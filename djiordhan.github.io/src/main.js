@@ -9,7 +9,7 @@ import 'buefy/lib/buefy.css'
 
 import VueCodemirror from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/base16-dark.css'
+import 'codemirror/theme/base16-light.css'
 import 'codemirror/mode/javascript/javascript.js'
 
 Vue.config.productionTip = false
@@ -17,7 +17,7 @@ Vue.config.productionTip = false
 Vue.use(Buefy)
 Vue.use(VueCodemirror, {
   options: {
-    theme: 'base16-dark',
+    theme: 'base16-light',
     tabSize: 4,
     mode: 'text/javascript',
     lineNumbers: true,

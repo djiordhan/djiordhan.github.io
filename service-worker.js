@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.4.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.24c309dace099cbef00dcf06692b5b8c.js"
+  "/precache-manifest.894f60c5794c313780e03ae2a7fe508a.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "djiordhan.github.io"});
