@@ -1,0 +1,46 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
+</head>
+
+<body class="a-body ">
+    <a-scene>
+        <!-- assets -->
+        <a-assets>
+            <img id="stars" src="8k_stars_milky_way.jpg">
+            <img id="mercury" src="2k_mercury.jpg">
+            <img id="venus" src="2k_venus_surface.jpg">
+            <img id="earth" src="2k_earth_daymap.jpg">
+            <img id="mars" src="2k_mars.jpg">
+            <img id="jupiter" src="2k_jupiter.jpg">
+            <img id="saturn" src="2k_saturn.jpg">
+            <img id="uranus" src="2k_uranus.jpg">
+            <img id="neptune" src="2k_neptune.jpg">
+            <img id="sun" src="2k_sun.jpg">
+            <img id="moon" src="2k_moon.jpg">
+        </a-assets>
+        <!-- sky -->
+        <a-sky src="#stars"></a-sky>
+        <!-- planets -->
+        <a-sphere position="10.146753038314554 1.25 -62.491" radius="1.25" src="#mercury" material="" geometry="radius:0.21999999999999997"></a-sphere>
+        <a-sphere position="-20.35974214589147 1.25 -57.395051623460375" radius="1.25 " src="#venus" material="" geometry="radius:0.64"></a-sphere>
+        <a-sphere position="-6.834837088736265 1.25 -42.0941785496003" radius="1.25 " src="#earth" material="" geometry="radius:0.59"></a-sphere>
+        <a-sphere position="-40.13975316159267 1.25 -68.75306205118116" radius="1.25 " src="#mars" material="" geometry="radius:0.42000000000000004"></a-sphere>
+        <a-sphere position="44.277826945435145 1.25 -69.89450226572859" radius="1.25 " src="#jupiter" material="" geometry="radius:1.5"></a-sphere>
+        <a-sphere position="-65.10191867989366 1.25 -71.11459036543997" radius="1.25 " src="#saturn" material="" geometry="radius:0.55"></a-sphere>
+        <a-sphere position="-75.95735967165126 1.25 -59.800931746639364" radius="1.25 " src="#uranus" material="" geometry="radius:0.67"></a-sphere>
+        <a-sphere position="60.599970700848004 1.25 -46.70093387394379" radius="1.25" src="#neptune" material="" geometry="radius:0.57"></a-sphere>
+        <a-sphere position="0.184 1.25 -69.147" radius="1.25" src="#sun" material="" geometry="radius:1.6800000000000002"></a-sphere>
+        <a-sphere position="-10.939132027221127 1.25 -41.91841046928741" radius="1.25" src="#moon" material="" geometry="radius:0.16000000000000003"></a-sphere>
+        <!-- camera -->
+        <a-entity camera="active:false" wasd-controls="" position="0 1.6 0" rotation="-8.806384902908412 0.15669090782035006 13.298502879647799"
+            look-controls="" aframe-injected="" data-aframe-inspector-original-camera="" data-aframe-avatar-replayer-camera=""></a-entity>
+    </a-scene>
+    <script type="text/javascript" src="astronomy.js"></script>
+    <script type="text/javascript">
+        console.log(new AstronomyClass().Sun);
+    </script>
+</body>
+
+</html>
