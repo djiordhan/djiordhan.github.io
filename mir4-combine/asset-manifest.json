@@ -1,0 +1,30 @@
+{
+  "files": {
+    "main.css": "/static/css/main.4d85ad60.css",
+    "main.js": "/static/js/main.ace59d8f.js",
+    "static/js/787.2b44fad9.chunk.js": "/static/js/787.2b44fad9.chunk.js",
+    "static/media/result-bg.png": "/static/media/result-bg.8867c8b961f135b89e70.png",
+    "static/media/bg.png": "/static/media/bg.394d9f8040e7886c5199.png",
+    "static/media/incense-burner-legendary.png": "/static/media/incense-burner-legendary.96e9288475dc32468c6f.png",
+    "static/media/incense-burner.png": "/static/media/incense-burner.7a07f9cd24ace420d13a.png",
+    "static/media/legendary.png": "/static/media/legendary.675c3ee3e8458ed1829d.png",
+    "static/media/close.png": "/static/media/close.47eb0f6c91e625f19a14.png",
+    "static/media/epic.png": "/static/media/epic.ef8d5fa3d029121e6505.png",
+    "static/media/rare.png": "/static/media/rare.4f82c18174c13a67d114.png",
+    "static/media/uc.png": "/static/media/uc.e634b1738698a9daf56f.png",
+    "static/media/epicUnknown.png": "/static/media/epicUnknown.2d5407cd939b73826c0a.png",
+    "static/media/legendaryUnknown.png": "/static/media/legendaryUnknown.c75461a67c66abc4c692.png",
+    "static/media/auto-assign.png": "/static/media/auto-assign.18f8d0c5291baf39778e.png",
+    "static/media/unknown-bg.png": "/static/media/unknown-bg.25c2b8b9625c5e268d66.png",
+    "static/media/unknown.png": "/static/media/unknown.6e391f4a8bd29f9a4176.png",
+    "static/media/combine-slot-bg.png": "/static/media/combine-slot-bg.93ef32e80585a427a2bb.png",
+    "index.html": "/index.html",
+    "main.4d85ad60.css.map": "/static/css/main.4d85ad60.css.map",
+    "main.ace59d8f.js.map": "/static/js/main.ace59d8f.js.map",
+    "787.2b44fad9.chunk.js.map": "/static/js/787.2b44fad9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4d85ad60.css",
+    "static/js/main.ace59d8f.js"
+  ]
+}
