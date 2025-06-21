@@ -260,6 +260,11 @@
             letterDisplay.textContent = letterPairs[currentIndex];
             body.style.background = backgrounds[currentBgIndex];
             
+            // Speak the new word after a short delay to let animation start
+            setTimeout(() => {
+                speakWord(letterPairs[currentIndex]);
+            }, 100);
+            
             // Reset animation flag
             setTimeout(() => {
                 isAnimating = false;
