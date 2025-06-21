@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter Swiper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            touch-action: pan-y;
+            transition: background 0.3s ease;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .letter-display {
+            font-size: clamp(8rem, 25vw, 20rem);
+            font-weight: bold;
+            color: white;
+            text-shadow: 
+                0 0 20px rgba(255, 255, 255, 0.5),
+                0 0 40px rgba(255, 255, 255, 0.3),
+                0 0 60px rgba(255, 255, 255, 0.1);
+            letter-spacing: 0.1em;
+            user-select: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+        }
+
+        .letter-display.swipe-up {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .letter-display.swipe-down {
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            0% {
+                transform: translateY(100px) scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            0% {
+                transform: translateY(-100px) scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .speak-button {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 15px 25px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .speak-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .speak-button:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        .speak-button.speaking {
+            background: rgba(255, 255, 255, 0.4);
+            animation: speaking 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes speaking {
+            0% { transform: translateX(-50%) scale(1); }
+            100% { transform: translateX(-50%) scale(1.02); }
+        }
+
+        .speak-icon {
+            font-size: 1.2rem;
+        }
+
+        .instruction {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .letter-display {
+                font-size: clamp(6rem, 30vw, 15rem);
+            }
+            
+            .speak-button {
+                bottom: 25%;
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            
+            .instruction {
+                font-size: 0.9rem;
+                bottom: 15%;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .letter-display {
+                font-size: clamp(5rem, 20vh, 12rem);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="letter-display" id="letterDisplay">it</div>
+        <button class="speak-button" id="speakButton">
+            <span class="speak-icon">🔊</span>
+            <span>Speak</span>
+        </button>
+        <div class="instruction">Swipe up or down to change letters</div>
+    </div>
+
+    <script>
+        const letterPairs = [
+            'it', 'am', 'me', 'we', 'be', 'go', 'no', 'so', 'to', 'up',
+            'in', 'on', 'at', 'by', 'or', 'if', 'my', 'as', 'is', 'he',
+            'an', 'of', 'do', 'hi', 'ok', 'oh', 'ah', 'uh', 'us', 'ox'
+        ];
+
+        const backgrounds = [
+            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+            'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+            'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+            'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
+            'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+            'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+            'linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%)'
+        ];
+
+        let currentIndex = 0;
+        let currentBgIndex = 0;
+        let startY = 0;
+        let startTime = 0;
+        let isAnimating = false;
+
+        const letterDisplay = document.getElementById('letterDisplay');
+        const speakButton = document.getElementById('speakButton');
+        const body = document.body;
+
+        // Set initial background
+        body.style.background = backgrounds[currentBgIndex];
+
+        // Speech synthesis function
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
+                speakButton.classList.add('speaking');
+                
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.rate = 0.8;
+                utterance.pitch = 1.1;
+                utterance.volume = 1;
+                
+                utterance.onend = () => {
+                    speakButton.classList.remove('speaking');
+                };
+                
+                utterance.onerror = () => {
+                    speakButton.classList.remove('speaking');
+                };
+                
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('Speech synthesis not supported in this browser');
+            }
+        }
+
+        // Speak button click event
+        speakButton.addEventListener('click', () => {
+            speakWord(letterPairs[currentIndex]);
+        });
+
+        function updateDisplay(direction) {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            
+            // Remove any existing animation classes
+            letterDisplay.classList.remove('swipe-up', 'swipe-down');
+            
+            // Update indices
+            if (direction === 'up') {
+                currentIndex = (currentIndex + 1) % letterPairs.length;
+                currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
+            } else {
+                currentIndex = (currentIndex - 1 + letterPairs.length) % letterPairs.length;
+                currentBgIndex = (currentBgIndex - 1 + backgrounds.length) % backgrounds.length;
+            }
+            
+            // Add animation class
+            letterDisplay.classList.add(direction === 'up' ? 'swipe-up' : 'swipe-down');
+            
+            // Update content and background
+            letterDisplay.textContent = letterPairs[currentIndex];
+            body.style.background = backgrounds[currentBgIndex];
+            
+            // Reset animation flag
+            setTimeout(() => {
+                isAnimating = false;
+                letterDisplay.classList.remove('swipe-up', 'swipe-down');
+            }, 400);
+        }
+
+        // Touch events
+        body.addEventListener('touchstart', (e) => {
+            if (isAnimating) return;
+            startY = e.touches[0].clientY;
+            startTime = Date.now();
+        }, { passive: true });
+
+        body.addEventListener('touchend', (e) => {
+            if (isAnimating) return;
+            
+            const endY = e.changedTouches[0].clientY;
+            const deltaY = startY - endY;
+            const deltaTime = Date.now() - startTime;
+            
+            // Minimum swipe distance and maximum time for a valid swipe
+            const minDistance = 50;
+            const maxTime = 500;
+            
+            if (Math.abs(deltaY) > minDistance && deltaTime < maxTime) {
+                if (deltaY > 0) {
+                    updateDisplay('up');
+                } else {
+                    updateDisplay('down');
+                }
+            }
+        }, { passive: true });
+
+        // Keyboard events for desktop testing
+        document.addEventListener('keydown', (e) => {
+            if (isAnimating) return;
+            
+            if (e.key === 'ArrowUp') {
+                updateDisplay('up');
+            } else if (e.key === 'ArrowDown') {
+                updateDisplay('down');
+            }
+        });
+
+        // Mouse wheel events for desktop
+        body.addEventListener('wheel', (e) => {
+            if (isAnimating) return;
+            
+            e.preventDefault();
+            if (e.deltaY > 0) {
+                updateDisplay('up');
+            } else {
+                updateDisplay('down');
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
