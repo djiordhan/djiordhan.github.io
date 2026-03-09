@@ -529,10 +529,10 @@ function updateDisplay() {
   const hEl = document.getElementById('hour-display');
   const mEl = document.getElementById('min-display');
   if (phase === 'hour') {
-    hEl.textContent = input.length ? input : '__';
+    hEl.textContent = input.length ? String(parseInt(input) || input) : '__';
     mEl.textContent = '__';
   } else {
-    hEl.textContent = input.slice(0, 2).padStart(2,'0').replace(/^0/,'') || '__';
+    hEl.textContent = String(parseInt(input.slice(0,2))) || '__';
     // min chars
     const minPart = input.slice(2);
     mEl.textContent = minPart.length === 0 ? '__' : minPart.padEnd(2,'_');
@@ -549,10 +549,12 @@ function handleDigit(d) {
     if (tentative.length === 1) {
       if (d === '0') return; // can't start with 0 for hours
       input = tentative;
-      if (val >= 2) { commitHour(); } // single-digit hour ≥2 → go to min
+      // digits 2-9: commit immediately as single-digit hour
+      if (val >= 2) { input = String(val).padStart(2,'0'); commitHour(); }
+      // digit 1: wait for possible second digit (10, 11, 12)
     } else if (tentative.length === 2) {
-      if (val >= 1 && val <= 12) { input = tentative; commitHour(); }
-      else if (tentative[0] === '1' && d === '0') { input = tentative; commitHour(); } // 10
+      const tval = parseInt(tentative);
+      if (tval >= 1 && tval <= 12) { input = String(tval).padStart(2,'0'); commitHour(); }
     }
   } else {
     // minute phase — collect up to 2 digits
@@ -583,10 +585,10 @@ function handleDelete() {
     if (minPart.length > 0) {
       input = input.slice(0, input.length - 1);
     } else {
-      // go back to hour
-      input = input.slice(0,2);
+      // go back to hour phase — keep the 2-char stored hour, just switch phase
       phase = 'hour';
-      // trim to what was entered
+      // strip leading zero for re-editing
+      input = String(parseInt(input.slice(0,2)));
     }
   } else {
     input = input.slice(0, -1);
@@ -604,6 +606,7 @@ function shakeDisplay() {
   d.style.animation = 'none';
   d.offsetHeight;
   d.style.animation = 'shake 0.4s ease';
+  soundShakeErr();
 }
 
 // ─── Check ────────────────────────────────────────
@@ -645,11 +648,13 @@ function showFeedback(ok, gh, gm) {
     emoji.textContent = ['🎉','🌟','🏆','🥳','🎊','✨'][Math.floor(Math.random()*6)];
     msg.textContent = CORRECT_MSGS[Math.floor(Math.random()*CORRECT_MSGS.length)];
     ans.textContent = `The time was ${targetH}:${String(targetM).padStart(2,'0')}`;
+    soundCorrect();
   } else {
     fb.className = 'feedback wrong-fb show';
     emoji.textContent = ['😅','🙈','💭','🤔'][Math.floor(Math.random()*4)];
     msg.textContent = WRONG_MSGS[Math.floor(Math.random()*WRONG_MSGS.length)];
     ans.textContent = `The answer was ${targetH}:${String(targetM).padStart(2,'0')}`;
+    soundWrong();
   }
 }
 
@@ -665,7 +670,44 @@ function lightStars(s) {
 }
 
 // ─── Hint ─────────────────────────────────────────
+// ─── Sounds ───────────────────────────────────────
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let actx = null;
+function getACtx() { if (!actx) actx = new AudioCtx(); return actx; }
+
+function playTone(freq, type, duration, vol, delay) {
+  vol = vol || 0.3; delay = delay || 0;
+  try {
+    const ctx = getACtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+    gain.gain.setValueAtTime(vol, ctx.currentTime + delay);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
+    osc.start(ctx.currentTime + delay);
+    osc.stop(ctx.currentTime + delay + duration);
+  } catch(e) {}
+}
+
+function soundClick() { playTone(520, 'sine', 0.09, 0.22, 0); }
+function soundDelete() { playTone(300, 'sine', 0.08, 0.15, 0); }
+function soundShakeErr() { playTone(180, 'sawtooth', 0.13, 0.14, 0); }
+function soundCorrect() {
+  [523, 659, 784, 1047].forEach(function(f, i) { playTone(f, 'sine', 0.38, 0.26, i * 0.11); });
+  setTimeout(function() { playTone(1568, 'sine', 0.22, 0.14, 0); }, 480);
+}
+function soundWrong() {
+  playTone(330, 'sine', 0.18, 0.22, 0);
+  playTone(260, 'sine', 0.18, 0.22, 0.2);
+}
+function soundNext() { playTone(440, 'sine', 0.1, 0.18, 0); playTone(550, 'sine', 0.1, 0.18, 0.1); }
+function soundHint() { playTone(880, 'sine', 0.25, 0.16, 0); playTone(1100, 'sine', 0.2, 0.12, 0.16); }
+
+// ─── Hint ─────────────────────────────────────────
 document.getElementById('hint-btn').addEventListener('click', () => {
+  soundHint();
   hintUsed = true;
   const h = targetH, m = targetM;
   let minWord = '';
@@ -684,23 +726,25 @@ document.getElementById('numpad').addEventListener('click', e => {
   if (!btn) return;
   btn.classList.add('pressed');
   setTimeout(() => btn.classList.remove('pressed'), 120);
+  soundClick();
   handleDigit(btn.dataset.val);
 });
 
-document.getElementById('btn-clear').addEventListener('click', handleDelete);
+document.getElementById('btn-clear').addEventListener('click', () => { soundDelete(); handleDelete(); });
 document.getElementById('btn-submit').addEventListener('click', () => {
+  soundClick();
   if (phase === 'min' && input.slice(2).length === 2) checkAnswer();
-  else shakeDisplay();
+  else { shakeDisplay(); soundShakeErr(); }
 });
-document.getElementById('next-btn').addEventListener('click', newQuestion);
+document.getElementById('next-btn').addEventListener('click', () => { soundNext(); newQuestion(); });
 
 // Keyboard support
 document.addEventListener('keydown', e => {
-  if (e.key >= '0' && e.key <= '9') handleDigit(e.key);
-  else if (e.key === 'Backspace') handleDelete();
+  if (e.key >= '0' && e.key <= '9') { soundClick(); handleDigit(e.key); }
+  else if (e.key === 'Backspace') { soundDelete(); handleDelete(); }
   else if (e.key === 'Enter') {
-    if (document.getElementById('feedback').classList.contains('show')) newQuestion();
-    else checkAnswer();
+    if (document.getElementById('feedback').classList.contains('show')) { soundNext(); newQuestion(); }
+    else { soundClick(); checkAnswer(); }
   }
 });
 
