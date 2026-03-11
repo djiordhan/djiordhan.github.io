@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn My Body Parts! 🌟</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FF6B9D;
+    --yellow: #FFD93D;
+    --green: #6BCB77;
+    --blue: #4ECDC4;
+    --purple: #C77DFF;
+    --orange: #FF9F43;
+    --red: #FF6B6B;
+    --sky: #74C0FC;
+    --bg: #FFF8E7;
+    --dark: #2D3436;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,107,157,0.12) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(78,205,196,0.12) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(255,217,61,0.08) 0%, transparent 70%);
+  }
+
+  /* ── Floating deco shapes ── */
+  .deco {
+    position: fixed;
+    border-radius: 50%;
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+    animation: float 6s ease-in-out infinite;
+  }
+  .deco:nth-child(1){ width:80px;height:80px;background:var(--pink);  top:5%;  left:3%;  animation-delay:0s; }
+  .deco:nth-child(2){ width:60px;height:60px;background:var(--yellow);top:12%; right:5%;animation-delay:1s; }
+  .deco:nth-child(3){ width:50px;height:50px;background:var(--green); bottom:15%;left:6%; animation-delay:2s; }
+  .deco:nth-child(4){ width:70px;height:70px;background:var(--sky);   bottom:8%;right:4%;animation-delay:0.5s;}
+  .deco:nth-child(5){ width:40px;height:40px;background:var(--purple);top:45%; left:1%; animation-delay:1.5s;}
+
+  @keyframes float {
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-18px) rotate(10deg); }
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    padding: 28px 20px 10px;
+    position: relative;
+    z-index: 1;
+  }
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--pink), var(--orange), var(--yellow), var(--green), var(--blue), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(2px 3px 0px rgba(0,0,0,0.12));
+  }
+  header p {
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+    color: #636e72;
+    font-weight: 700;
+    margin-top: 6px;
+  }
+
+  /* ── Score / progress bar ── */
+  #scoreboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    margin: 10px auto 18px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .score-badge {
+    background: white;
+    border-radius: 30px;
+    padding: 8px 22px;
+    font-weight: 800;
+    font-size: 1rem;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .score-badge .emoji { font-size: 1.3rem; }
+  #progress-wrap {
+    width: min(300px, 80vw);
+    height: 16px;
+    background: #eee;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+  }
+  #progress-bar {
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(90deg, var(--green), var(--sky));
+    transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    width: 0%;
+  }
+
+  /* ── Main layout ── */
+  #game-area {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 16px 30px;
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+  }
+
+  /* ── Label banks ── */
+  .label-bank {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 145px;
+    padding-top: 20px;
+    flex-shrink: 0;
+  }
+
+  /* ── Body figure ── */
+  #body-figure {
+    position: relative;
+    width: min(500px, 90vw);
+    flex-shrink: 0;
+  }
+  #body-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.12));
+  }
+
+  /* Drop zones on SVG */
+  .drop-zone {
+    cursor: pointer;
+    transition: filter 0.2s;
+  }
+  .drop-zone:hover { filter: brightness(1.15); }
+  .drop-zone.over { filter: brightness(1.3) drop-shadow(0 0 8px rgba(255,255,100,0.9)); }
+  .drop-zone.correct { animation: correctPulse 0.6s ease; }
+  .drop-zone.wrong { animation: wrongShake 0.4s ease; }
+
+  @keyframes correctPulse {
+    0%{ filter:brightness(1); }
+    40%{ filter:brightness(1.5) drop-shadow(0 0 12px rgba(100,255,100,1)); }
+    100%{ filter:brightness(1); }
+  }
+  @keyframes wrongShake {
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px); }
+    60%{ transform:translateX(6px); }
+  }
+
+  /* ── Draggable labels ── */
+  .label {
+    background: white;
+    border-radius: 22px;
+    padding: 9px 14px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    cursor: grab;
+    user-select: none;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.13), 0 2px 0px rgba(0,0,0,0.08);
+    border: 3px solid transparent;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+    letter-spacing: 0.4px;
+    position: relative;
+    z-index: 10;
+  }
+  .label:active { cursor: grabbing; }
+  .label.dragging {
+    transform: scale(1.12) rotate(-3deg);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+    opacity: 0.92;
+    z-index: 9999;
+  }
+  .label.placed {
+    opacity: 0.38;
+    cursor: default;
+    pointer-events: none;
+    transform: scale(0.9);
+  }
+  /* Color variants */
+  .label[data-color="pink"]   { border-color:var(--pink);   color:var(--pink);   }
+  .label[data-color="yellow"] { border-color:var(--yellow); color:#d4a200;       }
+  .label[data-color="green"]  { border-color:var(--green);  color:#2d9640;       }
+  .label[data-color="blue"]   { border-color:var(--blue);   color:#2ba3a0;       }
+  .label[data-color="purple"] { border-color:var(--purple); color:#9b40e0;       }
+  .label[data-color="orange"] { border-color:var(--orange); color:#e07c00;       }
+  .label[data-color="red"]    { border-color:var(--red);    color:#d93a3a;       }
+  .label[data-color="sky"]    { border-color:var(--sky);    color:#1a7ac9;       }
+
+  /* ── Floating label on body after correct drop ── */
+  .body-label {
+    position: absolute;
+    background: white;
+    border-radius: 16px;
+    padding: 4px 11px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.82rem;
+    pointer-events: none;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    border: 2.5px solid;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    z-index: 20;
+  }
+  @keyframes popIn {
+    0%{ opacity:0; transform:translate(-50%,-50%) scale(0.3); }
+    100%{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  }
+
+  /* ── Fireworks / confetti overlay ── */
+  #confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Win screen ── */
+  #win-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(255,248,231,0.95);
+    z-index: 10000;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    text-align: center;
+    padding: 20px;
+  }
+  #win-screen.show { display: flex; animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+  #win-screen h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    background: linear-gradient(135deg, var(--pink), var(--orange), var(--yellow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  #win-screen p {
+    font-size: 1.2rem;
+    color: #636e72;
+    font-weight: 700;
+  }
+  .win-emoji { font-size: 4rem; animation: bounce 0.8s infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-16px)} }
+  #replay-btn {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 44px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(78,205,196,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 1px;
+  }
+  #replay-btn:hover { transform: scale(1.06); box-shadow: 0 10px 28px rgba(78,205,196,0.5); }
+
+  /* ── Toast notifications ── */
+  #toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: white;
+    border-radius: 30px;
+    padding: 14px 30px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 8000;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events: none;
+    text-align: center;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.correct-toast { color: var(--green); border: 3px solid var(--green); }
+  #toast.wrong-toast   { color: var(--red);   border: 3px solid var(--red);   }
+
+  /* ── Drop zone markers on body ── */
+  .zone-marker {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 15;
+  }
+  .zone-marker .pulse-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 3px solid currentColor;
+    animation: markerPulse 1.8s ease-in-out infinite;
+    opacity: 0.7;
+  }
+  .zone-marker .pulse-ring:nth-child(2) {
+    animation-delay: 0.6s;
+    width: 140%; height: 140%;
+    top: -20%; left: -20%;
+    opacity: 0.4;
+  }
+  .zone-marker .dot {
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.9;
+  }
+  .zone-marker .label-hint {
+    position: absolute;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 2.5px solid currentColor;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.68rem;
+    white-space: nowrap;
+    opacity: 0.85;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+  .zone-marker.solved {
+    display: none;
+  }
+  @keyframes markerPulse {
+    0%, 100% { transform: scale(1);   opacity: 0.7; }
+    50%       { transform: scale(1.4); opacity: 0.2; }
+  }
+
+  /* ── Reset button ── */
+  #reset-btn {
+    display: block;
+    margin: 0 auto 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    background: white;
+    color: var(--orange);
+    border: 3px solid var(--orange);
+    border-radius: 50px;
+    padding: 10px 30px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    z-index: 1;
+  }
+  #reset-btn:hover { background: var(--orange); color: white; transform: scale(1.04); }
+
+  /* responsive */
+  @media(max-width:640px){
+    .label-bank { width: 110px; }
+    .label { font-size: 0.88rem; padding: 7px 10px; }
+    #body-figure { width: min(300px, 72vw); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Decorative blobs -->
+<div class="deco"></div><div class="deco"></div><div class="deco"></div>
+<div class="deco"></div><div class="deco"></div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- Win screen -->
+<div id="win-screen">
+  <div class="win-emoji">🎉</div>
+  <h2>Amazing Job!</h2>
+  <p>You learned all the body parts! You're a superstar! ⭐</p>
+  <button id="replay-btn" onclick="resetGame()">Play Again! 🔄</button>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<header>
+  <h1>🌟 Learn My Body! 🌟</h1>
+  <p>Drag each label to the right body part!</p>
+</header>
+
+<div id="scoreboard">
+  <div class="score-badge"><span class="emoji">⭐</span><span id="score-text">0 / 16</span></div>
+  <div id="progress-wrap"><div id="progress-bar"></div></div>
+  <div class="score-badge"><span class="emoji">💪</span><span id="tries-text">Tries: 0</span></div>
+</div>
+
+<button id="reset-btn" onclick="resetGame()">🔄 Start Over</button>
+
+<div id="game-area">
+  <!-- Left label bank -->
+  <div class="label-bank" id="bank-left"></div>
+
+  <!-- Body figure -->
+  <div id="body-figure">
+    <svg id="body-svg" viewBox="0 0 340 580" xmlns="http://www.w3.org/2000/svg">
+      <!-- Sky background gradient -->
+      <defs>
+        <radialGradient id="skinGrad" cx="50%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="#FFDAB9"/>
+          <stop offset="100%" stop-color="#F4A76A"/>
+        </radialGradient>
+        <radialGradient id="hairGrad" cx="50%" cy="0%" r="100%">
+          <stop offset="0%" stop-color="#8B4513"/>
+          <stop offset="100%" stop-color="#5D2E00"/>
+        </radialGradient>
+        <radialGradient id="shirtGrad" cx="50%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#FF6B9D"/>
+          <stop offset="30%" stop-color="#FFD93D"/>
+          <stop offset="60%" stop-color="#6BCB77"/>
+          <stop offset="100%" stop-color="#4ECDC4"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Ground -->
+      <ellipse cx="170" cy="560" rx="130" ry="20" fill="#6BCB77" opacity="0.3"/>
+
+      <!-- ══ SHOES ══ -->
+      <ellipse cx="135" cy="545" rx="32" ry="13" fill="#FF4444"/>
+      <ellipse cx="205" cy="545" rx="32" ry="13" fill="#FF4444"/>
+      <ellipse cx="130" cy="540" rx="16" ry="9" fill="#FF7777"/>
+      <ellipse cx="200" cy="540" rx="16" ry="9" fill="#FF7777"/>
+
+      <!-- ══ LEGS ══ -->
+      <rect x="118" y="410" width="38" height="130" rx="18" fill="#74B9FF"/>
+      <rect x="184" y="410" width="38" height="130" rx="18" fill="#74B9FF"/>
+      <!-- leg highlight -->
+      <rect x="126" y="415" width="12" height="100" rx="6" fill="rgba(255,255,255,0.25)"/>
+      <rect x="192" y="415" width="12" height="100" rx="6" fill="rgba(255,255,255,0.25)"/>
+
+      <!-- ══ BODY / TORSO ══ -->
+      <rect x="105" y="220" width="130" height="200" rx="28" fill="url(#shirtGrad)"/>
+      <!-- shirt stripes detail -->
+      <rect x="105" y="250" width="130" height="12" rx="0" fill="rgba(255,255,255,0.2)"/>
+      <rect x="105" y="278" width="130" height="12" rx="0" fill="rgba(255,255,255,0.2)"/>
+      <rect x="105" y="306" width="130" height="12" rx="0" fill="rgba(255,255,255,0.2)"/>
+
+      <!-- ══ ARMS ══ -->
+      <!-- Left arm -->
+      <rect x="60" y="225" width="50" height="140" rx="22" fill="url(#skinGrad)" transform="rotate(8,85,295)"/>
+      <!-- Right arm -->
+      <rect x="230" y="225" width="50" height="140" rx="22" fill="url(#skinGrad)" transform="rotate(-8,255,295)"/>
+
+      <!-- ══ HANDS ══ -->
+      <!-- Left hand -->
+      <ellipse cx="70" cy="385" rx="22" ry="18" fill="url(#skinGrad)"/>
+      <ellipse cx="55" cy="377" rx="7" ry="10" fill="url(#skinGrad)"/>
+      <ellipse cx="50" cy="368" rx="6" ry="9" fill="url(#skinGrad)"/>
+      <ellipse cx="56" cy="362" rx="6" ry="9" fill="url(#skinGrad)"/>
+      <ellipse cx="64" cy="360" rx="6" ry="9" fill="url(#skinGrad)"/>
+      <ellipse cx="72" cy="361" rx="5" ry="8" fill="url(#skinGrad)"/>
+      <!-- Right hand -->
+      <ellipse cx="270" cy="385" rx="22" ry="18" fill="url(#skinGrad)"/>
+      <ellipse cx="285" cy="377" rx="7" ry="10" fill="url(#skinGrad)"/>
+      <ellipse cx="290" cy="368" rx="6" ry="9" fill="url(#skinGrad)"/>
+      <ellipse cx="284" cy="362" rx="6" ry="9" fill="url(#skinGrad)"/>
+      <ellipse cx="276" cy="360" rx="6" ry="9" fill="url(#skinGrad)"/>
+      <ellipse cx="268" cy="361" rx="5" ry="8" fill="url(#skinGrad)"/>
+
+      <!-- ══ NECK ══ -->
+      <rect x="148" y="175" width="44" height="52" rx="18" fill="url(#skinGrad)"/>
+
+      <!-- ══ HEAD ══ -->
+      <ellipse cx="170" cy="145" rx="75" ry="82" fill="url(#skinGrad)"/>
+      <!-- cheeks blush -->
+      <ellipse cx="120" cy="160" rx="16" ry="10" fill="#FFB3C6" opacity="0.55"/>
+      <ellipse cx="220" cy="160" rx="16" ry="10" fill="#FFB3C6" opacity="0.55"/>
+
+      <!-- ══ HAIR ══ -->
+      <ellipse cx="170" cy="90" rx="76" ry="55" fill="url(#hairGrad)"/>
+      <ellipse cx="103" cy="115" rx="22" ry="38" fill="url(#hairGrad)"/>
+      <ellipse cx="237" cy="115" rx="22" ry="38" fill="url(#hairGrad)"/>
+      <!-- hair shine -->
+      <ellipse cx="148" cy="78" rx="18" ry="8" fill="rgba(255,255,255,0.18)" transform="rotate(-20,148,78)"/>
+
+      <!-- ══ EYES ══ -->
+      <!-- whites -->
+      <ellipse cx="143" cy="145" rx="17" ry="15" fill="white"/>
+      <ellipse cx="197" cy="145" rx="17" ry="15" fill="white"/>
+      <!-- irises -->
+      <circle cx="143" cy="147" r="10" fill="#4ECDC4"/>
+      <circle cx="197" cy="147" r="10" fill="#4ECDC4"/>
+      <!-- pupils -->
+      <circle cx="145" cy="148" r="6" fill="#1a1a2e"/>
+      <circle cx="199" cy="148" r="6" fill="#1a1a2e"/>
+      <!-- shine -->
+      <circle cx="148" cy="144" r="3" fill="white"/>
+      <circle cx="202" cy="144" r="3" fill="white"/>
+      <!-- eyebrows -->
+      <path d="M130 132 Q143 126 156 131" stroke="#5D2E00" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M184 131 Q197 126 210 132" stroke="#5D2E00" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <!-- eyelashes top -->
+      <path d="M128 138 Q135 133 143 132 Q151 133 158 138" stroke="#5D2E00" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M182 138 Q189 133 197 132 Q205 133 212 138" stroke="#5D2E00" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+      <!-- ══ NOSE ══ -->
+      <path d="M170 153 Q163 168 162 175 Q166 179 170 178 Q174 179 178 175 Q177 168 170 153Z" fill="#E8956D" opacity="0.8"/>
+      <ellipse cx="164" cy="175" rx="5" ry="3.5" fill="#C87040" opacity="0.6"/>
+      <ellipse cx="176" cy="175" rx="5" ry="3.5" fill="#C87040" opacity="0.6"/>
+
+      <!-- ══ MOUTH ══ -->
+      <path d="M152 190 Q162 200 170 201 Q178 200 188 190" stroke="#C87040" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M155 192 Q162 198 170 199 Q178 198 185 192" fill="#FF8FAB" opacity="0.6"/>
+      <!-- teeth -->
+      <path d="M156 193 Q162 199 170 200 Q178 199 184 193" fill="white" opacity="0.8"/>
+
+      <!-- ══ EARS ══ -->
+      <ellipse cx="95" cy="148" rx="14" ry="18" fill="url(#skinGrad)"/>
+      <ellipse cx="245" cy="148" rx="14" ry="18" fill="url(#skinGrad)"/>
+      <ellipse cx="98" cy="148" rx="8" ry="11" fill="#E8956D" opacity="0.6"/>
+      <ellipse cx="242" cy="148" rx="8" ry="11" fill="#E8956D" opacity="0.6"/>
+
+      <!-- ══ ELBOW dots ══ -->
+      <circle cx="72" cy="308" r="7" fill="#E8956D" opacity="0.5"/>
+      <circle cx="268" cy="308" r="7" fill="#E8956D" opacity="0.5"/>
+
+      <!-- ══ BELLY BUTTON ══ -->
+      <ellipse cx="170" cy="390" rx="6" ry="5" fill="rgba(0,0,0,0.12)"/>
+
+      <!-- ══ HIT AREAS (drop zones) ══ -->
+      <!-- Head -->
+      <ellipse id="zone-head" class="drop-zone" cx="170" cy="120" rx="72" ry="65" fill="transparent" data-part="Head" stroke="transparent" stroke-width="4"/>
+      <!-- Hair -->
+      <ellipse id="zone-hair" class="drop-zone" cx="170" cy="85" rx="76" ry="52" fill="transparent" data-part="Hair"/>
+      <!-- Left Eye -->
+      <ellipse id="zone-eye" class="drop-zone" cx="143" cy="147" rx="22" ry="18" fill="transparent" data-part="Eye"/>
+      <!-- Right Ear -->
+      <ellipse id="zone-ear" class="drop-zone" cx="245" cy="148" rx="18" ry="24" fill="transparent" data-part="Ear"/>
+      <!-- Nose -->
+      <ellipse id="zone-nose" class="drop-zone" cx="170" cy="170" rx="18" ry="16" fill="transparent" data-part="Nose"/>
+      <!-- Mouth -->
+      <ellipse id="zone-mouth" class="drop-zone" cx="170" cy="192" rx="22" ry="14" fill="transparent" data-part="Mouth"/>
+      <!-- Neck -->
+      <rect id="zone-neck" class="drop-zone" x="142" y="175" width="56" height="50" rx="14" fill="transparent" data-part="Neck"/>
+      <!-- Left Shoulder -->
+      <ellipse id="zone-shoulder" class="drop-zone" cx="108" cy="228" rx="30" ry="22" fill="transparent" data-part="Shoulder"/>
+      <!-- Chest -->
+      <ellipse id="zone-chest" class="drop-zone" cx="170" cy="258" rx="42" ry="28" fill="transparent" data-part="Chest"/>
+      <!-- Left Arm -->
+      <ellipse id="zone-arm" class="drop-zone" cx="76" cy="285" rx="24" ry="40" fill="transparent" data-part="Arm" transform="rotate(8,76,285)"/>
+      <!-- Left Elbow -->
+      <ellipse id="zone-elbow" class="drop-zone" cx="72" cy="310" rx="18" ry="15" fill="transparent" data-part="Elbow"/>
+      <!-- Left Hand / fingers zone -->
+      <ellipse id="zone-hand" class="drop-zone" cx="70" cy="377" rx="28" ry="22" fill="transparent" data-part="Hand"/>
+      <!-- Fingers -->
+      <ellipse id="zone-fingers" class="drop-zone" cx="62" cy="362" rx="22" ry="18" fill="transparent" data-part="Fingers"/>
+      <!-- Stomach -->
+      <ellipse id="zone-stomach" class="drop-zone" cx="170" cy="350" rx="40" ry="35" fill="transparent" data-part="Stomach"/>
+      <!-- Hip -->
+      <ellipse id="zone-hip" class="drop-zone" cx="170" cy="408" rx="55" ry="22" fill="transparent" data-part="Hip"/>
+      <!-- Knee -->
+      <ellipse id="zone-knee" class="drop-zone" cx="137" cy="480" rx="22" ry="18" fill="transparent" data-part="Knee"/>
+      <!-- Foot -->
+      <ellipse id="zone-foot" class="drop-zone" cx="137" cy="545" rx="34" ry="16" fill="transparent" data-part="Foot"/>
+    </svg>
+  </div>
+
+  <!-- Right label bank -->
+  <div class="label-bank" id="bank-right"></div>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────
+const PARTS = [
+  { name:"Head",     color:"pink",   bank:"left",  zoneX:"50%", zoneY:"20%" },
+  { name:"Hair",     color:"purple", bank:"right", zoneX:"50%", zoneY:"10%" },
+  { name:"Eye",      color:"blue",   bank:"left",  zoneX:"42%", zoneY:"26%" },
+  { name:"Ear",      color:"sky",    bank:"right", zoneX:"75%", zoneY:"26%" },
+  { name:"Nose",     color:"orange", bank:"right", zoneX:"50%", zoneY:"30%" },
+  { name:"Mouth",    color:"pink",   bank:"left",  zoneX:"50%", zoneY:"34%" },
+  { name:"Neck",     color:"green",  bank:"right", zoneX:"50%", zoneY:"38%" },
+  { name:"Shoulder", color:"yellow", bank:"left",  zoneX:"30%", zoneY:"41%" },
+  { name:"Chest",    color:"blue",   bank:"right", zoneX:"50%", zoneY:"47%" },
+  { name:"Arm",      color:"orange", bank:"left",  zoneX:"20%", zoneY:"52%" },
+  { name:"Elbow",    color:"red",    bank:"right", zoneX:"20%", zoneY:"57%" },
+  { name:"Hand",     color:"green",  bank:"left",  zoneX:"18%", zoneY:"68%" },
+  { name:"Fingers",  color:"purple", bank:"right", zoneX:"15%", zoneY:"64%" },
+  { name:"Stomach",  color:"yellow", bank:"left",  zoneX:"50%", zoneY:"63%" },
+  { name:"Hip",      color:"pink",   bank:"right", zoneX:"50%", zoneY:"72%" },
+  { name:"Knee",     color:"sky",    bank:"left",  zoneX:"40%", zoneY:"84%" },
+  { name:"Foot",     color:"red",    bank:"right", zoneX:"40%", zoneY:"95%" },
+];
+
+// Extend to 16 shown (we have 17, cap at 16 displayed labels)
+const ACTIVE_PARTS = PARTS.slice(0, 16);
+
+let score = 0;
+let tries = 0;
+let draggedPart = null;
+let toastTimer = null;
+
+// ── Build labels ────────────────────────────────────────────────────
+function buildLabels() {
+  const bankLeft  = document.getElementById('bank-left');
+  const bankRight = document.getElementById('bank-right');
+  bankLeft.innerHTML = '';
+  bankRight.innerHTML = '';
+
+  // Shuffle for fun
+  const shuffled = [...ACTIVE_PARTS].sort(() => Math.random() - 0.5);
+
+  shuffled.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'label';
+    el.textContent = p.name;
+    el.dataset.part = p.name;
+    el.dataset.color = p.color;
+    el.setAttribute('draggable', 'true');
+    el.id = 'label-' + p.name.toLowerCase();
+
+    // Drag events
+    el.addEventListener('dragstart', onDragStart);
+    el.addEventListener('dragend',   onDragEnd);
+    // Touch events
+    el.addEventListener('touchstart', onTouchStart, { passive:true });
+    el.addEventListener('touchmove',  onTouchMove,  { passive:false });
+    el.addEventListener('touchend',   onTouchEnd);
+
+    const target = p.bank === 'left' ? bankLeft : bankRight;
+    target.appendChild(el);
+  });
+}
+
+// ── Drag (mouse) ─────────────────────────────────────────────────────
+function onDragStart(e) {
+  draggedPart = e.target.dataset.part;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', draggedPart);
+}
+function onDragEnd(e) {
+  e.target.classList.remove('dragging');
+}
+
+// Drop zones
+document.querySelectorAll('.drop-zone').forEach(zone => {
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('over');
+  });
+  zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('over');
+    handleDrop(zone.dataset.part, draggedPart);
+  });
+});
+
+// ── Touch drag ────────────────────────────────────────────────────────
+let touchClone = null;
+let touchLabel = null;
+let touchOffX = 0, touchOffY = 0;
+
+function onTouchStart(e) {
+  const touch = e.touches[0];
+  touchLabel = e.currentTarget;
+  draggedPart = touchLabel.dataset.part;
+  touchLabel.classList.add('dragging');
+
+  const rect = touchLabel.getBoundingClientRect();
+  touchOffX = touch.clientX - rect.left;
+  touchOffY = touch.clientY - rect.top;
+
+  // Clone for visual drag
+  touchClone = touchLabel.cloneNode(true);
+  touchClone.style.cssText = `
+    position:fixed; left:${rect.left}px; top:${rect.top}px;
+    width:${rect.width}px; pointer-events:none; z-index:99999;
+    opacity:0.9; transform:scale(1.1) rotate(-3deg);
+    border-color: var(--${touchLabel.dataset.color});
+    color: var(--${touchLabel.dataset.color});
+    box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+    font-family:'Fredoka One',cursive; font-size:1rem;
+    border:3px solid; border-radius:22px; padding:9px 14px;
+    background:white; text-align:center;
+  `;
+  document.body.appendChild(touchClone);
+}
+
+function onTouchMove(e) {
+  e.preventDefault();
+  const touch = e.touches[0];
+  if (touchClone) {
+    touchClone.style.left = (touch.clientX - touchOffX) + 'px';
+    touchClone.style.top  = (touch.clientY - touchOffY) + 'px';
+  }
+}
+
+function onTouchEnd(e) {
+  const touch = e.changedTouches[0];
+  if (touchClone) { touchClone.remove(); touchClone = null; }
+  if (touchLabel) { touchLabel.classList.remove('dragging'); }
+
+  // Find element under finger
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  if (el) {
+    const zone = el.closest('.drop-zone') || (el.classList.contains('drop-zone') ? el : null);
+    if (zone) {
+      handleDrop(zone.dataset.part, draggedPart);
+    } else {
+      showToast("Try dropping on my body! 🤔", "wrong-toast");
+    }
+  }
+  touchLabel = null;
+  draggedPart = null;
+}
+
+// ── Core drop logic ───────────────────────────────────────────────────
+function handleDrop(zonePart, droppedPart) {
+  if (!droppedPart) return;
+  const labelEl = document.getElementById('label-' + droppedPart.toLowerCase());
+  if (!labelEl || labelEl.classList.contains('placed')) return;
+
+  tries++;
+  document.getElementById('tries-text').textContent = `Tries: ${tries}`;
+
+  if (zonePart === droppedPart) {
+    // ✅ Correct!
+    score++;
+    labelEl.classList.add('placed');
+    labelEl.textContent = '✅ ' + droppedPart;
+
+    // Place label on body
+    placeBodyLabel(droppedPart);
+
+    // Animate zone
+    const zone = document.getElementById('zone-' + droppedPart.toLowerCase());
+    if (zone) { zone.classList.add('correct'); setTimeout(()=>zone.classList.remove('correct'),700); }
+
+    updateScore();
+    const msgs = ["Awesome! 🌟","Great job! 🎉","You got it! 💪","Superstar! ⭐","Woohoo! 🎊","Brilliant! 🧠","Amazing! 🏆"];
+    showToast(msgs[Math.floor(Math.random()*msgs.length)], "correct-toast");
+    launchMini();
+
+    // Hide the marker for this part
+    const marker = document.getElementById('marker-' + droppedPart.toLowerCase());
+    if (marker) marker.classList.add('solved');
+
+    if (score >= ACTIVE_PARTS.length) setTimeout(showWin, 600);
+  } else {
+    // ❌ Wrong
+    const zone = document.getElementById('zone-' + zonePart.toLowerCase());
+    if (zone) { zone.classList.add('wrong'); setTimeout(()=>zone.classList.remove('wrong'),500); }
+    const msgs = ["Oops! Try again! 😅","Not quite! 🙈","Almost! Keep trying! 💡","Hmm, look carefully! 🔍"];
+    showToast(msgs[Math.floor(Math.random()*msgs.length)], "wrong-toast");
+  }
+}
+
+// ── Place label on figure ─────────────────────────────────────────────
+const colorMap = {
+  pink:"#FF6B9D", yellow:"#d4a200", green:"#2d9640", blue:"#2ba3a0",
+  purple:"#9b40e0", orange:"#e07c00", red:"#d93a3a", sky:"#1a7ac9"
+};
+
+function placeBodyLabel(partName) {
+  const fig = document.getElementById('body-figure');
+  const svgRect = document.getElementById('body-svg').getBoundingClientRect();
+  const figRect = fig.getBoundingClientRect();
+
+  const p = ACTIVE_PARTS.find(x => x.name === partName);
+  if (!p) return;
+
+  // Convert percent to pixel within figure
+  const xPct = parseFloat(p.zoneX) / 100;
+  const yPct = parseFloat(p.zoneY) / 100;
+
+  const x = (svgRect.left - figRect.left) + svgRect.width  * xPct;
+  const y = (svgRect.top  - figRect.top)  + svgRect.height * yPct;
+
+  const lbl = document.createElement('div');
+  lbl.className = 'body-label';
+  lbl.textContent = partName;
+  lbl.style.left = x + 'px';
+  lbl.style.top  = y + 'px';
+  lbl.style.borderColor = colorMap[p.color] || '#888';
+  lbl.style.color = colorMap[p.color] || '#888';
+  fig.appendChild(lbl);
+}
+
+// ── Score update ──────────────────────────────────────────────────────
+function updateScore() {
+  document.getElementById('score-text').textContent = `${score} / ${ACTIVE_PARTS.length}`;
+  document.getElementById('progress-bar').style.width = `${(score/ACTIVE_PARTS.length)*100}%`;
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────
+function showToast(msg, cls) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + cls;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 2000);
+}
+
+// ── Mini confetti burst ────────────────────────────────────────────────
+const canvas = document.getElementById('confetti-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function launchMini() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const colors = ['#FF6B9D','#FFD93D','#6BCB77','#4ECDC4','#C77DFF','#FF9F43'];
+  for (let i = 0; i < 30; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height * 0.5,
+      r: Math.random() * 7 + 4,
+      dx: (Math.random()-0.5)*4,
+      dy: Math.random()*3+1,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      alpha: 1,
+      rotation: Math.random()*360,
+      drot: (Math.random()-0.5)*8
+    });
+  }
+  if (particles.length > 0 && !animating) animateConfetti();
+}
+
+let animating = false;
+function animateConfetti() {
+  animating = true;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles = particles.filter(p => p.alpha > 0.05);
+  particles.forEach(p => {
+    p.x += p.dx; p.y += p.dy; p.alpha -= 0.018; p.rotation += p.drot;
+    ctx.save();
+    ctx.globalAlpha = p.alpha;
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rotation * Math.PI/180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*1.6);
+    ctx.restore();
+  });
+  if (particles.length > 0) requestAnimationFrame(animateConfetti);
+  else animating = false;
+}
+
+// ── Big win confetti ──────────────────────────────────────────────────
+function bigConfetti() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const colors = ['#FF6B9D','#FFD93D','#6BCB77','#4ECDC4','#C77DFF','#FF9F43','#FF6B6B','#74C0FC'];
+  for (let i = 0; i < 200; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: -20,
+      r: Math.random() * 9 + 5,
+      dx: (Math.random()-0.5)*6,
+      dy: Math.random()*5+2,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      alpha: 1,
+      rotation: Math.random()*360,
+      drot: (Math.random()-0.5)*10
+    });
+  }
+  if (!animating) animateConfetti();
+}
+
+// ── Win screen ────────────────────────────────────────────────────────
+function showWin() {
+  bigConfetti();
+  document.getElementById('win-screen').classList.add('show');
+}
+
+// ── Reset ─────────────────────────────────────────────────────────────
+function resetGame() {
+  score = 0; tries = 0;
+  updateScore();
+  document.getElementById('tries-text').textContent = 'Tries: 0';
+  document.getElementById('win-screen').classList.remove('show');
+
+  // Remove placed body labels
+  document.querySelectorAll('.body-label').forEach(el => el.remove());
+
+  buildLabels();
+  setTimeout(buildMarkers, 80);
+  particles = [];
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+// ── Zone markers ─────────────────────────────────────────────────────
+const markerColors = {
+  pink:"#FF6B9D", yellow:"#F5A800", green:"#2d9640", blue:"#2ba3a0",
+  purple:"#9b40e0", orange:"#e07c00", red:"#d93a3a", sky:"#1a7ac9"
+};
+
+function buildMarkers() {
+  document.querySelectorAll('.zone-marker').forEach(el => el.remove());
+  const fig    = document.getElementById('body-figure');
+  const svgEl  = document.getElementById('body-svg');
+  const svgRect = svgEl.getBoundingClientRect();
+  const figRect = fig.getBoundingClientRect();
+
+  ACTIVE_PARTS.forEach(p => {
+    const xPct = parseFloat(p.zoneX) / 100;
+    const yPct = parseFloat(p.zoneY) / 100;
+    const x = (svgRect.left - figRect.left) + svgRect.width  * xPct;
+    const y = (svgRect.top  - figRect.top)  + svgRect.height * yPct;
+    const color = markerColors[p.color] || '#888';
+
+    const marker = document.createElement('div');
+    marker.className = 'zone-marker';
+    marker.id = 'marker-' + p.name.toLowerCase();
+    marker.style.left  = x + 'px';
+    marker.style.top   = y + 'px';
+    marker.style.color = color;
+    marker.innerHTML = `
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+      <div class="dot"></div>
+    `;
+    fig.appendChild(marker);
+  });
+}
+
+// Re-build markers when window resizes (positions change)
+window.addEventListener('resize', buildMarkers);
+
+// ── Init ──────────────────────────────────────────────────────────────
+buildLabels();
+updateScore();
+// Markers need a tiny delay so SVG has rendered and getBoundingClientRect is correct
+setTimeout(buildMarkers, 80);
+
+window.addEventListener('resize', () => {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+</script>
+</body>
+</html>
