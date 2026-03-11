@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 Reading Adventure!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #6EC6F5;
+    --sun: #FFD93D;
+    --grass: #6BCB77;
+    --coral: #FF6B6B;
+    --purple: #C77DFF;
+    --cream: #FFF8ED;
+    --card: #FFFFFF;
+    --shadow: 0 8px 32px rgba(80,60,120,0.13);
+    --radius: 28px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(160deg, #a8edea 0%, #fed6e3 50%, #ffd6a0 100%);
+    min-height: 100vh;
+    padding: 16px;
+    overflow-x: hidden;
+  }
+
+  /* Floating clouds */
+  .clouds { position: fixed; top: 0; left: 0; width: 100%; pointer-events: none; z-index: 0; }
+  .cloud {
+    position: absolute;
+    font-size: 3rem;
+    opacity: 0.18;
+    animation: floatCloud linear infinite;
+  }
+  .cloud:nth-child(1) { top: 5%; animation-duration: 28s; animation-delay: 0s; }
+  .cloud:nth-child(2) { top: 18%; animation-duration: 22s; animation-delay: -8s; font-size: 2rem; }
+  .cloud:nth-child(3) { top: 35%; animation-duration: 35s; animation-delay: -15s; font-size: 4rem; }
+  @keyframes floatCloud {
+    from { transform: translateX(-120px); }
+    to { transform: translateX(calc(100vw + 120px)); }
+  }
+
+  .app {
+    max-width: 780px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 28px 20px 20px;
+  }
+  .header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 7vw, 3.2rem);
+    color: #fff;
+    text-shadow: 0 4px 16px rgba(120,60,160,0.25), 3px 3px 0 #c77dff;
+    letter-spacing: 1px;
+    line-height: 1.1;
+  }
+  .header p {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    color: #fff;
+    font-weight: 700;
+    opacity: 0.9;
+    margin-top: 6px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  /* Progress bar */
+  .progress-area {
+    background: rgba(255,255,255,0.6);
+    border-radius: 50px;
+    padding: 12px 20px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    backdrop-filter: blur(6px);
+    box-shadow: var(--shadow);
+  }
+  .progress-label {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.05rem;
+    color: #7c4dbb;
+    white-space: nowrap;
+  }
+  .progress-bar-wrap {
+    flex: 1;
+    background: #e8d8ff;
+    border-radius: 50px;
+    height: 18px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #c77dff, #6ec6f5);
+    border-radius: 50px;
+    transition: width 0.6s cubic-bezier(.4,1.5,.5,1);
+    min-width: 12px;
+  }
+  .progress-stars {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+
+  /* Story card */
+  .story-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 22px;
+    animation: slideIn 0.5s cubic-bezier(.4,1.3,.5,1);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .story-banner {
+    padding: 28px 28px 18px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .story-emoji-big {
+    font-size: clamp(3.5rem, 10vw, 5rem);
+    line-height: 1;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.12));
+    flex-shrink: 0;
+    animation: bouncePop 1.2s ease;
+  }
+  @keyframes bouncePop {
+    0% { transform: scale(0) rotate(-15deg); }
+    70% { transform: scale(1.2) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+  .story-meta {
+    flex: 1;
+  }
+  .story-number {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+  .story-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.4rem, 5vw, 2rem);
+    line-height: 1.15;
+    margin-top: 2px;
+  }
+
+  .story-body {
+    padding: 16px 28px 26px;
+  }
+  .story-text {
+    font-size: clamp(1.2rem, 3.5vw, 1.45rem);
+    line-height: 2;
+    color: #3a3060;
+    font-weight: 600;
+    background: #f7f0ff;
+    border-radius: 18px;
+    padding: 20px 22px;
+    border-left: 6px solid var(--purple);
+    position: relative;
+  }
+  .story-text::before {
+    content: '📖';
+    position: absolute;
+    top: -14px;
+    left: 16px;
+    font-size: 1.5rem;
+  }
+
+  /* Decorative sentence emojis */
+  .sentence-emoji { margin-left: 5px; }
+
+  /* Questions */
+  .questions-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px 28px 28px;
+    margin-bottom: 22px;
+    animation: slideIn 0.6s cubic-bezier(.4,1.3,.5,1) 0.1s both;
+  }
+  .questions-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    color: #e05f9e;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .question-block {
+    margin-bottom: 22px;
+  }
+  .question-text {
+    font-size: clamp(1rem, 3vw, 1.12rem);
+    font-weight: 800;
+    color: #3a3060;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .q-num {
+    background: linear-gradient(135deg, #c77dff, #6ec6f5);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    border-radius: 50%;
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(199,125,255,0.35);
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 480px) {
+    .options-grid { grid-template-columns: 1fr; }
+  }
+
+  .option-btn {
+    background: #f7f0ff;
+    border: 3px solid #e8d5ff;
+    border-radius: 16px;
+    padding: 12px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+    font-weight: 700;
+    color: #4a3080;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.18s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .option-btn:hover:not(:disabled) {
+    background: #ede0ff;
+    border-color: #c77dff;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 18px rgba(199,125,255,0.25);
+  }
+  .option-btn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .option-btn.correct {
+    background: #d4f7e3;
+    border-color: #6bcb77;
+    color: #1a6b3a;
+    animation: correctPop 0.4s cubic-bezier(.4,1.6,.5,1);
+  }
+  .option-btn.wrong {
+    background: #ffe0e0;
+    border-color: #ff6b6b;
+    color: #8b1a1a;
+    animation: shake 0.4s ease;
+  }
+  .option-btn.reveal-correct {
+    background: #d4f7e3;
+    border-color: #6bcb77;
+    color: #1a6b3a;
+  }
+  @keyframes correctPop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.07); }
+    100% { transform: scale(1); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-7px); }
+    40% { transform: translateX(7px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+  .option-letter {
+    font-family: 'Fredoka One', cursive;
+    background: rgba(199,125,255,0.2);
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .option-btn.correct .option-letter { background: rgba(107,203,119,0.3); }
+  .option-btn.wrong .option-letter { background: rgba(255,107,107,0.25); }
+
+  .feedback-msg {
+    margin-top: 10px;
+    font-size: 1rem;
+    font-weight: 800;
+    border-radius: 12px;
+    padding: 8px 14px;
+    display: none;
+  }
+  .feedback-msg.show { display: block; animation: fadeInUp 0.3s ease; }
+  .feedback-msg.correct-fb { background: #d4f7e3; color: #1a6b3a; }
+  .feedback-msg.wrong-fb { background: #ffe0e0; color: #8b1a1a; }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* Score & nav */
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.65);
+    border-radius: 50px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(6px);
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+  }
+  .score-display {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: #7c4dbb;
+  }
+  .score-val {
+    font-size: 1.4rem;
+    color: #e05f9e;
+  }
+
+  .nav-row {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+
+  .nav-btn {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    padding: 14px 32px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.13);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .nav-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.25);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+    transform-origin: left;
+  }
+  .nav-btn:hover::after { transform: scaleX(1); }
+  .nav-btn:hover { transform: translateY(-3px) scale(1.04); }
+  .nav-btn:active { transform: scale(0.96); }
+
+  .btn-prev { background: linear-gradient(135deg, #ffd93d, #ff6b6b); color: white; }
+  .btn-next { background: linear-gradient(135deg, #6ec6f5, #c77dff); color: white; }
+  .btn-check { background: linear-gradient(135deg, #6bcb77, #4aa8ff); color: white; }
+  .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+  /* Story picker dots */
+  .story-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: rgba(255,255,255,0.5);
+    color: #7c4dbb;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  }
+  .dot:hover { transform: scale(1.2); background: white; }
+  .dot.active { background: linear-gradient(135deg, #c77dff, #6ec6f5); color: white; transform: scale(1.2); }
+  .dot.completed { background: linear-gradient(135deg, #6bcb77, #4aa8ff); color: white; }
+
+  /* Results screen */
+  .results-screen {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 40px 28px;
+    text-align: center;
+    animation: slideIn 0.5s ease;
+    display: none;
+  }
+  .results-screen.show { display: block; }
+  .results-trophy { font-size: 5rem; animation: bouncePop 1s ease; }
+  .results-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.8rem, 6vw, 2.8rem);
+    color: #7c4dbb;
+    margin: 10px 0 6px;
+  }
+  .results-score {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    color: #e05f9e;
+    margin: 10px 0;
+  }
+  .results-msg {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #3a3060;
+    margin-bottom: 24px;
+  }
+  .btn-restart {
+    background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    padding: 16px 40px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(255,107,107,0.35);
+    transition: all 0.2s ease;
+  }
+  .btn-restart:hover { transform: scale(1.05); }
+
+  /* Stars animation */
+  .stars-burst {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 999;
+    font-size: 2.5rem;
+    animation: starsBurst 1.2s ease forwards;
+    display: none;
+  }
+  @keyframes starsBurst {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); }
+  }
+
+  @media (max-width: 600px) {
+    .story-banner { padding: 20px 18px 14px; }
+    .story-body { padding: 14px 18px 20px; }
+    .questions-card { padding: 18px 18px 22px; }
+    .story-text { padding: 16px 16px; }
+    .nav-btn { padding: 12px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="clouds" aria-hidden="true">
+  <span class="cloud">☁️</span>
+  <span class="cloud">☁️</span>
+  <span class="cloud">⛅</span>
+</div>
+
+<div class="app">
+  <div class="header">
+    <h1>📚 Reading Adventure!</h1>
+    <p>Read the story, then answer the questions! ✨</p>
+  </div>
+
+  <div class="progress-area">
+    <span class="progress-label">📖 Progress</span>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill" style="width:10%"></div>
+    </div>
+    <span class="progress-stars" id="progressStars">⭐</span>
+  </div>
+
+  <div class="story-dots" id="storyDots"></div>
+
+  <div class="score-row">
+    <span class="score-display">⭐ Score: <span class="score-val" id="scoreDisplay">0</span></span>
+    <span class="score-display">📖 Story <span class="score-val" id="storyNumDisplay">1</span> of 10</span>
+  </div>
+
+  <div id="mainContent">
+    <div class="story-card" id="storyCard">
+      <div class="story-banner" id="storyBanner">
+        <div class="story-emoji-big" id="storyEmoji"></div>
+        <div class="story-meta">
+          <div class="story-number" id="storyNumber"></div>
+          <div class="story-title" id="storyTitle"></div>
+        </div>
+      </div>
+      <div class="story-body">
+        <div class="story-text" id="storyText"></div>
+      </div>
+    </div>
+
+    <div class="questions-card" id="questionsCard">
+      <div class="questions-title">🧠 Answer the Questions!</div>
+      <div id="questionsContainer"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn btn-prev" id="btnPrev" onclick="navigate(-1)">⬅️ Back</button>
+      <button class="nav-btn btn-check" id="btnCheck" onclick="checkAnswers()">✅ Check!</button>
+      <button class="nav-btn btn-next" id="btnNext" onclick="navigate(1)">Next ➡️</button>
+    </div>
+  </div>
+
+  <div class="results-screen" id="resultsScreen">
+    <div class="results-trophy" id="resultsTrophy">🏆</div>
+    <div class="results-title">Amazing Job!</div>
+    <div class="results-score" id="resultsScore"></div>
+    <div class="results-msg" id="resultsMsg"></div>
+    <button class="btn-restart" onclick="restartGame()">🔄 Play Again!</button>
+  </div>
+</div>
+
+<div class="stars-burst" id="starsBurst">🌟✨⭐🌟✨</div>
+
+<script>
+const stories = [
+  {
+    title: "The Brave Little Cat",
+    emoji: "🐱",
+    color: "#fde8ff",
+    titleColor: "#c77dff",
+    text: "Milo the cat saw a tiny bird stuck in the rose bush. 🌹 He gently pushed the thorny branches aside with his soft paws to help it get free. 🐾 The bird chirped a happy \"thank you\" before flying high into the sky. 🐦 Milo purred loudly, feeling very proud of his good deed for the day. 😻",
+    questions: [
+      { q: "What was stuck in the rose bush?", options: ["A kitten", "A tiny bird", "A butterfly", "A bee"], answer: 1 },
+      { q: "How did Milo help the bird?", options: ["He called for help", "He sang a song", "He pushed the thorny branches aside", "He carried the bird"], answer: 2 },
+      { q: "How did Milo feel after helping the bird?", options: ["Tired", "Sad", "Scared", "Very proud"], answer: 3 },
+      { q: "What did the bird do to say thank you?", options: ["Brought food", "Chirped and flew away", "Gave Milo a gift", "Stayed with Milo"], answer: 1 },
+    ]
+  },
+  {
+    title: "A Starry Night",
+    emoji: "🔭",
+    color: "#e8eeff",
+    titleColor: "#4a80ff",
+    text: "Lily pointed her long silver telescope at the glowing moon in the dark sky. 🌙 She was surprised to see a small, sparkling star dancing right next to it. ⭐ She grabbed her notebook and drew a quick picture of the beautiful sight. 📓 Lily went to bed dreaming of traveling through the galaxy in a fast rocket. 🚀",
+    questions: [
+      { q: "What was Lily looking through?", options: ["Binoculars", "A silver telescope", "A magnifying glass", "A camera"], answer: 1 },
+      { q: "What did Lily see next to the moon?", options: ["A planet", "A comet", "A sparkling star", "A cloud"], answer: 2 },
+      { q: "What did Lily draw in her notebook?", options: ["A rocket ship", "Her house", "The beautiful star and moon", "A cat"], answer: 2 },
+      { q: "What did Lily dream about?", options: ["Swimming in the ocean", "Flying a kite", "Traveling in a rocket", "Meeting aliens"], answer: 2 },
+    ]
+  },
+  {
+    title: "The Lost Key",
+    emoji: "🗝️",
+    color: "#fff5e0",
+    titleColor: "#ff9c00",
+    text: "Sam found a shiny golden key buried deep in the sandbox at the park. 🏖️ He wondered if it opened a secret door or a dusty old wooden chest. 🤔 He looked everywhere until he saw a small box sitting under the green slide. 📦 When the key turned with a click, Sam found a pile of colorful marbles. 🔮",
+    questions: [
+      { q: "Where did Sam find the key?", options: ["Under a tree", "In the sandbox", "By the swings", "In a puddle"], answer: 1 },
+      { q: "What color was the key?", options: ["Silver", "Bronze", "Golden", "Red"], answer: 2 },
+      { q: "Where was the small box hiding?", options: ["Behind a bench", "In a tree", "Under the green slide", "Near the fountain"], answer: 2 },
+      { q: "What was inside the box?", options: ["Gold coins", "Colorful marbles", "Toy cars", "Candy"], answer: 1 },
+    ]
+  },
+  {
+    title: "Baking Day",
+    emoji: "🍪",
+    color: "#fff0f3",
+    titleColor: "#e05f9e",
+    text: "Maya put on her polka-dot apron and gathered the flour, sugar, and eggs. 🥚 She mixed the dough carefully until it was smooth and ready for the oven. 🍳 Soon, the kitchen smelled like sweet chocolate and warm, gooey butter. 😍 Maya shared the treats with her neighbors, who said they were the best cookies ever. 🏡",
+    questions: [
+      { q: "What did Maya wear while baking?", options: ["A chef's hat", "A polka-dot apron", "Gloves", "A raincoat"], answer: 1 },
+      { q: "What did the kitchen smell like?", options: ["Lemon and mint", "Sweet chocolate and warm butter", "Vanilla and berries", "Cinnamon and apples"], answer: 1 },
+      { q: "What did Maya make?", options: ["A cake", "Bread", "Cookies", "Muffins"], answer: 2 },
+      { q: "Who did Maya share the treats with?", options: ["Her teacher", "Her classmates", "Her neighbors", "Her cousins"], answer: 2 },
+    ]
+  },
+  {
+    title: "The Rainy Parade",
+    emoji: "☔",
+    color: "#e8f7ff",
+    titleColor: "#4aa8ff",
+    text: "The sky turned gray, and big raindrops began to splash on the sidewalk. 🌧️ Tim pulled on his yellow boots and opened his giant red umbrella. ☂️ He splashed in every puddle he could find on his way to school. 💦 By the time he arrived, his boots were muddy but his heart was full of joy. 😄",
+    questions: [
+      { q: "What color were Tim's boots?", options: ["Red", "Blue", "Green", "Yellow"], answer: 3 },
+      { q: "What color was Tim's umbrella?", options: ["Yellow", "Blue", "Red", "Purple"], answer: 2 },
+      { q: "What did Tim do on his way to school?", options: ["Ran very fast", "Sang songs", "Splashed in puddles", "Rode his bike"], answer: 2 },
+      { q: "How did Tim feel when he arrived at school?", options: ["Grumpy", "Tired", "Scared", "Full of joy"], answer: 3 },
+    ]
+  },
+  {
+    title: "The Helpful Robot",
+    emoji: "🤖",
+    color: "#eaffea",
+    titleColor: "#4caf50",
+    text: "Beep was a small robot with round wheels and a glowing green tummy. 💚 His job was to pick up all the stray blocks left on the playroom floor. 🧱 He hummed a happy tune as he sorted the colors into neat little piles. 🎵 Once the room was clean, Beep plugged himself in for a well-earned nap. 😴",
+    questions: [
+      { q: "What color was Beep's tummy?", options: ["Blue", "Red", "Green", "Yellow"], answer: 2 },
+      { q: "What was Beep's job?", options: ["Make food", "Pick up blocks", "Paint pictures", "Sing songs"], answer: 1 },
+      { q: "What did Beep do while sorting the blocks?", options: ["Watched TV", "Hummed a happy tune", "Counted numbers", "Told stories"], answer: 1 },
+      { q: "What did Beep do when the room was clean?", options: ["Went outside", "Plugged in for a nap", "Danced around", "Called a friend"], answer: 1 },
+    ]
+  },
+  {
+    title: "Garden Surprise",
+    emoji: "🌱",
+    color: "#f0ffe8",
+    titleColor: "#5cb85c",
+    text: "Leo planted a tiny brown seed in a pot filled with rich, dark soil. 🪴 He gave it a little bit of water every morning before he ate breakfast. 💧 One Friday, a tiny green leaf finally peeked out to say hello to the sun. 🌞 Leo cheered because he knew his little plant was finally starting to grow. 🎉",
+    questions: [
+      { q: "What did Leo plant?", options: ["A flower bulb", "A tiny brown seed", "A small tree", "A strawberry plant"], answer: 1 },
+      { q: "When did Leo water his plant?", options: ["At lunchtime", "Every evening", "Every morning", "On weekends"], answer: 2 },
+      { q: "On what day did the leaf appear?", options: ["Monday", "Wednesday", "Sunday", "Friday"], answer: 3 },
+      { q: "How did Leo react when the leaf appeared?", options: ["He cried", "He cheered", "He fell asleep", "He hid it"], answer: 1 },
+    ]
+  },
+  {
+    title: "The Sandcastle King",
+    emoji: "🏰",
+    color: "#fff8e0",
+    titleColor: "#f5a623",
+    text: "Toby used his yellow shovel to build a tall tower by the crashing waves. 🌊 He decorated the walls with white seashells and a long piece of green seaweed. 🐚 A small crab crawled by and stopped to look at the beautiful new home. 🦀 Toby smiled because his sandcastle was the finest one on the whole beach. 🏖️",
+    questions: [
+      { q: "What color was Toby's shovel?", options: ["Red", "Blue", "Yellow", "Green"], answer: 2 },
+      { q: "What did Toby use to decorate the walls?", options: ["Stones and flowers", "Seashells and seaweed", "Sticks and sand", "Buttons and string"], answer: 1 },
+      { q: "What animal stopped to look at the sandcastle?", options: ["A fish", "A seagull", "A starfish", "A small crab"], answer: 3 },
+      { q: "How did Toby feel about his sandcastle?", options: ["Disappointed", "Very proud", "Confused", "Bored"], answer: 1 },
+    ]
+  },
+  {
+    title: "A Cold Treat",
+    emoji: "🍦",
+    color: "#fff0fb",
+    titleColor: "#d63aab",
+    text: "The ice cream truck played a tinkling song as it drove down the quiet street. 🎶 Sarah ran outside with a few coins held tightly in her warm hand. 🪙 She chose a grape popsicle that turned her tongue a very bright shade of purple. 💜 It was the perfect way to cool down on such a hot summer afternoon. ☀️",
+    questions: [
+      { q: "What was playing on the ice cream truck?", options: ["A drum beat", "A tinkling song", "A loud alarm", "A funny jingle"], answer: 1 },
+      { q: "What did Sarah hold in her hand?", options: ["A dollar bill", "A few coins", "A credit card", "A bag"], answer: 1 },
+      { q: "What flavor popsicle did Sarah choose?", options: ["Strawberry", "Lemon", "Grape", "Mango"], answer: 2 },
+      { q: "What color did Sarah's tongue turn?", options: ["Red", "Blue", "Green", "Purple"], answer: 3 },
+    ]
+  },
+  {
+    title: "The Library Adventure",
+    emoji: "🐉",
+    color: "#ede8ff",
+    titleColor: "#7c4dbb",
+    text: "Ben walked through the quiet library aisles filled with thousands of colorful books. 📚 He picked a thick book about fire-breathing dragons and brave, daring knights. ⚔️ He sat in a beanbag chair and started reading about a hidden kingdom. 👑 For the next hour, Ben forgot he was sitting in a library at all. 😮",
+    questions: [
+      { q: "What was Ben's book about?", options: ["Pirates and treasure", "Dragons and knights", "Wizards and spells", "Space and planets"], answer: 1 },
+      { q: "Where did Ben sit to read?", options: ["A wooden chair", "The floor", "A beanbag chair", "A window seat"], answer: 2 },
+      { q: "What was in Ben's book?", options: ["A lost city", "A hidden kingdom", "A magic forest", "A secret cave"], answer: 1 },
+      { q: "How long did Ben read?", options: ["30 minutes", "2 hours", "1 hour", "All day"], answer: 2 },
+    ]
+  }
+];
+
+const letters = ['A', 'B', 'C', 'D'];
+let currentStory = 0;
+let score = 0;
+let totalAnswered = 0;
+let storyAnswers = new Array(stories.length).fill(null).map(() => ({}));
+let storyChecked = new Array(stories.length).fill(false);
+let storyScores = new Array(stories.length).fill(0);
+let completedStories = new Set();
+
+// Sound effects using Web Audio API
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  return audioCtx;
+}
+
+function playTone(freq, type, duration, volume = 0.3) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(volume, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+function playCorrect() {
+  playTone(523, 'sine', 0.15, 0.3);
+  setTimeout(() => playTone(659, 'sine', 0.15, 0.3), 120);
+  setTimeout(() => playTone(784, 'sine', 0.25, 0.3), 240);
+}
+function playWrong() {
+  playTone(330, 'sawtooth', 0.1, 0.2);
+  setTimeout(() => playTone(262, 'sawtooth', 0.2, 0.15), 100);
+}
+function playClick() {
+  playTone(440, 'sine', 0.08, 0.15);
+}
+function playWhoosh() {
+  playTone(800, 'sine', 0.05, 0.2);
+  setTimeout(() => playTone(400, 'sine', 0.1, 0.12), 50);
+}
+function playComplete() {
+  [523,659,784,1047].forEach((f,i) => setTimeout(() => playTone(f,'sine',0.2,0.35), i*100));
+}
+
+function buildDots() {
+  const container = document.getElementById('storyDots');
+  container.innerHTML = '';
+  stories.forEach((s, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === currentStory ? ' active' : '') + (completedStories.has(i) ? ' completed' : '');
+    dot.textContent = i + 1;
+    dot.title = s.title;
+    dot.onclick = () => { playClick(); goToStory(i); };
+    container.appendChild(dot);
+  });
+}
+
+function goToStory(idx) {
+  currentStory = idx;
+  renderStory();
+}
+
+function renderStory() {
+  const s = stories[currentStory];
+  document.getElementById('storyEmoji').textContent = s.emoji;
+  document.getElementById('storyNumber').textContent = `Story ${currentStory + 1} of ${stories.length}`;
+  document.getElementById('storyTitle').textContent = s.title;
+  document.getElementById('storyTitle').style.color = s.titleColor;
+  document.getElementById('storyBanner').style.background = s.color;
+  document.getElementById('storyText').innerHTML = s.text;
+  document.getElementById('storyNumDisplay').textContent = currentStory + 1;
+
+  // Animate card
+  const card = document.getElementById('storyCard');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'slideIn 0.5s cubic-bezier(.4,1.3,.5,1)';
+
+  buildQuestions();
+  buildDots();
+  updateProgress();
+
+  document.getElementById('btnPrev').disabled = currentStory === 0;
+  document.getElementById('btnNext').disabled = currentStory === stories.length - 1;
+}
+
+function buildQuestions() {
+  const s = stories[currentStory];
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  const saved = storyAnswers[currentStory];
+  const checked = storyChecked[currentStory];
+
+  s.questions.forEach((q, qi) => {
+    const block = document.createElement('div');
+    block.className = 'question-block';
+
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.innerHTML = `<span class="q-num">${qi+1}</span><span>${q.q}</span>`;
+    block.appendChild(qText);
+
+    const grid = document.createElement('div');
+    grid.className = 'options-grid';
+
+    q.options.forEach((opt, oi) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = `<span class="option-letter">${letters[oi]}</span>${opt}`;
+      btn.onclick = () => selectOption(qi, oi, btn);
+      if (saved[qi] === oi) btn.classList.add('selected-temp');
+      if (checked) {
+        btn.disabled = true;
+        if (oi === q.answer) btn.classList.add('reveal-correct');
+        if (saved[qi] === oi && oi !== q.answer) btn.classList.add('wrong');
+        if (saved[qi] === oi && oi === q.answer) btn.classList.add('correct');
+      }
+      grid.appendChild(btn);
+    });
+    block.appendChild(grid);
+
+    // Feedback
+    const fb = document.createElement('div');
+    fb.className = 'feedback-msg';
+    fb.id = `fb-${qi}`;
+    if (checked) {
+      fb.classList.add('show');
+      if (saved[qi] === q.answer) {
+        fb.classList.add('correct-fb');
+        fb.textContent = '✅ Great job! That\'s correct!';
+      } else {
+        fb.classList.add('wrong-fb');
+        fb.textContent = `❌ Not quite! The answer is: ${q.options[q.answer]}`;
+      }
+    }
+    block.appendChild(fb);
+    container.appendChild(block);
+  });
+}
+
+function selectOption(qi, oi, btn) {
+  if (storyChecked[currentStory]) return;
+  playClick();
+  storyAnswers[currentStory][qi] = oi;
+
+  // Highlight selected
+  const grid = btn.closest('.options-grid');
+  grid.querySelectorAll('.option-btn').forEach(b => {
+    b.style.background = '';
+    b.style.borderColor = '';
+    b.classList.remove('selected-temp');
+  });
+  btn.classList.add('selected-temp');
+  btn.style.background = '#ede0ff';
+  btn.style.borderColor = '#c77dff';
+}
+
+function checkAnswers() {
+  if (storyChecked[currentStory]) return;
+  const s = stories[currentStory];
+  const saved = storyAnswers[currentStory];
+  let allAnswered = true;
+  s.questions.forEach((q, qi) => {
+    if (saved[qi] === undefined) allAnswered = false;
+  });
+  if (!allAnswered) {
+    playWrong();
+    const btn = document.getElementById('btnCheck');
+    btn.textContent = '⚠️ Answer all questions!';
+    btn.style.background = 'linear-gradient(135deg,#ff9c00,#ff6b6b)';
+    setTimeout(() => {
+      btn.textContent = '✅ Check!';
+      btn.style.background = '';
+    }, 2000);
+    return;
+  }
+
+  playClick();
+  storyChecked[currentStory] = true;
+  let storyScore = 0;
+
+  const container = document.getElementById('questionsContainer');
+  const blocks = container.querySelectorAll('.question-block');
+
+  s.questions.forEach((q, qi) => {
+    const block = blocks[qi];
+    const grid = block.querySelector('.options-grid');
+    const btns = grid.querySelectorAll('.option-btn');
+    const chosen = saved[qi];
+
+    btns.forEach((btn, oi) => {
+      btn.disabled = true;
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.classList.remove('selected-temp');
+      if (oi === q.answer) btn.classList.add('reveal-correct');
+    });
+
+    const fb = block.querySelector('.feedback-msg');
+    fb.classList.add('show');
+
+    if (chosen === q.answer) {
+      btns[chosen].classList.add('correct');
+      fb.classList.add('correct-fb');
+      fb.textContent = '✅ Great job! That\'s correct!';
+      storyScore++;
+      setTimeout(() => playCorrect(), qi * 200);
+    } else {
+      if (chosen !== undefined) btns[chosen].classList.add('wrong');
+      fb.classList.add('wrong-fb');
+      fb.textContent = `❌ Not quite! The answer is: ${q.options[q.answer]}`;
+      setTimeout(() => playWrong(), qi * 200);
+    }
+  });
+
+  const pointsGained = storyScore - (storyScores[currentStory] || 0);
+  if (pointsGained > 0) score += pointsGained;
+  storyScores[currentStory] = storyScore;
+
+  if (storyScore === s.questions.length) {
+    completedStories.add(currentStory);
+    showStarBurst();
+    setTimeout(() => playComplete(), 600);
+  }
+
+  document.getElementById('scoreDisplay').textContent = score;
+  buildDots();
+  updateProgress();
+
+  // Check if all done
+  if (completedStories.size === stories.length) {
+    setTimeout(() => showResults(), 1500);
+  }
+}
+
+function showStarBurst() {
+  const el = document.getElementById('starsBurst');
+  el.style.display = 'block';
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = 'starsBurst 1.2s ease forwards';
+  setTimeout(() => { el.style.display = 'none'; }, 1300);
+}
+
+function navigate(dir) {
+  playWhoosh();
+  currentStory = Math.max(0, Math.min(stories.length - 1, currentStory + dir));
+  renderStory();
+}
+
+function updateProgress() {
+  const pct = Math.max(10, (completedStories.size / stories.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  const stars = '⭐'.repeat(completedStories.size) + '☆'.repeat(stories.length - completedStories.size);
+  document.getElementById('progressStars').textContent = stars.slice(0, 10);
+}
+
+function showResults() {
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('storyDots').style.display = 'none';
+  const results = document.getElementById('resultsScreen');
+  results.classList.add('show');
+  const total = stories.reduce((a, s) => a + s.questions.length, 0);
+  document.getElementById('resultsScore').textContent = `${score} / ${total} ⭐`;
+  const pct = Math.round((score / total) * 100);
+  let msg, trophy;
+  if (pct >= 90) { msg = "You're a READING SUPERSTAR! 🌟 Amazing work!"; trophy = "🏆"; }
+  else if (pct >= 70) { msg = "Fantastic reading! You did really well! 🎉"; trophy = "🥇"; }
+  else if (pct >= 50) { msg = "Good effort! Keep reading and you'll get even better! 📚"; trophy = "🥈"; }
+  else { msg = "Keep practicing! Every reader starts somewhere! 💪"; trophy = "🌱"; }
+  document.getElementById('resultsTrophy').textContent = trophy;
+  document.getElementById('resultsMsg').textContent = msg;
+  playComplete();
+}
+
+function restartGame() {
+  score = 0; currentStory = 0;
+  storyAnswers = new Array(stories.length).fill(null).map(() => ({}));
+  storyChecked = new Array(stories.length).fill(false);
+  storyScores = new Array(stories.length).fill(0);
+  completedStories = new Set();
+  document.getElementById('mainContent').style.display = '';
+  document.getElementById('storyDots').style.display = '';
+  document.getElementById('resultsScreen').classList.remove('show');
+  document.getElementById('scoreDisplay').textContent = 0;
+  playClick();
+  renderStory();
+}
+
+// Init
+renderStory();
+</script>
+</body>
+</html>
