@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn Computer Parts! 💻</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #FF6B9D;
+    --yellow: #FFD93D;
+    --green: #6BCB77;
+    --blue: #4ECDC4;
+    --purple: #C77DFF;
+    --orange: #FF9F43;
+    --red: #FF6B6B;
+    --sky: #74C0FC;
+    --mint: #00D2A0;
+    --bg: #EEF4FF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(116,192,252,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(199,125,255,0.12) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(78,205,196,0.08) 0%, transparent 70%);
+  }
+
+  .deco {
+    position: fixed; border-radius: 50%; opacity: 0.16;
+    pointer-events: none; z-index: 0;
+    animation: float 6s ease-in-out infinite;
+  }
+  .deco:nth-child(1){ width:80px;height:80px;background:var(--sky);   top:4%;   left:3%;   animation-delay:0s; }
+  .deco:nth-child(2){ width:60px;height:60px;background:var(--purple);top:10%;  right:5%;  animation-delay:1s; }
+  .deco:nth-child(3){ width:50px;height:50px;background:var(--mint);  bottom:14%;left:5%;  animation-delay:2s; }
+  .deco:nth-child(4){ width:70px;height:70px;background:var(--blue);  bottom:7%;right:4%;  animation-delay:0.5s;}
+  .deco:nth-child(5){ width:44px;height:44px;background:var(--yellow);top:44%;  left:1%;   animation-delay:1.5s;}
+
+  @keyframes float {
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-18px) rotate(10deg); }
+  }
+
+  header {
+    text-align: center;
+    padding: 28px 20px 10px;
+    position: relative; z-index: 1;
+  }
+  header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--sky), var(--blue), var(--purple), var(--pink), var(--orange), var(--yellow));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    filter: drop-shadow(2px 3px 0px rgba(0,0,0,0.12));
+  }
+  header p {
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+    color: #636e72; font-weight: 700; margin-top: 6px;
+  }
+
+  #scoreboard {
+    display: flex; justify-content: center; align-items: center;
+    gap: 18px; margin: 10px auto 18px; flex-wrap: wrap;
+    position: relative; z-index: 1;
+  }
+  .score-badge {
+    background: white; border-radius: 30px; padding: 8px 22px;
+    font-weight: 800; font-size: 1rem;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .score-badge .emoji { font-size: 1.3rem; }
+  #progress-wrap {
+    width: min(300px, 80vw); height: 16px;
+    background: #dde6ff; border-radius: 20px; overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+  }
+  #progress-bar {
+    height: 100%; border-radius: 20px;
+    background: linear-gradient(90deg, var(--blue), var(--purple));
+    transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); width: 0%;
+  }
+
+  #game-area {
+    display: flex; align-items: flex-start; justify-content: center;
+    gap: 20px; padding: 0 16px 30px;
+    position: relative; z-index: 1; flex-wrap: wrap;
+  }
+
+  .label-bank {
+    display: flex; flex-direction: column; gap: 10px;
+    width: 145px; padding-top: 20px; flex-shrink: 0;
+  }
+
+  #computer-figure {
+    position: relative;
+    width: min(520px, 88vw);
+    flex-shrink: 0;
+  }
+  #computer-svg {
+    width: 100%; height: auto; display: block;
+    filter: drop-shadow(0 8px 28px rgba(100,120,255,0.18));
+  }
+
+  .drop-zone { cursor: pointer; transition: filter 0.2s; }
+  .drop-zone:hover { filter: brightness(1.12); }
+  .drop-zone.over { filter: brightness(1.3) drop-shadow(0 0 10px rgba(120,180,255,0.95)); }
+  .drop-zone.correct { animation: correctPulse 0.6s ease; }
+  .drop-zone.wrong   { animation: wrongShake 0.4s ease; }
+
+  @keyframes correctPulse {
+    0%{ filter:brightness(1); }
+    40%{ filter:brightness(1.5) drop-shadow(0 0 14px rgba(100,255,160,1)); }
+    100%{ filter:brightness(1); }
+  }
+  @keyframes wrongShake {
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px); }
+    60%{ transform:translateX(6px); }
+  }
+
+  .label {
+    background: white; border-radius: 22px; padding: 9px 14px;
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    cursor: grab; user-select: none; text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.13), 0 2px 0px rgba(0,0,0,0.08);
+    border: 3px solid transparent;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+    letter-spacing: 0.4px; position: relative; z-index: 10;
+  }
+  .label:active { cursor: grabbing; }
+  .label.dragging {
+    transform: scale(1.12) rotate(-3deg);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+    opacity: 0.92; z-index: 9999;
+  }
+  .label.placed {
+    opacity: 0.38; cursor: default;
+    pointer-events: none; transform: scale(0.9);
+  }
+  .label[data-color="pink"]   { border-color:var(--pink);   color:var(--pink);   }
+  .label[data-color="yellow"] { border-color:var(--yellow); color:#d4a200;       }
+  .label[data-color="green"]  { border-color:var(--green);  color:#2d9640;       }
+  .label[data-color="blue"]   { border-color:var(--blue);   color:#2ba3a0;       }
+  .label[data-color="purple"] { border-color:var(--purple); color:#9b40e0;       }
+  .label[data-color="orange"] { border-color:var(--orange); color:#e07c00;       }
+  .label[data-color="red"]    { border-color:var(--red);    color:#d93a3a;       }
+  .label[data-color="sky"]    { border-color:var(--sky);    color:#1a7ac9;       }
+  .label[data-color="mint"]   { border-color:var(--mint);   color:#00a07a;       }
+
+  .body-label {
+    position: absolute; background: white; border-radius: 16px;
+    padding: 4px 11px; font-family: 'Fredoka One', cursive; font-size: 0.78rem;
+    pointer-events: none; box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    border: 2.5px solid; transform: translate(-50%, -50%);
+    white-space: nowrap; animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    z-index: 20;
+  }
+  @keyframes popIn {
+    0%{ opacity:0; transform:translate(-50%,-50%) scale(0.3); }
+    100%{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  }
+
+  /* Zone markers */
+  .zone-marker {
+    position: absolute; width: 28px; height: 28px;
+    transform: translate(-50%, -50%); pointer-events: none; z-index: 15;
+  }
+  .zone-marker .pulse-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 3px solid currentColor;
+    animation: markerPulse 1.8s ease-in-out infinite; opacity: 0.7;
+  }
+  .zone-marker .pulse-ring:nth-child(2) {
+    animation-delay: 0.6s; width: 140%; height: 140%;
+    top: -20%; left: -20%; opacity: 0.4;
+  }
+  .zone-marker .dot {
+    position: absolute; inset: 6px; border-radius: 50%;
+    background: currentColor; opacity: 0.9;
+  }
+  .zone-marker.solved { display: none; }
+  @keyframes markerPulse {
+    0%, 100% { transform: scale(1);   opacity: 0.7; }
+    50%       { transform: scale(1.4); opacity: 0.2; }
+  }
+
+  #confetti-canvas {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    pointer-events: none; z-index: 9999;
+  }
+
+  #win-screen {
+    display: none; position: fixed; inset: 0;
+    background: rgba(238,244,255,0.96); z-index: 10000;
+    flex-direction: column; align-items: center;
+    justify-content: center; gap: 24px;
+    text-align: center; padding: 20px;
+  }
+  #win-screen.show { display: flex; animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+  #win-screen h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    background: linear-gradient(135deg, var(--sky), var(--purple), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  #win-screen p { font-size: 1.2rem; color: #636e72; font-weight: 700; }
+  .win-emoji { font-size: 4rem; animation: bounce 0.8s infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-16px)} }
+  #replay-btn {
+    font-family: 'Fredoka One', cursive; font-size: 1.3rem;
+    background: linear-gradient(135deg, var(--sky), var(--purple));
+    color: white; border: none; border-radius: 50px;
+    padding: 16px 44px; cursor: pointer;
+    box-shadow: 0 6px 20px rgba(116,192,252,0.4);
+    transition: transform 0.15s, box-shadow 0.15s; letter-spacing: 1px;
+  }
+  #replay-btn:hover { transform: scale(1.06); box-shadow: 0 10px 28px rgba(116,192,252,0.5); }
+
+  #toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: white; border-radius: 30px; padding: 14px 30px;
+    font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 8000;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events: none; text-align: center;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.correct-toast { color: var(--green);  border: 3px solid var(--green); }
+  #toast.wrong-toast   { color: var(--red);    border: 3px solid var(--red);   }
+
+  #reset-btn {
+    display: block; margin: 0 auto 20px;
+    font-family: 'Fredoka One', cursive; font-size: 1rem;
+    background: white; color: var(--sky); border: 3px solid var(--sky);
+    border-radius: 50px; padding: 10px 30px; cursor: pointer;
+    transition: all 0.15s; position: relative; z-index: 1;
+  }
+  #reset-btn:hover { background: var(--sky); color: white; transform: scale(1.04); }
+
+  @media(max-width:640px){
+    .label-bank { width: 110px; }
+    .label { font-size: 0.85rem; padding: 7px 9px; }
+    #computer-figure { width: min(300px, 76vw); }
+  }
+</style>
+</head>
+<body>
+
+<div class="deco"></div><div class="deco"></div><div class="deco"></div>
+<div class="deco"></div><div class="deco"></div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div id="win-screen">
+  <div class="win-emoji">🖥️</div>
+  <h2>You're a Tech Star!</h2>
+  <p>You know all the computer parts! Super smart! 🌟</p>
+  <button id="replay-btn" onclick="resetGame()">Play Again! 🔄</button>
+</div>
+
+<div id="toast"></div>
+
+<header>
+  <h1>💻 Learn My Computer! 💻</h1>
+  <p>Drag each label to the right computer part!</p>
+</header>
+
+<div id="scoreboard">
+  <div class="score-badge"><span class="emoji">⭐</span><span id="score-text">0 / 6</span></div>
+  <div id="progress-wrap"><div id="progress-bar"></div></div>
+  <div class="score-badge"><span class="emoji">🖱️</span><span id="tries-text">Tries: 0</span></div>
+</div>
+
+<button id="reset-btn" onclick="resetGame()">🔄 Start Over</button>
+
+<div id="game-area">
+  <div class="label-bank" id="bank-left"></div>
+
+  <div id="computer-figure">
+    <!-- ══════════════════════════════════════════
+         COMPUTER SVG  (desk setup: monitor + keyboard + mouse + speakers + webcam + tower)
+         viewBox 0 0 600 540
+    ══════════════════════════════════════════ -->
+    <svg id="computer-svg" viewBox="0 0 600 540" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="deskGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#D2A679"/>
+          <stop offset="100%" stop-color="#A0724A"/>
+        </linearGradient>
+        <linearGradient id="monitorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#4A4E69"/>
+          <stop offset="100%" stop-color="#22223B"/>
+        </linearGradient>
+        <linearGradient id="screenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1a1a3e"/>
+          <stop offset="40%" stop-color="#0f3460"/>
+          <stop offset="100%" stop-color="#16213e"/>
+        </linearGradient>
+        <linearGradient id="towerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#5A6075"/>
+          <stop offset="100%" stop-color="#3D4255"/>
+        </linearGradient>
+        <linearGradient id="keyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#B8C0CC"/>
+          <stop offset="100%" stop-color="#8D95A3"/>
+        </linearGradient>
+        <linearGradient id="speakerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#6B7280"/>
+          <stop offset="100%" stop-color="#374151"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- ══ DESK ══ -->
+      <rect x="20" y="450" width="560" height="22" rx="4" fill="url(#deskGrad)"/>
+      <rect x="20" y="468" width="560" height="8" rx="2" fill="#8B5E3C" opacity="0.5"/>
+      <!-- desk legs -->
+      <rect x="40"  y="472" width="18" height="60" rx="4" fill="#A0724A"/>
+      <rect x="542" y="472" width="18" height="60" rx="4" fill="#A0724A"/>
+
+      <!-- ══ TOWER / CPU CASE ══ -->
+      <rect x="28" y="290" width="82" height="160" rx="10" fill="url(#towerGrad)"/>
+      <!-- tower front panel details -->
+      <rect x="36" y="302" width="66" height="8"  rx="3" fill="#2a2d3e"/>
+      <rect x="36" y="316" width="66" height="80" rx="4" fill="#2a2d3e" opacity="0.6"/>
+      <!-- DVD drive slot -->
+      <rect x="40" y="320" width="58" height="10" rx="3" fill="#1a1c2a"/>
+      <rect x="44" y="322" width="50" height="6"  rx="2" fill="#0d0e18" opacity="0.7"/>
+      <!-- USB ports -->
+      <rect x="44" y="338" width="12" height="8" rx="2" fill="#111" stroke="#4ECDC4" stroke-width="1.2"/>
+      <rect x="62" y="338" width="12" height="8" rx="2" fill="#111" stroke="#4ECDC4" stroke-width="1.2"/>
+      <!-- power button -->
+      <circle cx="69" cy="362" r="8" fill="#1a1c2a" stroke="#6BCB77" stroke-width="2"/>
+      <circle cx="69" cy="362" r="4" fill="#6BCB77" opacity="0.8" filter="url(#glow)"/>
+      <!-- tower vents -->
+      <line x1="38" y1="408" x2="90" y2="408" stroke="#666" stroke-width="2"/>
+      <line x1="38" y1="416" x2="90" y2="416" stroke="#666" stroke-width="2"/>
+      <line x1="38" y1="424" x2="90" y2="424" stroke="#666" stroke-width="2"/>
+      <line x1="38" y1="432" x2="90" y2="432" stroke="#666" stroke-width="2"/>
+      <!-- tower label -->
+      <text x="69" y="447" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">PC</text>
+
+      <!-- ══ LEFT SPEAKER ══ -->
+      <rect x="120" y="370" width="50" height="80" rx="8" fill="url(#speakerGrad)"/>
+      <circle cx="145" cy="395" r="16" fill="#1a1a2e" stroke="#555" stroke-width="2"/>
+      <circle cx="145" cy="395" r="10" fill="#111" stroke="#4ECDC4" stroke-width="1.5" opacity="0.8"/>
+      <circle cx="145" cy="395" r="4"  fill="#4ECDC4" opacity="0.6" filter="url(#glow)"/>
+      <!-- grille lines -->
+      <line x1="126" y1="420" x2="164" y2="420" stroke="#555" stroke-width="1.5"/>
+      <line x1="126" y1="427" x2="164" y2="427" stroke="#555" stroke-width="1.5"/>
+      <line x1="126" y1="434" x2="164" y2="434" stroke="#555" stroke-width="1.5"/>
+      <line x1="126" y1="441" x2="164" y2="441" stroke="#555" stroke-width="1.5"/>
+
+      <!-- ══ RIGHT SPEAKER ══ -->
+      <rect x="430" y="370" width="50" height="80" rx="8" fill="url(#speakerGrad)"/>
+      <circle cx="455" cy="395" r="16" fill="#1a1a2e" stroke="#555" stroke-width="2"/>
+      <circle cx="455" cy="395" r="10" fill="#111" stroke="#4ECDC4" stroke-width="1.5" opacity="0.8"/>
+      <circle cx="455" cy="395" r="4"  fill="#4ECDC4" opacity="0.6" filter="url(#glow)"/>
+      <line x1="436" y1="420" x2="474" y2="420" stroke="#555" stroke-width="1.5"/>
+      <line x1="436" y1="427" x2="474" y2="427" stroke="#555" stroke-width="1.5"/>
+      <line x1="436" y1="434" x2="474" y2="434" stroke="#555" stroke-width="1.5"/>
+      <line x1="436" y1="441" x2="474" y2="441" stroke="#555" stroke-width="1.5"/>
+
+      <!-- ══ MONITOR STAND ══ -->
+      <rect x="272" y="380" width="56" height="70" rx="4" fill="#3D4255"/>
+      <rect x="252" y="440" width="96" height="12" rx="6" fill="#4A4E69"/>
+
+      <!-- ══ MONITOR BODY ══ -->
+      <rect x="155" y="60" width="290" height="200" rx="14" fill="url(#monitorGrad)"/>
+      <!-- bezel inner shadow -->
+      <rect x="160" y="65" width="280" height="190" rx="10" fill="#16192a" opacity="0.5"/>
+
+      <!-- ══ SCREEN ══ -->
+      <rect x="168" y="72" width="264" height="176" rx="6" fill="url(#screenGrad)"/>
+      <!-- screen glow lines (decorative) -->
+      <rect x="168" y="72"  width="264" height="3"  rx="1" fill="rgba(116,192,252,0.3)"/>
+      <!-- screen content: cute desktop -->
+      <rect x="168" y="220" width="264" height="28" rx="0" fill="rgba(255,255,255,0.08)"/>
+      <!-- taskbar icons -->
+      <rect x="178" y="225" width="18" height="18" rx="4" fill="#FF6B9D" opacity="0.8"/>
+      <rect x="202" y="225" width="18" height="18" rx="4" fill="#FFD93D" opacity="0.8"/>
+      <rect x="226" y="225" width="18" height="18" rx="4" fill="#6BCB77" opacity="0.8"/>
+      <!-- desktop icons -->
+      <rect x="182" y="90"  width="28" height="28" rx="6" fill="rgba(116,192,252,0.7)"/>
+      <rect x="220" y="90"  width="28" height="28" rx="6" fill="rgba(199,125,255,0.7)"/>
+      <rect x="258" y="90"  width="28" height="28" rx="6" fill="rgba(255,107,157,0.7)"/>
+      <rect x="296" y="90"  width="28" height="28" rx="6" fill="rgba(255,211,61,0.8)"/>
+      <!-- folder icon detail -->
+      <rect x="182" y="88" width="20" height="6" rx="3" fill="rgba(255,255,255,0.5)"/>
+      <!-- screen shine -->
+      <path d="M168 72 L200 72 L168 110 Z" fill="rgba(255,255,255,0.05)"/>
+      <!-- monitor power LED -->
+      <circle cx="300" cy="256" r="4" fill="#6BCB77" opacity="0.9" filter="url(#glow)"/>
+
+      <!-- ══ WEBCAM ══ -->
+      <rect x="285" y="52" width="30" height="14" rx="7" fill="#22223B"/>
+      <circle cx="300" cy="59" r="5" fill="#111" stroke="#4ECDC4" stroke-width="1.5"/>
+      <circle cx="300" cy="59" r="2.5" fill="#0d0e18"/>
+      <circle cx="301" cy="57" r="1"   fill="rgba(255,255,255,0.6)"/>
+      <!-- webcam indicator -->
+      <circle cx="311" cy="59" r="2" fill="#FF6B6B" opacity="0.9" filter="url(#glow)"/>
+
+      <!-- ══ KEYBOARD ══ -->
+      <rect x="175" y="465" width="250" height="65" rx="10" fill="url(#keyGrad)"/>
+      <rect x="180" y="470" width="240" height="55" rx="7" fill="#A8B2C0"/>
+      <!-- key rows -->
+      <!-- row 1: function keys -->
+      <rect x="185" y="474" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="202" y="474" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="219" y="474" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="236" y="474" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="253" y="474" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="270" y="474" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="287" y="474" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="304" y="474" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="321" y="474" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="338" y="474" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="355" y="474" width="22" height="9" rx="2" fill="white" opacity="0.8"/>
+      <!-- row 2 -->
+      <rect x="185" y="487" width="20" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="208" y="487" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="225" y="487" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="242" y="487" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="259" y="487" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="276" y="487" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="293" y="487" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="310" y="487" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="327" y="487" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="344" y="487" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="361" y="487" width="16" height="9" rx="2" fill="white" opacity="0.8"/>
+      <!-- row 3 spacebar area -->
+      <rect x="185" y="500" width="24" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="212" y="500" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="229" y="500" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="246" y="500" width="90" height="9" rx="2" fill="white" opacity="0.9"/>
+      <rect x="339" y="500" width="14" height="9" rx="2" fill="white" opacity="0.8"/>
+      <rect x="356" y="500" width="21" height="9" rx="2" fill="white" opacity="0.8"/>
+      <!-- keyboard logo -->
+      <rect x="292" y="516" width="16" height="5" rx="2" fill="rgba(255,255,255,0.4)"/>
+
+      <!-- ══ MOUSE ══ -->
+      <ellipse cx="500" cy="487" rx="28" ry="36" fill="#5A6075"/>
+      <ellipse cx="500" cy="480" rx="24" ry="22" fill="#4A4E69"/>
+      <!-- mouse split line -->
+      <line x1="500" y1="458" x2="500" y2="490" stroke="#666" stroke-width="1.5"/>
+      <!-- scroll wheel -->
+      <rect x="495" y="466" width="10" height="16" rx="5" fill="#888"/>
+      <rect x="496" y="468" width="8"  height="12" rx="4" fill="#6BCB77" opacity="0.7"/>
+      <!-- mouse cord -->
+      <path d="M500 454 Q500 430 510 415 Q520 400 520 380" stroke="#3D4255" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- mouse button highlights -->
+      <ellipse cx="488" cy="473" rx="10" ry="12" fill="rgba(255,255,255,0.06)"/>
+      <ellipse cx="512" cy="473" rx="10" ry="12" fill="rgba(255,255,255,0.04)"/>
+
+      <!-- ══ HIT AREAS (drop zones) ══ -->
+      <!-- Monitor — full bezel + extra padding -->
+      <rect  id="zone-monitor"  class="drop-zone" x="140" y="40"  width="320" height="250" rx="18" fill="transparent" data-part="Monitor"/>
+      <!-- Webcam — much bigger tap target -->
+      <rect  id="zone-webcam"   class="drop-zone" x="255" y="30"  width="90"  height="50"  rx="12" fill="transparent" data-part="Webcam"/>
+      <!-- System Unit — full tower + generous sides -->
+      <rect  id="zone-systemunit" class="drop-zone" x="14"  y="272" width="112" height="185" rx="12" fill="transparent" data-part="System Unit"/>
+      <!-- Speakers — taller + wider -->
+      <rect  id="zone-speakers" class="drop-zone" x="104" y="355" width="84"  height="100" rx="10" fill="transparent" data-part="Speakers"/>
+      <!-- Keyboard — wider + taller -->
+      <rect  id="zone-keyboard" class="drop-zone" x="158" y="455" width="284" height="82"  rx="12" fill="transparent" data-part="Keyboard"/>
+      <!-- Mouse — bigger ellipse -->
+      <ellipse id="zone-mouse"  class="drop-zone" cx="500" cy="487" rx="46" ry="56" fill="transparent" data-part="Mouse"/>
+    </svg>
+  </div>
+
+  <div class="label-bank" id="bank-right"></div>
+</div>
+
+<script>
+const PARTS = [
+  { name:"Monitor",     color:"sky",    bank:"left",  zoneX:"50%", zoneY:"32%" },
+  { name:"Webcam",      color:"red",    bank:"left",  zoneX:"50%", zoneY:"11%" },
+  { name:"System Unit", color:"purple", bank:"right", zoneX:"12%", zoneY:"62%" },
+  { name:"Speakers",    color:"orange", bank:"left",  zoneX:"24%", zoneY:"76%" },
+  { name:"Keyboard",    color:"green",  bank:"right", zoneX:"50%", zoneY:"88%" },
+  { name:"Mouse",       color:"pink",   bank:"right", zoneX:"84%", zoneY:"88%" },
+];
+
+const ACTIVE_PARTS = PARTS;
+
+let score = 0, tries = 0, draggedPart = null, toastTimer = null;
+
+function buildLabels() {
+  const bankLeft  = document.getElementById('bank-left');
+  const bankRight = document.getElementById('bank-right');
+  bankLeft.innerHTML = ''; bankRight.innerHTML = '';
+
+  const shuffled = [...ACTIVE_PARTS].sort(() => Math.random() - 0.5);
+  shuffled.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'label';
+    el.textContent = p.name;
+    el.dataset.part = p.name;
+    el.dataset.color = p.color;
+    el.setAttribute('draggable', 'true');
+    el.id = 'label-' + p.name.toLowerCase().replace(/\s+/g,'-');
+    el.addEventListener('dragstart', onDragStart);
+    el.addEventListener('dragend',   onDragEnd);
+    el.addEventListener('touchstart', onTouchStart, { passive:true });
+    el.addEventListener('touchmove',  onTouchMove,  { passive:false });
+    el.addEventListener('touchend',   onTouchEnd);
+    document.getElementById(p.bank === 'left' ? 'bank-left' : 'bank-right').appendChild(el);
+  });
+}
+
+function labelId(name){ return 'label-' + name.toLowerCase().replace(/\s+/g,'-'); }
+function zoneId(name) { return 'zone-'  + name.toLowerCase().replace(/\s+/g,''); }
+function markerId(name){ return 'marker-'+ name.toLowerCase().replace(/\s+/g,'-'); }
+
+// Drag (mouse)
+function onDragStart(e) {
+  draggedPart = e.target.dataset.part;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', draggedPart);
+}
+function onDragEnd(e) { e.target.classList.remove('dragging'); }
+
+document.querySelectorAll('.drop-zone').forEach(zone => {
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('over');
+    handleDrop(zone.dataset.part, draggedPart);
+  });
+});
+
+// Touch drag
+let touchClone = null, touchLabel = null, touchOffX = 0, touchOffY = 0;
+function onTouchStart(e) {
+  const touch = e.touches[0];
+  touchLabel = e.currentTarget;
+  draggedPart = touchLabel.dataset.part;
+  touchLabel.classList.add('dragging');
+  const rect = touchLabel.getBoundingClientRect();
+  touchOffX = touch.clientX - rect.left;
+  touchOffY = touch.clientY - rect.top;
+  touchClone = touchLabel.cloneNode(true);
+  touchClone.style.cssText = `
+    position:fixed; left:${rect.left}px; top:${rect.top}px;
+    width:${rect.width}px; pointer-events:none; z-index:99999;
+    opacity:0.9; transform:scale(1.1) rotate(-3deg);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+    font-family:'Fredoka One',cursive; font-size:1rem;
+    border:3px solid; border-radius:22px; padding:9px 14px;
+    background:white; text-align:center;
+  `;
+  document.body.appendChild(touchClone);
+}
+function onTouchMove(e) {
+  e.preventDefault();
+  const touch = e.touches[0];
+  if (touchClone) {
+    touchClone.style.left = (touch.clientX - touchOffX) + 'px';
+    touchClone.style.top  = (touch.clientY - touchOffY) + 'px';
+  }
+}
+function onTouchEnd(e) {
+  const touch = e.changedTouches[0];
+  if (touchClone) { touchClone.remove(); touchClone = null; }
+  if (touchLabel) { touchLabel.classList.remove('dragging'); }
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  if (el) {
+    const zone = el.closest('.drop-zone') || (el.classList.contains('drop-zone') ? el : null);
+    if (zone) handleDrop(zone.dataset.part, draggedPart);
+    else showToast("Drop it on the computer! 🖥️", "wrong-toast");
+  }
+  touchLabel = null; draggedPart = null;
+}
+
+// Core drop
+function handleDrop(zonePart, droppedPart) {
+  if (!droppedPart) return;
+  const labelEl = document.getElementById(labelId(droppedPart));
+  if (!labelEl || labelEl.classList.contains('placed')) return;
+
+  tries++;
+  document.getElementById('tries-text').textContent = `Tries: ${tries}`;
+
+  if (zonePart === droppedPart) {
+    score++;
+    labelEl.classList.add('placed');
+    labelEl.textContent = '✅ ' + droppedPart;
+    placeBodyLabel(droppedPart);
+
+    const zEl = document.getElementById(zoneId(droppedPart));
+    if (zEl) { zEl.classList.add('correct'); setTimeout(()=>zEl.classList.remove('correct'),700); }
+
+    updateScore();
+    const msgs = ["Awesome! 🌟","Great job! 🎉","You got it! 💻","Tech Star! ⭐","Woohoo! 🎊","Brilliant! 🧠","Amazing! 🏆"];
+    showToast(msgs[Math.floor(Math.random()*msgs.length)], "correct-toast");
+    launchMini();
+
+    const marker = document.getElementById(markerId(droppedPart));
+    if (marker) marker.classList.add('solved');
+
+    if (score >= ACTIVE_PARTS.length) setTimeout(showWin, 600);
+  } else {
+    const zEl = document.getElementById(zoneId(zonePart));
+    if (zEl) { zEl.classList.add('wrong'); setTimeout(()=>zEl.classList.remove('wrong'),500); }
+    const msgs = ["Oops! Try again! 😅","Not quite! 🙈","Almost! Keep trying! 💡","Hmm, look carefully! 🔍"];
+    showToast(msgs[Math.floor(Math.random()*msgs.length)], "wrong-toast");
+  }
+}
+
+// Place label on figure
+const colorMap = {
+  pink:"#FF6B9D", yellow:"#d4a200", green:"#2d9640", blue:"#2ba3a0",
+  purple:"#9b40e0", orange:"#e07c00", red:"#d93a3a", sky:"#1a7ac9", mint:"#00a07a"
+};
+
+function placeBodyLabel(partName) {
+  const fig = document.getElementById('computer-figure');
+  const svgEl = document.getElementById('computer-svg');
+  const svgRect = svgEl.getBoundingClientRect();
+  const figRect = fig.getBoundingClientRect();
+  const p = ACTIVE_PARTS.find(x => x.name === partName);
+  if (!p) return;
+  const x = (svgRect.left - figRect.left) + svgRect.width  * (parseFloat(p.zoneX)/100);
+  const y = (svgRect.top  - figRect.top)  + svgRect.height * (parseFloat(p.zoneY)/100);
+  const lbl = document.createElement('div');
+  lbl.className = 'body-label';
+  lbl.textContent = partName;
+  lbl.style.left = x + 'px';
+  lbl.style.top  = y + 'px';
+  lbl.style.borderColor = colorMap[p.color] || '#888';
+  lbl.style.color = colorMap[p.color] || '#888';
+  fig.appendChild(lbl);
+}
+
+function updateScore() {
+  document.getElementById('score-text').textContent = `${score} / ${ACTIVE_PARTS.length}`;
+  document.getElementById('progress-bar').style.width = `${(score/ACTIVE_PARTS.length)*100}%`;
+}
+
+function showToast(msg, cls) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show ' + cls;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 2000);
+}
+
+// Confetti
+const canvas = document.getElementById('confetti-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function launchMini() {
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const colors = ['#74C0FC','#C77DFF','#FF6B9D','#6BCB77','#FFD93D','#4ECDC4'];
+  for (let i = 0; i < 30; i++) {
+    particles.push({
+      x: Math.random()*canvas.width, y: Math.random()*canvas.height*0.5,
+      r: Math.random()*7+4, dx:(Math.random()-.5)*4, dy:Math.random()*3+1,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      alpha:1, rotation:Math.random()*360, drot:(Math.random()-.5)*8
+    });
+  }
+  if (!animating) animateConfetti();
+}
+
+let animating = false;
+function animateConfetti() {
+  animating = true;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles = particles.filter(p => p.alpha > 0.05);
+  particles.forEach(p => {
+    p.x+=p.dx; p.y+=p.dy; p.alpha-=0.018; p.rotation+=p.drot;
+    ctx.save(); ctx.globalAlpha=p.alpha;
+    ctx.translate(p.x,p.y); ctx.rotate(p.rotation*Math.PI/180);
+    ctx.fillStyle=p.color; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);
+    ctx.restore();
+  });
+  if (particles.length > 0) requestAnimationFrame(animateConfetti);
+  else animating = false;
+}
+
+function bigConfetti() {
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const colors = ['#74C0FC','#C77DFF','#FF6B9D','#6BCB77','#FFD93D','#4ECDC4','#FF9F43','#FF6B6B'];
+  for (let i = 0; i < 200; i++) {
+    particles.push({
+      x:Math.random()*canvas.width, y:-20,
+      r:Math.random()*9+5, dx:(Math.random()-.5)*6, dy:Math.random()*5+2,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      alpha:1, rotation:Math.random()*360, drot:(Math.random()-.5)*10
+    });
+  }
+  if (!animating) animateConfetti();
+}
+
+function showWin() { bigConfetti(); document.getElementById('win-screen').classList.add('show'); }
+
+// Zone markers
+const markerColors = {
+  pink:"#FF6B9D", yellow:"#F5A800", green:"#2d9640", blue:"#2ba3a0",
+  purple:"#9b40e0", orange:"#e07c00", red:"#d93a3a", sky:"#1a7ac9", mint:"#00a07a"
+};
+
+function buildMarkers() {
+  document.querySelectorAll('.zone-marker').forEach(el => el.remove());
+  const fig = document.getElementById('computer-figure');
+  const svgEl = document.getElementById('computer-svg');
+  const svgRect = svgEl.getBoundingClientRect();
+  const figRect = fig.getBoundingClientRect();
+
+  ACTIVE_PARTS.forEach(p => {
+    const x = (svgRect.left - figRect.left) + svgRect.width  * (parseFloat(p.zoneX)/100);
+    const y = (svgRect.top  - figRect.top)  + svgRect.height * (parseFloat(p.zoneY)/100);
+    const color = markerColors[p.color] || '#888';
+    const marker = document.createElement('div');
+    marker.className = 'zone-marker';
+    marker.id = markerId(p.name);
+    marker.style.left = x + 'px';
+    marker.style.top  = y + 'px';
+    marker.style.color = color;
+    marker.innerHTML = `<div class="pulse-ring"></div><div class="pulse-ring"></div><div class="dot"></div>`;
+    fig.appendChild(marker);
+  });
+}
+
+function resetGame() {
+  score = 0; tries = 0; updateScore();
+  document.getElementById('tries-text').textContent = 'Tries: 0';
+  document.getElementById('win-screen').classList.remove('show');
+  document.querySelectorAll('.body-label').forEach(el => el.remove());
+  buildLabels();
+  setTimeout(buildMarkers, 80);
+  particles = []; ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  buildMarkers();
+});
+
+buildLabels();
+updateScore();
+setTimeout(buildMarkers, 80);
+</script>
+</body>
+</html>
