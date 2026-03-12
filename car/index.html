@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚗 Learn About Cars!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Nunito',sans-serif; background:#87CEEB; height:100vh; overflow:hidden; display:flex; flex-direction:column; }
+
+  #header {
+    background:linear-gradient(135deg,#FF6B6B,#FF8C42,#FFD700);
+    padding:10px 20px; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 15px rgba(0,0,0,0.25); flex-shrink:0; z-index:10;
+  }
+  #header h1 { font-family:'Fredoka One',cursive; font-size:1.9rem; color:#fff; text-shadow:2px 2px 0 rgba(0,0,0,0.2); }
+  .star { display:inline-block; margin:0 8px; font-size:1.5rem; animation:wb 2s ease-in-out infinite; }
+  @keyframes wb { 0%,100%{transform:rotate(-10deg)} 50%{transform:rotate(10deg)} }
+
+  #main { display:flex; flex:1; overflow:hidden; }
+
+  /* Canvas wrapper */
+  #cw { flex:1; position:relative; overflow:hidden; background:linear-gradient(180deg,#87CEEB 0%,#b8ddb0 70%,#6ab04c 100%); }
+  #cw canvas { display:block; width:100%!important; height:100%!important; }
+
+  /* Road */
+  #road { position:absolute; bottom:0; left:0; right:0; height:55px; background:#444; pointer-events:none; z-index:1; }
+  #road::after { content:''; position:absolute; top:50%; left:0; right:0; height:6px; transform:translateY(-50%);
+    background:repeating-linear-gradient(90deg,#FFD700 0,#FFD700 40px,transparent 40px,transparent 80px); }
+
+  /* Clouds */
+  .cloud { position:absolute; background:#fff; border-radius:50px; opacity:0.9; pointer-events:none; animation:fc linear infinite; }
+  .cloud::before,.cloud::after { content:''; position:absolute; background:#fff; border-radius:50%; }
+  .cloud::before { width:55%; height:160%; top:-55%; left:12%; }
+  .cloud::after  { width:38%; height:130%; top:-45%; right:12%; }
+  @keyframes fc { from{transform:translateX(-250px)} to{transform:translateX(calc(100vw + 250px))} }
+
+  /* Popup */
+  #popup {
+    position:absolute; top:14%; left:50%; transform:translateX(-50%) scale(0.4);
+    background:#fff; border-radius:20px; padding:14px 22px; min-width:210px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.22); text-align:center;
+    border:4px solid #FFD700; z-index:20; opacity:0; pointer-events:none;
+    transition:opacity .3s, transform .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  #popup.on { opacity:1; transform:translateX(-50%) scale(1); pointer-events:all; }
+  #popup .pe { font-size:2.4rem; line-height:1.1; }
+  #popup .pn { font-family:'Fredoka One',cursive; font-size:1.65rem; color:#222; margin:4px 0 2px; }
+  #popup .pd { font-size:.87rem; color:#555; font-weight:700; line-height:1.45; }
+  #popup .sp { margin-top:9px; background:#FFD700; border:none; border-radius:11px; padding:5px 14px;
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:.82rem; cursor:pointer; color:#333; pointer-events:all; }
+  #popup .sp:hover { filter:brightness(1.1); transform:scale(1.06); }
+
+  /* Hint */
+  #hint { position:absolute; bottom:62px; left:50%; transform:translateX(-50%);
+    background:rgba(255,255,255,.92); border-radius:18px; padding:6px 15px;
+    font-size:.8rem; font-weight:800; color:#444; z-index:10; pointer-events:none;
+    white-space:nowrap; box-shadow:0 2px 10px rgba(0,0,0,.12); animation:bh 2.2s ease-in-out infinite; }
+  @keyframes bh { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-5px)} }
+
+  /* Panel */
+  #panel { width:218px; flex-shrink:0; overflow-y:auto; padding:13px 10px;
+    background:linear-gradient(180deg,#FFF9E6,#FFF0F5);
+    box-shadow:-3px 0 14px rgba(0,0,0,.12); z-index:5; display:flex; flex-direction:column; gap:0; }
+  #panel h2 { font-family:'Fredoka One',cursive; font-size:1.05rem; color:#444; text-align:center; margin-bottom:7px; }
+  #score-bar { display:flex; gap:5px; justify-content:center; flex-wrap:wrap; margin-bottom:5px; }
+  .dot { width:13px; height:13px; border-radius:50%; background:#ddd; transition:all .4s; flex-shrink:0; }
+  .dot.on { background:var(--c); transform:scale(1.3); box-shadow:0 0 7px var(--c); }
+  #fmsg { font-family:'Fredoka One',cursive; font-size:.88rem; text-align:center; color:#aaa; margin-bottom:9px; }
+
+  #btnlist { display:flex; flex-direction:column; gap:7px; }
+  .pb {
+    display:flex; align-items:center; gap:9px; padding:9px 11px;
+    border:3px solid transparent; border-radius:14px; background:#fff;
+    cursor:pointer; transition:all .18s; box-shadow:0 3px 8px rgba(0,0,0,.1);
+    font-family:'Nunito',sans-serif; font-weight:800; font-size:.9rem;
+    color:#333; text-align:left; width:100%;
+  }
+  .pb:hover { transform:translateX(4px); box-shadow:0 5px 14px rgba(0,0,0,.15); }
+  .pb.active { border-color:var(--c); transform:translateX(3px); }
+  .pb .pe2 { font-size:1.25rem; flex-shrink:0; }
+  .pb .dot2 { width:9px; height:9px; border-radius:50%; background:var(--c); margin-left:auto; flex-shrink:0; }
+
+  #colsec { margin-top:11px; padding-top:10px; border-top:2px dashed #eee; }
+  #colsec h3 { font-family:'Fredoka One',cursive; font-size:.9rem; color:#bbb; text-align:center; margin-bottom:7px; }
+  .swatches { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+  .sw { width:27px; height:27px; border-radius:50%; cursor:pointer; border:3px solid transparent;
+    transition:all .2s; box-shadow:0 2px 6px rgba(0,0,0,.2); }
+  .sw:hover { transform:scale(1.3); }
+  .sw.sel { border-color:#333; transform:scale(1.2); }
+  #panel::-webkit-scrollbar { width:4px; }
+  #panel::-webkit-scrollbar-thumb { background:#ddd; border-radius:6px; }
+
+  .confetti { position:fixed; pointer-events:none; animation:cf linear forwards; z-index:999; }
+  @keyframes cf { 0%{transform:translateY(-20px) rotate(0); opacity:1} 100%{transform:translateY(105vh) rotate(720deg); opacity:0} }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <span class="star">⭐</span>
+  <h1>🚗 Learn About Cars!</h1>
+  <span class="star">⭐</span>
+</div>
+
+<div id="main">
+  <div id="cw">
+    <div class="cloud" style="width:110px;height:38px;top:7%;animation-duration:18s;animation-delay:-4s"></div>
+    <div class="cloud" style="width:75px;height:26px;top:15%;animation-duration:24s;animation-delay:-11s"></div>
+    <div class="cloud" style="width:95px;height:32px;top:5%;animation-duration:21s;animation-delay:-8s"></div>
+    <canvas id="c"></canvas>
+    <div id="road"></div>
+    <div id="popup">
+      <div class="pe" id="pe">🛞</div>
+      <div class="pn" id="pn">Tire</div>
+      <div class="pd" id="pd">Tires help the car grip and roll on the road!</div>
+      <button class="sp" id="spbtn">🔊 Read it!</button>
+    </div>
+    <div id="hint">👆 Click a button or tap the car!</div>
+  </div>
+
+  <div id="panel">
+    <h2>🔍 Find the Parts!</h2>
+    <div id="score-bar"></div>
+    <div id="fmsg">Found 0 of 10!</div>
+    <div id="btnlist"></div>
+    <div id="colsec">
+      <h3>🎨 Paint the Car!</h3>
+      <div class="swatches" id="swatches"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ── PART DATA ─────────────────────────────────────────────────────────── */
+const PARTS = [
+  { id:'tire',      name:'Tire',       emoji:'🛞', col:'#FF4B4B', desc:'Tires help the car grip and roll on the road!' },
+  { id:'windshield',name:'Windshield', emoji:'🪟', col:'#4B9EFF', desc:'The big front glass keeps wind and rain out!' },
+  { id:'hood',      name:'Hood',       emoji:'🔧', col:'#FF8C42', desc:'The hood covers the engine underneath!' },
+  { id:'trunk',     name:'Trunk',      emoji:'🧳', col:'#A855F7', desc:'The trunk stores your bags and luggage!' },
+  { id:'door',      name:'Door',       emoji:'🚪', col:'#22C55E', desc:'Doors let you get in and out of the car!' },
+  { id:'headlight', name:'Headlight',  emoji:'💡', col:'#FFD700', desc:'Headlights help you see in the dark!' },
+  { id:'wiper',     name:'Wiper',      emoji:'🌧️', col:'#64B5F6', desc:'Wipers wipe rain off the windshield!' },
+  { id:'mirror',    name:'Side Mirror',emoji:'🪞', col:'#FF6EB4', desc:'Mirrors help the driver see behind the car!' },
+  { id:'bumper',    name:'Bumper',     emoji:'🛡️', col:'#FF7043', desc:'Bumpers protect the car from bumps!' },
+  { id:'roof',      name:'Roof',       emoji:'🏠', col:'#26C6DA', desc:'The roof is the very top of the car!' },
+];
+const PALETTE = ['#E53935','#1E88E5','#FFD700','#43A047','#8E24AA','#FB8C00','#E91E8C','#EEEEEE','#263238','#FF7043'];
+let bodyHex = '#E53935';
+let found = 0;
+
+/* ── SPEECH ────────────────────────────────────────────────────────────── */
+function speak(txt){
+  if(!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(txt);
+  u.rate=0.88; u.pitch=1.1; speechSynthesis.speak(u);
+}
+document.getElementById('spbtn').onclick=()=>
+  speak(document.getElementById('pn').textContent+'. '+document.getElementById('pd').textContent);
+
+/* ── BUILD PANEL ───────────────────────────────────────────────────────── */
+const sb=document.getElementById('score-bar');
+const bl=document.getElementById('btnlist');
+PARTS.forEach(p=>{
+  const d=document.createElement('div');
+  d.className='dot'; d.id='d-'+p.id; d.style.setProperty('--c',p.col); sb.appendChild(d);
+  const b=document.createElement('button');
+  b.className='pb'; b.id='b-'+p.id; b.style.setProperty('--c',p.col);
+  b.innerHTML=`<span class="pe2">${p.emoji}</span><span>${p.name}</span><span class="dot2"></span>`;
+  b.onclick=()=>pick(p.id); bl.appendChild(b);
+});
+const sw=document.getElementById('swatches');
+PALETTE.forEach(c=>{
+  const s=document.createElement('div');
+  s.className='sw'+(c===bodyHex?' sel':''); s.style.background=c;
+  s.onclick=()=>{ bodyHex=c; document.querySelectorAll('.sw').forEach(x=>x.classList.remove('sel')); s.classList.add('sel'); recolor(); };
+  sw.appendChild(s);
+});
+function updMsg(){
+  const m=document.getElementById('fmsg');
+  m.textContent=found===PARTS.length?'🎉 You found them all!':`Found ${found} of ${PARTS.length}!`;
+  if(found===PARTS.length){ m.style.color='#E53935'; confetti(); }
+}
+function confetti(){
+  for(let i=0;i<80;i++){
+    const el=document.createElement('div'); el.className='confetti';
+    const sz=6+Math.random()*10;
+    el.style.cssText=`left:${Math.random()*100}vw;top:-20px;background:${PALETTE[~~(Math.random()*PALETTE.length)]};width:${sz}px;height:${sz}px;animation-duration:${1.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s;border-radius:${Math.random()>.5?'50%':'3px'}`;
+    document.body.appendChild(el); setTimeout(()=>el.remove(),5000);
+  }
+}
+
+/* ── THREE.JS SETUP ───────────────────────────────────────────────────── */
+const canvas=document.getElementById('c');
+const wrap=document.getElementById('cw');
+const renderer=new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true;
+renderer.setClearColor(0x87CEEB, 0); // transparent so CSS bg shows
+
+const scene=new THREE.Scene();
+
+/* Camera – pulled way back so car is definitely in view */
+const cam=new THREE.PerspectiveCamera(45,1,0.1,200);
+cam.position.set(0, 3.5, 12);
+cam.lookAt(0, 1, 0);
+
+/* Target for smooth lerp */
+const camT={z:12, y:3.5, ly:1};
+const camC={z:12, y:3.5, ly:1};
+
+/* Lights */
+scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+const sun=new THREE.DirectionalLight(0xffffff,1.0);
+sun.position.set(6,12,8); sun.castShadow=true; scene.add(sun);
+const fill=new THREE.DirectionalLight(0xaaccff,0.45); fill.position.set(-5,4,-4); scene.add(fill);
+const bot=new THREE.DirectionalLight(0xffffff,0.25); bot.position.set(0,-5,0); scene.add(bot);
+
+/* Ground plane – so shadow is visible */
+const ground=new THREE.Mesh(
+  new THREE.PlaneGeometry(30,30),
+  new THREE.MeshLambertMaterial({color:0x6ab04c})
+);
+ground.rotation.x=-Math.PI/2; ground.position.y=0; ground.receiveShadow=true;
+scene.add(ground);
+
+/* ── MATERIALS ─────────────────────────────────────────────────────────── */
+const mkMat=(hex,r=0.5,m=0.1)=>new THREE.MeshStandardMaterial({color:new THREE.Color(hex),roughness:r,metalness:m});
+let bodyMat = mkMat(bodyHex,0.35,0.3);
+const tireMat   = mkMat('#111',0.9,0.0);
+const rimMat    = mkMat('#CCC',0.2,0.8);
+const darkMat   = mkMat('#222',0.8,0.1);
+const chromeMat = mkMat('#BBB',0.15,0.9);
+const underMat  = mkMat('#333',0.9,0.0);
+const wipeMat   = mkMat('#111',0.9,0.0);
+const hlFMat    = new THREE.MeshStandardMaterial({color:0xFFFFAA,roughness:0.1,metalness:0.3,emissive:0xFFFF44,emissiveIntensity:0.6});
+const hlRMat    = new THREE.MeshStandardMaterial({color:0xFF1111,roughness:0.1,metalness:0.0,emissive:0xFF0000,emissiveIntensity:0.5});
+const glassMat  = new THREE.MeshStandardMaterial({color:0x88bbff,roughness:0.05,metalness:0.1,transparent:true,opacity:0.45,side:THREE.DoubleSide});
+
+/* ── MESH REGISTRY ─────────────────────────────────────────────────────── */
+const meshMap={};   // partId → [mesh]
+const origMat=new Map(); // mesh → mat
+const clickable=[];
+
+function reg(id,mesh){
+  if(!meshMap[id]) meshMap[id]=[];
+  meshMap[id].push(mesh);
+  mesh.userData.pid=id;
+  clickable.push(mesh);
+  origMat.set(mesh,mesh.material);
+}
+
+/* ── CAR GROUP ─────────────────────────────────────────────────────────── */
+const car=new THREE.Group();
+scene.add(car);
+
+/* Helper: create a box, add to car, return mesh */
+function B(w,h,d,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+  m.position.set(x,y,z); m.rotation.set(rx,ry,rz);
+  m.castShadow=true; m.receiveShadow=true; car.add(m); return m;
+}
+function C(rt,rb,h,seg,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0){
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat);
+  m.position.set(x,y,z); m.rotation.set(rx,ry,rz);
+  m.castShadow=true; car.add(m); return m;
+}
+
+/* ── BODY ──────────────────────────────────────────────────────────────── */
+// Raise everything so bottom of tires sit at y=0
+// Tire radius = 0.45, so tyre center at y=0.45
+// Underbody bottom at y=0.45, height 0.25 → top at y=0.7
+// Lower body: y=0.7 to y=1.5  → center y=1.1, h=0.8
+// Cabin: y=1.5 to y=2.3 → center y=1.9, h=0.8
+// Roof top: at y=2.3
+
+B(4.0,0.28,2.0, underMat, 0,0.59,0); // underbody
+
+const bodyLow=B(3.9,0.85,2.0, bodyMat, 0,1.12,0); // main lower body
+reg('door',bodyLow);
+
+// hood (front slope)  x from 0.9 to 1.95, top face
+const hood1=B(1.1,0.14,2.0, bodyMat,  1.40,1.57,0,  0,0,-0.18);
+const hood2=B(0.55,0.1,2.0, bodyMat,  0.95,1.60,0);
+reg('hood',hood1); reg('hood',hood2);
+
+// trunk (rear)
+const trunk1=B(0.9,0.14,2.0, bodyMat, -1.30,1.57,0, 0,0,0.22);
+const trunk2=B(0.45,0.1,2.0, bodyMat, -0.95,1.60,0);
+reg('trunk',trunk1); reg('trunk',trunk2);
+
+// cabin / roof
+const cabin=B(2.0,0.82,1.85, bodyMat,  0,1.94,0);
+const roofM=B(1.85,0.12,1.85, bodyMat, 0,2.37,0);
+reg('roof',cabin); reg('roof',roofM);
+
+// door side skins
+[-1,1].forEach(s=>{
+  const dp=B(3.8,0.82,0.08, bodyMat, 0,1.12,s*1.04);
+  const cp=B(1.9,0.78,0.08, bodyMat, 0,1.94,s*0.965);
+  reg('door',dp); reg('roof',cp);
+});
+
+/* ── WINDSHIELD (proper angled panels) ──────────────────────────────────── */
+// Coordinate system: x=car forward(+front), y=up, z=car side(+left)
+// makeQuad takes 4 corners as [x,y,z] in correct Three.js order
+function makeQuad(p0,p1,p2,p3,mat){
+  const g=new THREE.BufferGeometry();
+  const verts=new Float32Array([...p0,...p1,...p2,...p0,...p2,...p3]);
+  g.setAttribute('position',new THREE.BufferAttribute(verts,3));
+  g.computeVertexNormals();
+  const m=new THREE.Mesh(g,mat); m.castShadow=false; car.add(m); return m;
+}
+
+// Front windshield [x, y, z] — leans back from hood top to roof front
+const fwsFix=makeQuad(
+  [ 0.92,1.58,-0.92],  // bottom left  (front-low, driver side)
+  [ 0.92,1.58, 0.92],  // bottom right (front-low, passenger side)
+  [ 0.55,2.35, 0.92],  // top right    (front-high, passenger side)
+  [ 0.55,2.35,-0.92]   // top left     (front-high, driver side)
+, glassMat);
+reg('windshield',fwsFix);
+
+// Rear window [x,y,z]:
+const rwsFix=makeQuad(
+  [-0.55,2.35,-0.92],
+  [-0.55,2.35, 0.92],
+  [-0.92,1.58, 0.92],
+  [-0.92,1.58,-0.92]
+, glassMat);
+reg('windshield',rwsFix);
+
+// Side windows [x,y,z] — one per side (s = ±0.93 z position)
+[-1,1].forEach(s=>{
+  const z=s*0.93;
+  // front side window: trapezoid shape
+  const fsw=makeQuad(
+    [ 0.90,1.60,z],  // bottom front
+    [ 0.55,2.33,z],  // top front
+    [ 0.05,2.33,z],  // top rear
+    [ 0.10,1.60,z]   // bottom rear
+  , glassMat);
+  reg('windshield',fsw);
+  // rear side window
+  const rsw=makeQuad(
+    [ 0.08,1.60,z],
+    [-0.04,2.33,z],
+    [-0.55,2.33,z],
+    [-0.90,1.60,z]
+  , glassMat);
+  reg('windshield',rsw);
+});
+
+// A-pillars
+[-1,1].forEach(s=>{
+  const ap=B(0.06,0.85,0.07, darkMat, 0.70,1.94,s*0.94);
+  ap.rotation.z=-0.3;
+});
+
+/* ── WIPERS ─────────────────────────────────────────────────────────────── */
+[-0.32,0.32].forEach(z=>{
+  const w=B(0.055,0.055,0.62, wipeMat, 0.88,1.57,z, 0,0,-0.18);
+  const t=B(0.04,0.04,0.08,  chromeMat, 0.88,1.57,z+(z>0?.27:-.27),0,0,-0.18);
+  reg('wiper',w); reg('wiper',t);
+});
+
+/* ── HEADLIGHTS ─────────────────────────────────────────────────────────── */
+[-0.58,0.58].forEach(z=>{
+  const h=B(0.3,0.22,0.38, hlFMat, 1.93,1.1,z);
+  reg('headlight',h);
+  B(0.06,0.25,0.42, chromeMat, 1.9,1.1,z);
+});
+[-0.58,0.58].forEach(z=>{
+  const t=B(0.24,0.2,0.38, hlRMat, -1.92,1.12,z);
+  reg('headlight',t);
+});
+
+/* ── BUMPERS ────────────────────────────────────────────────────────────── */
+const fb=B(0.22,0.42,1.95, bodyMat, 1.97,0.72,0); reg('bumper',fb);
+B(0.18,0.24,1.15, darkMat, 1.99,0.78,0); // grille
+const rb=B(0.22,0.42,1.95, bodyMat,-1.97,0.72,0); reg('bumper',rb);
+
+/* ── MIRRORS ────────────────────────────────────────────────────────────── */
+[-1,1].forEach(s=>{
+  const mb=B(0.15,0.11,0.08, darkMat,   0.7,1.75,s*1.0);
+  const mf=B(0.3,0.2,0.05,  chromeMat, 0.7,1.75,s*1.06);
+  reg('mirror',mb); reg('mirror',mf);
+});
+
+/* ── DOOR HANDLES ───────────────────────────────────────────────────────── */
+[-1,1].forEach(s=>{
+  const dh=B(0.28,0.07,0.05, chromeMat,-0.08,1.28,s*1.05);
+  reg('door',dh);
+  B(3.55,0.035,0.035, darkMat, 0,1.22,s*1.05);
+});
+
+/* ── TIRES ──────────────────────────────────────────────────────────────── */
+const tireXZ=[[1.35,1.1],[1.35,-1.1],[-1.35,1.1],[-1.35,-1.1]];
+const tireY=0.45;
+tireXZ.forEach(([x,z])=>{
+  const tr=C(0.45,0.45,0.32,28, tireMat, x,tireY,z, Math.PI/2,0,0);
+  reg('tire',tr);
+  const ri=C(0.28,0.28,0.34,6,  rimMat,  x,tireY,z, Math.PI/2,0.26,0);
+  reg('tire',ri);
+  const cp=C(0.08,0.08,0.35,12, chromeMat,x,tireY,z, Math.PI/2,0,0);
+  reg('tire',cp);
+  for(let i=0;i<6;i++){
+    const sp=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.2,0.35),rimMat);
+    sp.position.set(x,tireY,z); sp.rotation.set(Math.PI/2,0,(i/6)*Math.PI);
+    sp.castShadow=true; car.add(sp); reg('tire',sp);
+  }
+});
+
+/* Wheel arches */
+[-1,1].forEach(s=>[-1,1].forEach(x=>{
+  const arch=C(0.52,0.52,0.12,20, bodyMat, x*1.35,tireY,s*1.04, Math.PI/2,0,0);
+}));
+
+/* Soft shadow under car */
+const shd=new THREE.Mesh(
+  new THREE.CircleGeometry(3.2,32),
+  new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.15})
+);
+shd.rotation.x=-Math.PI/2; shd.position.y=0.01; car.add(shd);
+
+// Collect body-colored meshes for recoloring
+const bodyParts=[bodyLow,hood1,hood2,trunk1,trunk2,cabin,roofM,fb,rb];
+car.children.forEach(m=>{if(m.material===bodyMat&&!bodyParts.includes(m))bodyParts.push(m);});
+
+function recolor(){
+  const nm=mkMat(bodyHex,0.35,0.3);
+  bodyParts.forEach(m=>{ origMat.set(m,nm); m.material=nm; });
+  // side skins
+  car.children.forEach(m=>{ if(m.material===bodyMat){origMat.set(m,nm);m.material=nm;} });
+  bodyMat=nm;
+}
+
+/* ── HIGHLIGHT ──────────────────────────────────────────────────────────── */
+const HL=new THREE.MeshStandardMaterial({color:0xFFFF00,roughness:0.3,metalness:0.1,emissive:0xFFCC00,emissiveIntensity:0.6});
+let hlTimer=null, curHL=null;
+function clearHL(){
+  if(curHL) meshMap[curHL]?.forEach(m=>{m.material=origMat.get(m)||m.material;});
+  curHL=null;
+}
+function applyHL(id){
+  clearHL(); curHL=id;
+  meshMap[id]?.forEach(m=>{m.material=HL;});
+}
+
+/* ── CAMERA FOCUS PER PART ──────────────────────────────────────────────── */
+const partCam={
+  tire:      {ry:0.85, z:9,  ly:0.6},
+  windshield:{ry:0.2,  z:8,  ly:1.8},
+  hood:      {ry:0.15, z:8.5,ly:1.2},
+  trunk:     {ry:Math.PI-0.15,z:8.5,ly:1.2},
+  door:      {ry:Math.PI/2,  z:8,  ly:1.1},
+  headlight: {ry:0.1,  z:7.5,ly:1.0},
+  wiper:     {ry:0.2,  z:7.5,ly:1.9},
+  mirror:    {ry:Math.PI/2-0.2,z:7.5,ly:1.6},
+  bumper:    {ry:0.05, z:8,  ly:0.8},
+  roof:      {ry:0.5,  z:9,  ly:2.1},
+};
+let isIdle=true, idleTimer=null, targetRY=0;
+
+function goIdle(){
+  isIdle=true; camT.z=12; camT.y=3.5; camT.ly=1;
+  clearHL();
+  document.querySelectorAll('.pb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('popup').classList.remove('on');
+}
+
+function pick(id){
+  const p=PARTS.find(x=>x.id===id); if(!p) return;
+  if(!p.found){p.found=true;found++;document.getElementById('d-'+id).classList.add('on');updMsg();}
+
+  document.querySelectorAll('.pb').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('b-'+id);
+  btn.classList.add('active');
+  btn.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  document.getElementById('pe').textContent=p.emoji;
+  document.getElementById('pn').textContent=p.name;
+  document.getElementById('pd').textContent=p.desc;
+  const pop=document.getElementById('popup');
+  pop.style.borderColor=p.col;
+  pop.classList.remove('on'); void pop.offsetWidth; pop.classList.add('on');
+
+  speak(p.name+'. '+p.desc);
+  applyHL(id);
+
+  const cfg=partCam[id]||{ry:0,z:10,ly:1};
+  isIdle=false; targetRY=cfg.ry;
+  camT.z=cfg.z; camT.y=cfg.ly+1.5; camT.ly=cfg.ly;
+
+  clearTimeout(hlTimer); hlTimer=setTimeout(()=>clearHL(),4500);
+  clearTimeout(idleTimer); idleTimer=setTimeout(goIdle,6000);
+}
+
+/* ── RAYCASTING ─────────────────────────────────────────────────────────── */
+const RC=new THREE.Raycaster();
+const MV=new THREE.Vector2();
+let dragging=false, dragMoved=false, prevX=0;
+
+canvas.addEventListener('mousedown',e=>{dragging=true;dragMoved=false;prevX=e.clientX;});
+window.addEventListener('mouseup',()=>{dragging=false;});
+window.addEventListener('mousemove',e=>{
+  if(!dragging)return;
+  const dx=e.clientX-prevX;
+  if(Math.abs(dx)>2){dragMoved=true;isIdle=false;clearTimeout(idleTimer);idleTimer=setTimeout(goIdle,4000);}
+  car.rotation.y+=dx*0.012; prevX=e.clientX;
+});
+canvas.addEventListener('click',e=>{
+  if(dragMoved)return;
+  const r=canvas.getBoundingClientRect();
+  MV.x=((e.clientX-r.left)/r.width)*2-1;
+  MV.y=-((e.clientY-r.top)/r.height)*2+1;
+  RC.setFromCamera(MV,cam);
+  const hits=RC.intersectObjects(clickable,false);
+  if(hits.length){const id=hits[0].object.userData.pid;if(id)pick(id);}
+});
+canvas.addEventListener('touchstart',e=>{dragging=true;dragMoved=false;prevX=e.touches[0].clientX;},{passive:true});
+window.addEventListener('touchend',()=>{dragging=false;});
+window.addEventListener('touchmove',e=>{
+  if(!dragging)return;
+  const dx=e.touches[0].clientX-prevX;
+  if(Math.abs(dx)>2){dragMoved=true;isIdle=false;}
+  car.rotation.y+=dx*0.012; prevX=e.touches[0].clientX;
+},{passive:true});
+
+/* ── RESIZE ─────────────────────────────────────────────────────────────── */
+function resize(){
+  const w=wrap.clientWidth, h=wrap.clientHeight;
+  renderer.setSize(w,h,false);
+  cam.aspect=w/h; cam.updateProjectionMatrix();
+}
+window.addEventListener('resize',resize); resize();
+
+/* ── ANIMATE ────────────────────────────────────────────────────────────── */
+let t=0;
+function lerp(a,b,s){return a+(b-a)*s;}
+function lerpA(a,b,s){let d=b-a;while(d>Math.PI)d-=Math.PI*2;while(d<-Math.PI)d+=Math.PI*2;return a+d*s;}
+const LV=new THREE.Vector3(0,1,0);
+
+(function animate(){
+  requestAnimationFrame(animate);
+  t+=0.012;
+
+  if(isIdle){
+    car.rotation.y+=0.005;
+    car.position.y=Math.sin(t*0.7)*0.04;
+  } else {
+    car.rotation.y=lerpA(car.rotation.y,targetRY,0.07);
+    car.position.y=lerp(car.position.y,0,0.1);
+  }
+
+  camC.z =lerp(camC.z, camT.z, 0.06);
+  camC.y =lerp(camC.y, camT.y, 0.06);
+  camC.ly=lerp(camC.ly,camT.ly,0.06);
+  cam.position.z=camC.z;
+  cam.position.y=camC.y;
+  LV.y=camC.ly;
+  cam.lookAt(LV);
+
+  renderer.render(scene,cam);
+})();
+</script>
+</body>
+</html>
