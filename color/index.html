@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎨 Color Fun!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Baloo 2', cursive;
+    background: #fff9f0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated polka dot background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, #ffe0f0 10px, transparent 10px),
+      radial-gradient(circle, #d0f0ff 8px, transparent 8px),
+      radial-gradient(circle, #fff0c0 12px, transparent 12px);
+    background-size: 120px 120px, 90px 90px, 150px 150px;
+    background-position: 0 0, 45px 45px, 75px 20px;
+    opacity: 0.5;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  header {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 16px 12px 10px;
+    background: linear-gradient(135deg, #ff6ec7, #ff9f43, #ffd32a, #0be881);
+    background-size: 300% 300%;
+    animation: rainbowShift 4s ease infinite;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+  }
+
+  @keyframes rainbowShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  header h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+    letter-spacing: 1px;
+  }
+
+  header p {
+    color: rgba(255,255,255,0.92);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 12px 20px;
+  }
+
+  /* SUBJECT SELECTOR */
+  .subject-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: white;
+    border-radius: 20px;
+    padding: 10px 14px;
+    box-shadow: 0 4px 0 #f0c0e0, 0 6px 16px rgba(0,0,0,0.08);
+  }
+
+  .subject-btn {
+    border: 3px solid transparent;
+    background: #f8f0ff;
+    border-radius: 14px;
+    padding: 8px 14px;
+    font-family: 'Baloo 2', cursive;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    color: #555;
+    min-width: 72px;
+  }
+
+  .subject-btn span.icon { font-size: 1.6rem; line-height: 1; }
+
+  .subject-btn:hover {
+    transform: translateY(-3px) scale(1.06);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  }
+
+  .subject-btn.active {
+    border-color: #ff6ec7;
+    background: #fff0fa;
+    color: #cc0066;
+    box-shadow: 0 4px 0 #ff6ec7;
+    transform: translateY(-2px);
+  }
+
+  /* MAIN WORKSPACE */
+  .workspace {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 980px;
+  }
+
+  /* TOOLBAR (left) */
+  .toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: white;
+    border-radius: 20px;
+    padding: 14px 10px;
+    box-shadow: 0 4px 0 #c0d8ff, 0 6px 16px rgba(0,0,0,0.08);
+    min-width: 82px;
+    align-items: center;
+  }
+
+  .tool-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tool-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    border: 3px solid transparent;
+    background: #f0f4ff;
+    font-size: 1.6rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .tool-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  }
+
+  .tool-btn.active {
+    border-color: #4a90e2;
+    background: #e8f0ff;
+    box-shadow: 0 3px 0 #4a90e2;
+    transform: translateY(-2px);
+  }
+
+  .tool-divider {
+    width: 44px;
+    height: 2px;
+    background: #f0e0ff;
+    border-radius: 2px;
+  }
+
+  /* Size slider */
+  .size-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+  }
+
+  .size-preview {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .size-dot {
+    background: #333;
+    border-radius: 50%;
+    transition: all 0.1s;
+  }
+
+  input[type=range].size-slider {
+    -webkit-appearance: none;
+    width: 60px;
+    height: 6px;
+    border-radius: 3px;
+    background: #dce8ff;
+    outline: none;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 6px;
+    height: 80px;
+    cursor: pointer;
+  }
+
+  input[type=range].size-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4a90e2;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(74,144,226,0.4);
+  }
+
+  /* Action buttons */
+  .action-btn {
+    width: 56px;
+    height: 46px;
+    border-radius: 14px;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    font-family: 'Baloo 2', cursive;
+    font-weight: 700;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .action-btn:hover { transform: scale(1.08); }
+  .action-btn:active { transform: scale(0.95); }
+
+  .btn-undo  { background: #fff0c0; color: #cc8800; box-shadow: 0 3px 0 #f0c060; }
+  .btn-clear { background: #ffd0d0; color: #cc3333; box-shadow: 0 3px 0 #f09090; }
+  .btn-save  { background: #c0ffd8; color: #007744; box-shadow: 0 3px 0 #80d4a0; }
+
+  /* CANVAS AREA */
+  .canvas-wrap {
+    flex: 1;
+    background: white;
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow: 0 4px 0 #e0e0e0, 0 6px 20px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  #drawingCanvas {
+    display: block;
+    border-radius: 12px;
+    cursor: crosshair;
+    touch-action: none;
+    width: 100%;
+    height: auto;
+  }
+
+  /* PALETTE (bottom) */
+  .palette-bar {
+    background: white;
+    border-radius: 20px;
+    padding: 12px 16px;
+    box-shadow: 0 4px 0 #ffe0a0, 0 6px 16px rgba(0,0,0,0.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 980px;
+    width: 100%;
+  }
+
+  .color-swatch {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 4px solid white;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    position: relative;
+  }
+
+  .color-swatch:hover {
+    transform: scale(1.2) translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  }
+
+  .color-swatch.active {
+    border-color: #333;
+    transform: scale(1.15) translateY(-2px);
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #333, 0 6px 14px rgba(0,0,0,0.2);
+  }
+
+  .color-swatch.rainbow {
+    background: conic-gradient(red, orange, yellow, green, blue, violet, red);
+  }
+
+  /* Custom color input */
+  .custom-color-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    border: 3px dashed #ccc;
+    position: relative;
+  }
+
+  .custom-color-wrap input[type=color] {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0;
+  }
+
+  .custom-color-wrap .plus {
+    font-size: 1.4rem;
+    color: #aaa;
+    pointer-events: none;
+  }
+
+  /* Bounce animation for star */
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .bounce { animation: bounce 1s ease infinite; display: inline-block; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎨 Color Fun! <span class="bounce">⭐</span></h1>
+  <p>Pick a picture, choose your colors, and paint away!</p>
+</header>
+
+<div class="app">
+
+  <!-- Subject selector -->
+  <div class="subject-bar" id="subjectBar"></div>
+
+  <div class="workspace">
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="tool-label">Tools</div>
+
+      <button class="tool-btn active" id="toolBrush" title="Brush" onclick="setTool('brush')">🖌️</button>
+      <button class="tool-btn" id="toolPencil" title="Pencil" onclick="setTool('pencil')">✏️</button>
+      <button class="tool-btn" id="toolEraser" title="Eraser" onclick="setTool('eraser')">🧹</button>
+
+      <div class="tool-divider"></div>
+      <div class="tool-label">Size</div>
+
+      <div class="size-wrap">
+        <div class="size-preview">
+          <div class="size-dot" id="sizeDot"></div>
+        </div>
+        <input type="range" class="size-slider" id="brushSize"
+               min="2" max="50" value="16" oninput="updateSize()">
+      </div>
+
+      <div class="tool-divider"></div>
+
+      <button class="action-btn btn-undo" title="Undo" onclick="undo()">↩️</button>
+      <button class="action-btn btn-clear" title="Clear drawing" onclick="clearCanvas()">🗑️</button>
+      <button class="action-btn btn-save" title="Save picture" onclick="saveCanvas()">💾</button>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-wrap">
+      <canvas id="drawingCanvas"></canvas>
+    </div>
+
+  </div>
+
+  <!-- Color palette -->
+  <div class="palette-bar" id="palette"></div>
+
+</div>
+
+<script>
+/* =============================================
+   DATA
+   ============================================= */
+
+const SUBJECTS = [
+  {
+    id: 'apple', label: 'Apple', icon: '🍎',
+    draw(ctx, w, h) {
+      const cx = w/2, cy = h/2;
+      // Body
+      ctx.beginPath();
+      ctx.ellipse(cx, cy+20, 110, 120, 0, 0, Math.PI*2);
+      ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.strokeStyle = '#c62828'; ctx.lineWidth = 5; ctx.stroke();
+      // Indent top
+      ctx.beginPath();
+      ctx.arc(cx, cy-90, 28, 0, Math.PI*2);
+      ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
+      // Stem
+      ctx.beginPath();
+      ctx.moveTo(cx, cy-85); ctx.bezierCurveTo(cx+5,cy-120,cx+30,cy-130,cx+25,cy-145);
+      ctx.strokeStyle = '#5d4037'; ctx.lineWidth = 5; ctx.stroke();
+      // Leaf
+      ctx.beginPath();
+      ctx.moveTo(cx+10, cy-120);
+      ctx.bezierCurveTo(cx+40,cy-150,cx+55,cy-110,cx+25,cy-108);
+      ctx.closePath();
+      ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.strokeStyle = '#33691e'; ctx.lineWidth = 4; ctx.stroke();
+      // Shine
+      ctx.beginPath();
+      ctx.ellipse(cx-50, cy-30, 18, 35, -0.5, 0, Math.PI*2);
+      ctx.strokeStyle = '#ffcdd2'; ctx.lineWidth = 3; ctx.stroke();
+    }
+  },
+  {
+    id: 'banana', label: 'Banana', icon: '🍌',
+    draw(ctx, w, h) {
+      const cx = w/2, cy = h/2;
+      ctx.beginPath();
+      ctx.moveTo(cx-100, cy+60);
+      ctx.bezierCurveTo(cx-90,cy-100, cx+120,cy-100, cx+100,cy+40);
+      ctx.bezierCurveTo(cx+70,cy+80, cx-60,cy+80, cx-100,cy+60);
+      ctx.closePath();
+      ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.strokeStyle = '#f9a825'; ctx.lineWidth = 5; ctx.stroke();
+      // tip
+      ctx.beginPath();
+      ctx.moveTo(cx+100, cy+40); ctx.lineTo(cx+120, cy+20);
+      ctx.strokeStyle = '#795548'; ctx.lineWidth = 6; ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx-100, cy+60); ctx.lineTo(cx-115, cy+40);
+      ctx.strokeStyle = '#795548'; ctx.lineWidth = 6; ctx.stroke();
+      // lines
+      for(let i=0;i<3;i++){
+        const t = 0.25 + i*0.2;
+        const px = cx-100 + t*200;
+        const py = cy + 60 - Math.sin(t*Math.PI)*140;
+        ctx.beginPath();
+        ctx.moveTo(px, py); ctx.lineTo(px+8, py-40);
+        ctx.strokeStyle = '#f9a82533'; ctx.lineWidth = 3; ctx.stroke();
+      }
+    }
+  },
+  {
+    id: 'star', label: 'Star', icon: '⭐',
+    draw(ctx, w, h) {
+      const cx=w/2, cy=h/2, r=120, ir=52, pts=5;
+      ctx.beginPath();
+      for(let i=0;i<pts*2;i++){
+        const angle = (i*Math.PI/pts) - Math.PI/2;
+        const rad = i%2===0 ? r : ir;
+        i===0 ? ctx.moveTo(cx+Math.cos(angle)*rad, cy+Math.sin(angle)*rad)
+              : ctx.lineTo(cx+Math.cos(angle)*rad, cy+Math.sin(angle)*rad);
+      }
+      ctx.closePath();
+      ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.strokeStyle = '#f9a825'; ctx.lineWidth = 5; ctx.stroke();
+      // eyes
+      ctx.beginPath(); ctx.arc(cx-28,cy-15,10,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle='#555'; ctx.lineWidth=3; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx+28,cy-15,10,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx,cy+10,28,0.1,Math.PI-0.1); ctx.strokeStyle='#e57373'; ctx.lineWidth=3; ctx.stroke();
+    }
+  },
+  {
+    id: 'house', label: 'House', icon: '🏠',
+    draw(ctx, w, h) {
+      const cx=w/2, cy=h/2;
+      // walls
+      ctx.beginPath();
+      ctx.rect(cx-100, cy-30, 200, 140);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#e57373'; ctx.lineWidth=5; ctx.stroke();
+      // roof
+      ctx.beginPath();
+      ctx.moveTo(cx-120, cy-30); ctx.lineTo(cx, cy-160); ctx.lineTo(cx+120, cy-30);
+      ctx.closePath();
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#c62828'; ctx.lineWidth=5; ctx.stroke();
+      // door
+      ctx.beginPath();
+      ctx.rect(cx-28, cy+40, 56, 70);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#795548'; ctx.lineWidth=4; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx,cy+75,4,0,Math.PI*2);
+      ctx.fillStyle='#ffd54f'; ctx.fill();
+      // windows
+      for(let sx of [-68, 42]){
+        ctx.beginPath(); ctx.rect(cx+sx, cy+10, 46, 40);
+        ctx.fillStyle='#fff'; ctx.fill();
+        ctx.strokeStyle='#64b5f6'; ctx.lineWidth=4; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx+sx+23,cy+10); ctx.lineTo(cx+sx+23,cy+50);
+        ctx.moveTo(cx+sx,cy+30); ctx.lineTo(cx+sx+46,cy+30);
+        ctx.strokeStyle='#90caf9'; ctx.lineWidth=2; ctx.stroke();
+      }
+      // chimney
+      ctx.beginPath(); ctx.rect(cx+50,-110+cy,32,80);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#8d6e63'; ctx.lineWidth=4; ctx.stroke();
+    }
+  },
+  {
+    id: 'sun', label: 'Sun', icon: '☀️',
+    draw(ctx, w, h) {
+      const cx=w/2, cy=h/2;
+      // rays
+      for(let i=0;i<12;i++){
+        const angle = (i/12)*Math.PI*2;
+        ctx.beginPath();
+        ctx.moveTo(cx+Math.cos(angle)*80, cy+Math.sin(angle)*80);
+        ctx.lineTo(cx+Math.cos(angle)*135, cy+Math.sin(angle)*135);
+        ctx.strokeStyle='#fdd835'; ctx.lineWidth=6;
+        ctx.lineCap='round'; ctx.stroke();
+      }
+      // body
+      ctx.beginPath(); ctx.arc(cx,cy,75,0,Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#f9a825'; ctx.lineWidth=6; ctx.stroke();
+      // eyes
+      ctx.beginPath(); ctx.arc(cx-22,cy-15,10,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle='#555'; ctx.lineWidth=3; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx+22,cy-15,10,0,Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx,cy+14,26,0.1,Math.PI-0.1);
+      ctx.strokeStyle='#e57373'; ctx.lineWidth=3; ctx.stroke();
+    }
+  },
+  {
+    id: 'butterfly', label: 'Butterfly', icon: '🦋',
+    draw(ctx, w, h) {
+      const cx=w/2, cy=h/2;
+      // top wings
+      ctx.beginPath();
+      ctx.moveTo(cx,cy-20);
+      ctx.bezierCurveTo(cx-160,cy-150, cx-180,cy+10, cx,cy+30);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#7b1fa2'; ctx.lineWidth=4; ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx,cy-20);
+      ctx.bezierCurveTo(cx+160,cy-150, cx+180,cy+10, cx,cy+30);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#7b1fa2'; ctx.lineWidth=4; ctx.stroke();
+      // bottom wings
+      ctx.beginPath();
+      ctx.moveTo(cx,cy+30);
+      ctx.bezierCurveTo(cx-100,cy+60, cx-90,cy+150, cx,cy+100);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#7b1fa2'; ctx.lineWidth=4; ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx,cy+30);
+      ctx.bezierCurveTo(cx+100,cy+60, cx+90,cy+150, cx,cy+100);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#7b1fa2'; ctx.lineWidth=4; ctx.stroke();
+      // body
+      ctx.beginPath();
+      ctx.ellipse(cx,cy+35,10,55,0,0,Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#4a148c'; ctx.lineWidth=4; ctx.stroke();
+      // antennae
+      ctx.beginPath();
+      ctx.moveTo(cx,cy-20); ctx.bezierCurveTo(cx-30,cy-70,cx-60,cy-80,cx-55,cy-100);
+      ctx.moveTo(cx,cy-20); ctx.bezierCurveTo(cx+30,cy-70,cx+60,cy-80,cx+55,cy-100);
+      ctx.strokeStyle='#6a1b9a'; ctx.lineWidth=3; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx-55,cy-102,6,0,Math.PI*2);
+      ctx.arc(cx+55,cy-102,6,0,Math.PI*2);
+      ctx.fillStyle='#ce93d8'; ctx.fill();
+    }
+  },
+  {
+    id: 'car', label: 'Car', icon: '🚗',
+    draw(ctx, w, h) {
+      const cx=w/2, cy=h/2+30;
+      // body bottom
+      ctx.beginPath();
+      ctx.roundRect(cx-150,cy-60, 300,80, 24);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=5; ctx.stroke();
+      // cabin
+      ctx.beginPath();
+      ctx.moveTo(cx-90,cy-60);
+      ctx.lineTo(cx-60,cy-130);
+      ctx.lineTo(cx+60,cy-130);
+      ctx.lineTo(cx+90,cy-60);
+      ctx.closePath();
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#1565c0'; ctx.lineWidth=5; ctx.stroke();
+      // windows
+      ctx.beginPath();
+      ctx.moveTo(cx-75,cy-65); ctx.lineTo(cx-50,cy-122); ctx.lineTo(cx-5,cy-122); ctx.lineTo(cx-5,cy-65); ctx.closePath();
+      ctx.fillStyle='#e3f2fd'; ctx.fill();
+      ctx.strokeStyle='#90caf9'; ctx.lineWidth=3; ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx+5,cy-65); ctx.lineTo(cx+5,cy-122); ctx.lineTo(cx+50,cy-122); ctx.lineTo(cx+75,cy-65); ctx.closePath();
+      ctx.fillStyle='#e3f2fd'; ctx.fill();
+      ctx.strokeStyle='#90caf9'; ctx.lineWidth=3; ctx.stroke();
+      // wheels
+      for(let wx of [cx-90, cx+90]){
+        ctx.beginPath(); ctx.arc(wx,cy+30,36,0,Math.PI*2);
+        ctx.fillStyle='#fff'; ctx.fill();
+        ctx.strokeStyle='#333'; ctx.lineWidth=5; ctx.stroke();
+        ctx.beginPath(); ctx.arc(wx,cy+30,16,0,Math.PI*2);
+        ctx.fillStyle='#e0e0e0'; ctx.fill();
+        ctx.strokeStyle='#555'; ctx.lineWidth=3; ctx.stroke();
+      }
+      // headlight
+      ctx.beginPath(); ctx.ellipse(cx+145,cy-15,12,8,0,0,Math.PI*2);
+      ctx.fillStyle='#fff9c4'; ctx.fill(); ctx.strokeStyle='#f9a825'; ctx.lineWidth=3; ctx.stroke();
+    }
+  },
+  {
+    id: 'flower', label: 'Flower', icon: '🌸',
+    draw(ctx, w, h) {
+      const cx=w/2, cy=h/2;
+      // stem
+      ctx.beginPath();
+      ctx.moveTo(cx,cy+40); ctx.bezierCurveTo(cx-20,cy+100,cx+10,cy+130,cx,cy+160);
+      ctx.strokeStyle='#388e3c'; ctx.lineWidth=7; ctx.lineCap='round'; ctx.stroke();
+      // leaf
+      ctx.beginPath();
+      ctx.moveTo(cx-5,cy+100);
+      ctx.bezierCurveTo(cx-60,cy+80, cx-65,cy+130, cx-10,cy+120);
+      ctx.closePath();
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#43a047'; ctx.lineWidth=4; ctx.stroke();
+      // petals
+      for(let i=0;i<8;i++){
+        const angle=(i/8)*Math.PI*2;
+        const px=cx+Math.cos(angle)*68, py=cy+Math.sin(angle)*68;
+        ctx.beginPath();
+        ctx.ellipse(px,py,28,18,angle,0,Math.PI*2);
+        ctx.fillStyle='#fff'; ctx.fill();
+        ctx.strokeStyle='#e91e63'; ctx.lineWidth=4; ctx.stroke();
+      }
+      // center
+      ctx.beginPath(); ctx.arc(cx,cy,36,0,Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#fdd835'; ctx.lineWidth=5; ctx.stroke();
+    }
+  },
+  {
+    id: 'fish', label: 'Fish', icon: '🐟',
+    draw(ctx, w, h) {
+      const cx=w/2, cy=h/2;
+      // tail
+      ctx.beginPath();
+      ctx.moveTo(cx+100,cy);
+      ctx.lineTo(cx+180,cy-70);
+      ctx.lineTo(cx+180,cy+70);
+      ctx.closePath();
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#0288d1'; ctx.lineWidth=5; ctx.stroke();
+      // body
+      ctx.beginPath();
+      ctx.ellipse(cx-10,cy,140,90,0,0,Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#0288d1'; ctx.lineWidth=5; ctx.stroke();
+      // eye
+      ctx.beginPath(); ctx.arc(cx-95,cy-25,16,0,Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill(); ctx.strokeStyle='#01579b'; ctx.lineWidth=4; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx-95,cy-25,7,0,Math.PI*2);
+      ctx.fillStyle='#01579b'; ctx.fill();
+      // fin
+      ctx.beginPath();
+      ctx.moveTo(cx-20,cy-90); ctx.lineTo(cx-60,cy-40); ctx.lineTo(cx+20,cy-40);
+      ctx.closePath();
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#29b6f6'; ctx.lineWidth=4; ctx.stroke();
+      // scales
+      for(let r=0;r<3;r++) for(let c=0;c<3;c++){
+        ctx.beginPath();
+        ctx.arc(cx-60+c*50, cy-20+r*30, 20, Math.PI, Math.PI*2);
+        ctx.strokeStyle='#b3e5fc'; ctx.lineWidth=2; ctx.stroke();
+      }
+      // mouth
+      ctx.beginPath(); ctx.arc(cx-140,cy+10,10,0,Math.PI);
+      ctx.strokeStyle='#e57373'; ctx.lineWidth=3; ctx.stroke();
+    }
+  },
+];
+
+const COLORS = [
+  '#FF0000','#FF6600','#FFCC00','#00CC44','#0066FF',
+  '#9900CC','#FF66CC','#FF9999','#FFCC88','#CCFF88',
+  '#88FFCC','#88CCFF','#CC88FF','#FFFFFF','#AAAAAA',
+  '#555555','#000000','#8B4513','#008080','#FF1493',
+];
+
+/* =============================================
+   STATE
+   ============================================= */
+let currentTool = 'brush';
+let currentColor = '#FF0000';
+let brushSz = 16;
+let isDrawing = false;
+let lastX = 0, lastY = 0;
+let currentSubject = SUBJECTS[0];
+let undoStack = [];
+
+/* =============================================
+   CANVAS SETUP
+   ============================================= */
+const canvas = document.getElementById('drawingCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const wrap = canvas.parentElement;
+  const W = Math.min(wrap.clientWidth - 24, 700);
+  const H = Math.round(W * 0.72);
+  canvas.width = W;
+  canvas.height = H;
+  redraw();
+}
+
+function redraw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // White background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  // Draw outline
+  currentSubject.draw(ctx, canvas.width, canvas.height);
+}
+
+function saveState() {
+  if(undoStack.length > 20) undoStack.shift();
+  undoStack.push(ctx.getImageData(0,0,canvas.width,canvas.height));
+}
+
+/* =============================================
+   TOOLS
+   ============================================= */
+function setTool(t) {
+  currentTool = t;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tool'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active');
+}
+
+function updateSize() {
+  brushSz = parseInt(document.getElementById('brushSize').value);
+  const dot = document.getElementById('sizeDot');
+  const s = Math.max(6, Math.min(brushSz, 40));
+  dot.style.width = s+'px';
+  dot.style.height = s+'px';
+}
+
+function undo() {
+  if(undoStack.length === 0) return;
+  ctx.putImageData(undoStack.pop(), 0, 0);
+}
+
+function clearCanvas() {
+  saveState();
+  redraw();
+}
+
+function saveCanvas() {
+  const link = document.createElement('a');
+  link.download = 'my-coloring-' + currentSubject.id + '.png';
+  link.href = canvas.toDataURL();
+  link.click();
+}
+
+/* =============================================
+   DRAWING EVENTS
+   ============================================= */
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  if(e.touches) {
+    return {
+      x: (e.touches[0].clientX - rect.left) * scaleX,
+      y: (e.touches[0].clientY - rect.top) * scaleY
+    };
+  }
+  return {
+    x: (e.clientX - rect.left) * scaleX,
+    y: (e.clientY - rect.top) * scaleY
+  };
+}
+
+function startDraw(e) {
+  e.preventDefault();
+  saveState();
+  isDrawing = true;
+  const pos = getPos(e);
+  lastX = pos.x; lastY = pos.y;
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, getRadius()/2, 0, Math.PI*2);
+  ctx.fillStyle = currentTool==='eraser' ? '#ffffff' : currentColor;
+  ctx.fill();
+}
+
+function draw(e) {
+  e.preventDefault();
+  if(!isDrawing) return;
+  const pos = getPos(e);
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(pos.x, pos.y);
+  ctx.strokeStyle = currentTool==='eraser' ? '#ffffff' : currentColor;
+  ctx.lineWidth = getRadius();
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  if(currentTool === 'pencil') {
+    ctx.globalAlpha = 0.85;
+    ctx.lineWidth = Math.max(2, brushSz*0.5);
+  } else {
+    ctx.globalAlpha = 1;
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  lastX = pos.x; lastY = pos.y;
+}
+
+function getRadius() {
+  if(currentTool==='pencil') return Math.max(2, brushSz*0.45);
+  if(currentTool==='eraser') return brushSz*1.5;
+  return brushSz;
+}
+
+function stopDraw(e) { isDrawing = false; }
+
+canvas.addEventListener('mousedown', startDraw);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', stopDraw);
+canvas.addEventListener('mouseleave', stopDraw);
+canvas.addEventListener('touchstart', startDraw, {passive:false});
+canvas.addEventListener('touchmove', draw, {passive:false});
+canvas.addEventListener('touchend', stopDraw);
+
+/* =============================================
+   BUILD SUBJECT BAR
+   ============================================= */
+const subjectBar = document.getElementById('subjectBar');
+SUBJECTS.forEach(s => {
+  const btn = document.createElement('button');
+  btn.className = 'subject-btn' + (s.id===currentSubject.id ? ' active' : '');
+  btn.innerHTML = `<span class="icon">${s.icon}</span>${s.label}`;
+  btn.onclick = () => {
+    currentSubject = s;
+    undoStack = [];
+    redraw();
+    document.querySelectorAll('.subject-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  };
+  subjectBar.appendChild(btn);
+});
+
+/* =============================================
+   BUILD PALETTE
+   ============================================= */
+const paletteBar = document.getElementById('palette');
+
+COLORS.forEach(c => {
+  const sw = document.createElement('div');
+  sw.className = 'color-swatch' + (c===currentColor?' active':'');
+  sw.style.background = c;
+  sw.style.outline = c==='#FFFFFF' ? '2px solid #ddd' : 'none';
+  sw.onclick = () => {
+    currentColor = c;
+    document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('active'));
+    sw.classList.add('active');
+  };
+  paletteBar.appendChild(sw);
+});
+
+// Custom color picker
+const ccWrap = document.createElement('div');
+ccWrap.className = 'custom-color-wrap';
+ccWrap.title = 'Pick any color!';
+ccWrap.innerHTML = `<span class="plus">➕</span><input type="color" id="customColor" value="#ff6699">`;
+ccWrap.querySelector('input').addEventListener('input', function(){
+  currentColor = this.value;
+  ccWrap.style.background = currentColor;
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('active'));
+});
+paletteBar.appendChild(ccWrap);
+
+/* =============================================
+   INIT
+   ============================================= */
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+updateSize();
+</script>
+</body>
+</html>
