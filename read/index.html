@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Word Wizards 🌟 Learn to Read!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --sky: #a8edff;
+      --sun: #ffe066;
+      --grass: #7be47b;
+      --card-bg: #fff9f0;
+      --pink: #ff8fab;
+      --purple: #c084fc;
+      --orange: #ffb347;
+      --blue: #60b8ff;
+      --green: #4ade80;
+      --red: #ff6b6b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #a8edff 0%, #d4f5ff 40%, #c3f5c3 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px 40px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Floating clouds */
+    .cloud {
+      position: fixed;
+      background: white;
+      border-radius: 50px;
+      opacity: 0.75;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+    }
+    .cloud1 { width: 120px; height: 40px; top: 8%; left: -140px; animation: drift 18s linear infinite; }
+    .cloud1::before { width: 60px; height: 55px; top: -30px; left: 15px; }
+    .cloud1::after { width: 45px; height: 40px; top: -20px; left: 55px; }
+    .cloud2 { width: 90px; height: 30px; top: 20%; left: -110px; animation: drift 24s linear infinite 6s; }
+    .cloud2::before { width: 45px; height: 40px; top: -22px; left: 12px; }
+    .cloud2::after { width: 35px; height: 30px; top: -14px; left: 44px; }
+    .cloud3 { width: 150px; height: 50px; top: 5%; left: -170px; animation: drift 30s linear infinite 12s; }
+    .cloud3::before { width: 75px; height: 65px; top: -38px; left: 20px; }
+    .cloud3::after { width: 55px; height: 50px; top: -28px; left: 75px; }
+
+    @keyframes drift {
+      from { left: -200px; }
+      to { left: 110vw; }
+    }
+
+    /* Stars */
+    .star {
+      position: fixed;
+      font-size: 1.4rem;
+      animation: twinkle 2s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* Header */
+    header {
+      z-index: 1;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    header h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2rem, 7vw, 3.2rem);
+      color: #fff;
+      text-shadow: 0 4px 0 #f97316, 0 6px 12px rgba(0,0,0,0.15);
+      letter-spacing: 1px;
+    }
+    header p {
+      font-size: 1rem;
+      color: #1e6e8c;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 20px;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 800;
+      color: #1e6e8c;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+    .progress-bar-bg {
+      background: rgba(255,255,255,0.6);
+      border-radius: 20px;
+      height: 18px;
+      overflow: hidden;
+      border: 2px solid white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #22d3ee);
+      border-radius: 20px;
+      transition: width 0.5s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    /* Flashcard */
+    .card-scene {
+      z-index: 1;
+      perspective: 900px;
+      width: 100%;
+      max-width: 380px;
+      height: 230px;
+      margin-bottom: 24px;
+      cursor: pointer;
+    }
+    .card-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(.34,1.56,.64,1);
+    }
+    .card-inner.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      border-radius: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15), 0 2px 0 rgba(255,255,255,0.5) inset;
+    }
+    .card-front {
+      background: var(--card-bg);
+      border: 4px solid var(--sun);
+    }
+    .card-back {
+      background: linear-gradient(135deg, #fdf4ff, #eff6ff);
+      border: 4px solid var(--purple);
+      transform: rotateY(180deg);
+    }
+
+    .card-emoji { font-size: 4.5rem; line-height: 1; margin-bottom: 8px; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.12)); }
+    .card-word {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2.8rem, 9vw, 4.2rem);
+      color: #1e3a5f;
+      text-align: center;
+      line-height: 1;
+      letter-spacing: 3px;
+    }
+    .card-hint {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      font-weight: 700;
+      margin-top: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .card-back .card-word { font-size: clamp(1.6rem, 5vw, 2rem); color: #6d28d9; margin-top: 8px; }
+    .card-category {
+      background: var(--purple);
+      color: white;
+      border-radius: 20px;
+      padding: 3px 14px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    /* Speak button */
+    .speak-btn {
+      z-index: 1;
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      border: none;
+      border-radius: 50px;
+      padding: 16px 40px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.35rem;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #c2410c, 0 10px 20px rgba(249,115,22,0.35);
+      transition: transform 0.1s, box-shadow 0.1s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+    .speak-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #c2410c; }
+    .speak-btn.speaking { background: linear-gradient(135deg, #8b5cf6, #a78bfa); box-shadow: 0 6px 0 #5b21b6, 0 10px 20px rgba(139,92,246,0.35); }
+    .speak-btn .mic-icon { font-size: 1.6rem; animation: none; }
+    .speak-btn.speaking .mic-icon { animation: pulse 0.5s ease-in-out infinite alternate; }
+    @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.2); } }
+
+    /* Nav buttons */
+    .nav-row {
+      z-index: 1;
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .nav-btn {
+      background: white;
+      border: 3px solid #d1d5db;
+      border-radius: 50px;
+      padding: 12px 28px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: #374151;
+      box-shadow: 0 4px 0 #d1d5db;
+      transition: transform 0.1s, box-shadow 0.1s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #d1d5db; }
+    .nav-btn.prev { border-color: var(--pink); box-shadow: 0 4px 0 #f472b6; color: #be185d; }
+    .nav-btn.next { border-color: var(--blue); box-shadow: 0 4px 0 #3b82f6; color: #1d4ed8; }
+
+    /* Category filter */
+    .filter-row {
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      max-width: 480px;
+      margin-bottom: 24px;
+    }
+    .filter-btn {
+      background: rgba(255,255,255,0.7);
+      border: 2px solid rgba(255,255,255,0.9);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 0.82rem;
+      cursor: pointer;
+      color: #374151;
+      transition: all 0.2s;
+    }
+    .filter-btn.active {
+      background: #1e3a5f;
+      color: white;
+      border-color: #1e3a5f;
+    }
+
+    /* Mini cards grid */
+    .grid-title {
+      z-index: 1;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.3rem;
+      color: #1e6e8c;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .mini-grid {
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+      gap: 8px;
+      max-width: 480px;
+      width: 100%;
+    }
+    .mini-card {
+      background: rgba(255,255,255,0.75);
+      border-radius: 14px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.9);
+      transition: transform 0.15s, background 0.15s;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.75rem;
+      color: #1e3a5f;
+    }
+    .mini-card:hover { transform: scale(1.08); background: white; }
+    .mini-card.active-mini { background: #fef9c3; border-color: #fbbf24; }
+    .mini-card .m-emoji { font-size: 1.2rem; display: block; }
+
+    /* Emoji toggle */
+    .emoji-toggle {
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.75);
+      border: 2.5px solid rgba(255,255,255,0.95);
+      border-radius: 50px;
+      padding: 8px 18px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 0.88rem;
+      color: #1e3a5f;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      transition: background 0.2s, box-shadow 0.2s;
+      user-select: none;
+    }
+    .emoji-toggle:hover { background: white; box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
+    .toggle-track {
+      width: 42px; height: 24px;
+      background: #d1d5db;
+      border-radius: 12px;
+      position: relative;
+      transition: background 0.3s;
+      flex-shrink: 0;
+    }
+    .toggle-track.on { background: #4ade80; }
+    .toggle-thumb {
+      width: 18px; height: 18px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px; left: 3px;
+      transition: left 0.3s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .toggle-track.on .toggle-thumb { left: 21px; }
+
+    .card-emoji-wrap {
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(.4,0,.2,1), opacity 0.3s;
+      max-height: 80px;
+      opacity: 1;
+    }
+    .card-emoji-wrap.hidden {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    /* Celebration */
+    .celebration {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .celebration-text {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      color: white;
+      text-shadow: 0 4px 0 #f97316, 0 6px 16px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
+    }
+    .celebration-text.show { opacity: 1; transform: scale(1); }
+
+    /* Confetti */
+    .confetti-piece {
+      position: fixed;
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 99;
+      animation: confettiFall 2s forwards ease-in;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Clouds -->
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+<div class="cloud cloud3"></div>
+
+<!-- Stars -->
+<div class="star" style="top:10%;left:5%;animation-delay:0s">⭐</div>
+<div class="star" style="top:6%;right:8%;animation-delay:0.6s">🌟</div>
+<div class="star" style="top:18%;right:4%;animation-delay:1.2s">✨</div>
+<div class="star" style="top:25%;left:3%;animation-delay:0.3s">⭐</div>
+
+<!-- Celebration overlay -->
+<div class="celebration" id="celebration">
+  <div class="celebration-text" id="celebrationText">🎉 Amazing! 🎉</div>
+</div>
+
+<header>
+  <h1>🪄 Word Wizards!</h1>
+  <p>Tap the card • Hear the word • Learn to read!</p>
+</header>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span id="cardNum">Card 1 of 50</span>
+    <span id="learnedCount">0 learned ⭐</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progressFill" style="width:2%"></div>
+  </div>
+</div>
+
+<!-- Category Filter -->
+<div class="filter-row" id="filterRow"></div>
+
+<!-- Emoji Toggle -->
+<div class="emoji-toggle" id="emojiToggle" onclick="toggleEmoji()">
+  <div class="toggle-track on" id="toggleTrack">
+    <div class="toggle-thumb"></div>
+  </div>
+  <span id="toggleLabel">🖼️ Show Emoji Hint</span>
+</div>
+
+<!-- Flashcard -->
+<div class="card-scene" id="cardScene" onclick="flipCard()">
+  <div class="card-inner" id="cardInner">
+    <div class="card-face card-front">
+      <div class="card-emoji-wrap" id="cardEmojiWrap">
+        <div class="card-emoji" id="cardEmoji">🐱</div>
+      </div>
+      <div class="card-word" id="cardWord">cat</div>
+      <div class="card-hint">Tap to flip!</div>
+    </div>
+    <div class="card-face card-back">
+      <div class="card-category" id="cardCategory">Animal</div>
+      <div class="card-emoji-wrap" id="cardEmojiWrapBack">
+        <div class="card-emoji" id="cardEmojiBack">🐱</div>
+      </div>
+      <div class="card-word" id="cardWordBack">cat</div>
+      <div style="font-size:0.85rem;color:#7c3aed;font-weight:700;margin-top:8px;" id="cardSentence">The cat is cute!</div>
+    </div>
+  </div>
+</div>
+
+<!-- Speak Button -->
+<button class="speak-btn" id="speakBtn" onclick="speakWord()">
+  <span class="mic-icon hint-emoji">🔊</span>
+  <span id="speakLabel">Say the Word!</span>
+</button>
+
+<!-- Nav -->
+<div class="nav-row">
+  <button class="nav-btn prev" onclick="prevCard()"><span class="hint-emoji">⬅ </span>Back</button>
+  <button class="nav-btn" onclick="markLearned()" style="border-color:#4ade80;box-shadow:0 4px 0 #16a34a;color:#15803d;"><span class="hint-emoji">⭐ </span>Learned!</button>
+  <button class="nav-btn next" onclick="nextCard()">Next<span class="hint-emoji"> ➡</span></button>
+</div>
+
+<!-- Mini grid -->
+<div class="grid-title">All 50 Words</div>
+<div class="mini-grid" id="miniGrid"></div>
+
+<script>
+const words = [
+  // Animals
+  { word: "cat",    emoji: "🐱", cat: "Animal",  sentence: "The cat is cute!" },
+  { word: "dog",    emoji: "🐶", cat: "Animal",  sentence: "The dog can run!" },
+  { word: "bird",   emoji: "🐦", cat: "Animal",  sentence: "A bird can fly!" },
+  { word: "fish",   emoji: "🐟", cat: "Animal",  sentence: "The fish swims fast!" },
+  { word: "frog",   emoji: "🐸", cat: "Animal",  sentence: "The frog is green!" },
+  { word: "bear",   emoji: "🐻", cat: "Animal",  sentence: "A big bear!" },
+  { word: "duck",   emoji: "🦆", cat: "Animal",  sentence: "The duck quacks!" },
+  { word: "cow",    emoji: "🐮", cat: "Animal",  sentence: "The cow says moo!" },
+  // Food
+  { word: "apple",  emoji: "🍎", cat: "Food",    sentence: "An apple is red!" },
+  { word: "cake",   emoji: "🎂", cat: "Food",    sentence: "I love cake!" },
+  { word: "milk",   emoji: "🥛", cat: "Food",    sentence: "Drink your milk!" },
+  { word: "egg",    emoji: "🥚", cat: "Food",    sentence: "I eat an egg!" },
+  { word: "bread",  emoji: "🍞", cat: "Food",    sentence: "Bread is yummy!" },
+  { word: "rice",   emoji: "🍚", cat: "Food",    sentence: "I eat rice today!" },
+  { word: "soup",   emoji: "🍜", cat: "Food",    sentence: "Hot soup for me!" },
+  { word: "pie",    emoji: "🥧", cat: "Food",    sentence: "A yummy pie!" },
+  // Colors
+  { word: "red",    emoji: "🔴", cat: "Color",   sentence: "Red is bright!" },
+  { word: "blue",   emoji: "🔵", cat: "Color",   sentence: "The sky is blue!" },
+  { word: "green",  emoji: "🟢", cat: "Color",   sentence: "Grass is green!" },
+  { word: "pink",   emoji: "🌸", cat: "Color",   sentence: "Pink is pretty!" },
+  // Nature
+  { word: "sun",    emoji: "☀️", cat: "Nature",  sentence: "The sun is hot!" },
+  { word: "moon",   emoji: "🌙", cat: "Nature",  sentence: "I see the moon!" },
+  { word: "rain",   emoji: "🌧️", cat: "Nature",  sentence: "Rain falls down!" },
+  { word: "tree",   emoji: "🌳", cat: "Nature",  sentence: "A big tree!" },
+  { word: "flower", emoji: "🌸", cat: "Nature",  sentence: "A pretty flower!" },
+  { word: "snow",   emoji: "❄️", cat: "Nature",  sentence: "Snow is cold!" },
+  { word: "cloud",  emoji: "☁️", cat: "Nature",  sentence: "I see a cloud!" },
+  { word: "star",   emoji: "⭐", cat: "Nature",  sentence: "Stars shine at night!" },
+  // Body
+  { word: "eye",    emoji: "👁️", cat: "Body",    sentence: "I see with my eye!" },
+  { word: "hand",   emoji: "✋", cat: "Body",    sentence: "Clap your hands!" },
+  { word: "foot",   emoji: "🦶", cat: "Body",    sentence: "I have two feet!" },
+  { word: "nose",   emoji: "👃", cat: "Body",    sentence: "My nose is small!" },
+  // Things
+  { word: "ball",   emoji: "⚽", cat: "Things",  sentence: "Kick the ball!" },
+  { word: "book",   emoji: "📚", cat: "Things",  sentence: "I read a book!" },
+  { word: "hat",    emoji: "🎩", cat: "Things",  sentence: "I wear a hat!" },
+  { word: "cup",    emoji: "☕", cat: "Things",  sentence: "Fill the cup!" },
+  { word: "bag",    emoji: "🎒", cat: "Things",  sentence: "My bag is big!" },
+  { word: "key",    emoji: "🔑", cat: "Things",  sentence: "I find the key!" },
+  { word: "toy",    emoji: "🧸", cat: "Things",  sentence: "I love my toy!" },
+  { word: "drum",   emoji: "🥁", cat: "Things",  sentence: "Bang the drum!" },
+  // Actions
+  { word: "run",    emoji: "🏃", cat: "Action",  sentence: "I can run fast!" },
+  { word: "jump",   emoji: "🤸", cat: "Action",  sentence: "I can jump high!" },
+  { word: "sing",   emoji: "🎤", cat: "Action",  sentence: "I love to sing!" },
+  { word: "read",   emoji: "📖", cat: "Action",  sentence: "I can read now!" },
+  { word: "play",   emoji: "🎮", cat: "Action",  sentence: "Let us play!" },
+  { word: "sleep",  emoji: "😴", cat: "Action",  sentence: "Time to sleep!" },
+  { word: "eat",    emoji: "🍽️", cat: "Action",  sentence: "Let us eat!" },
+  { word: "swim",   emoji: "🏊", cat: "Action",  sentence: "I can swim!" },
+  // People
+  { word: "mom",    emoji: "👩", cat: "People",  sentence: "I love my mom!" },
+  { word: "dad",    emoji: "👨", cat: "People",  sentence: "My dad is tall!" },
+];
+
+let currentIdx = 0;
+let learnedSet = new Set();
+let activeCategory = "All";
+let filteredWords = [...words];
+let isFlipped = false;
+
+const categories = ["All", ...new Set(words.map(w => w.cat))];
+
+function buildFilters() {
+  const row = document.getElementById('filterRow');
+  categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn' + (cat === 'All' ? ' active' : '');
+    btn.textContent = cat;
+    btn.onclick = () => setCategory(cat);
+    row.appendChild(btn);
+  });
+}
+
+function setCategory(cat) {
+  activeCategory = cat;
+  filteredWords = cat === 'All' ? [...words] : words.filter(w => w.cat === cat);
+  currentIdx = 0;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent === cat);
+  });
+  resetFlip();
+  updateCard();
+  buildMiniGrid();
+}
+
+function updateCard() {
+  const w = filteredWords[currentIdx];
+  document.getElementById('cardEmoji').textContent = w.emoji;
+  document.getElementById('cardWord').textContent = w.word;
+  document.getElementById('cardEmojiBack').textContent = w.emoji;
+  document.getElementById('cardWordBack').textContent = w.word;
+  document.getElementById('cardCategory').textContent = w.cat;
+  document.getElementById('cardSentence').textContent = w.sentence;
+
+  const total = filteredWords.length;
+  document.getElementById('cardNum').textContent = `Card ${currentIdx + 1} of ${total}`;
+  document.getElementById('learnedCount').textContent = `${learnedSet.size} learned ⭐`;
+  document.getElementById('progressFill').style.width = `${((currentIdx + 1) / total) * 100}%`;
+
+  // Highlight mini grid
+  document.querySelectorAll('.mini-card').forEach((mc, i) => {
+    mc.classList.toggle('active-mini', i === currentIdx);
+  });
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  document.getElementById('cardInner').classList.toggle('flipped', isFlipped);
+  if (isFlipped) speakWord();
+}
+
+function resetFlip() {
+  isFlipped = false;
+  document.getElementById('cardInner').classList.remove('flipped');
+}
+
+function nextCard() {
+  resetFlip();
+  currentIdx = (currentIdx + 1) % filteredWords.length;
+  updateCard();
+  if (currentIdx === 0) celebrate('🎊 All Done! 🎊');
+}
+
+function prevCard() {
+  resetFlip();
+  currentIdx = (currentIdx - 1 + filteredWords.length) % filteredWords.length;
+  updateCard();
+}
+
+function markLearned() {
+  const w = filteredWords[currentIdx];
+  if (!learnedSet.has(w.word)) {
+    learnedSet.add(w.word);
+    celebrate('⭐ Great job! ⭐');
+    launchConfetti();
+  }
+  updateCard();
+  setTimeout(nextCard, 800);
+}
+
+function speakWord() {
+  const w = filteredWords[currentIdx];
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(w.word);
+  utter.rate = 0.8;
+  utter.pitch = 1.2;
+  utter.lang = 'en-US';
+  const btn = document.getElementById('speakBtn');
+  btn.classList.add('speaking');
+  document.getElementById('speakLabel').textContent = w.word.toUpperCase() + '!';
+  utter.onend = () => {
+    btn.classList.remove('speaking');
+    document.getElementById('speakLabel').textContent = 'Say the Word!';
+  };
+  window.speechSynthesis.speak(utter);
+}
+
+function celebrate(msg) {
+  const el = document.getElementById('celebrationText');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1600);
+}
+
+function launchConfetti() {
+  const colors = ['#ff6b6b','#ffe066','#4ade80','#60b8ff','#c084fc','#ff8fab','#fb923c'];
+  for (let i = 0; i < 40; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = `
+      left: ${Math.random() * 100}vw;
+      top: -20px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      transform: rotate(${Math.random()*360}deg);
+      animation-delay: ${Math.random() * 0.5}s;
+      animation-duration: ${1.5 + Math.random()}s;
+      width: ${6 + Math.random() * 8}px;
+      height: ${6 + Math.random() * 8}px;
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+    `;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 2500);
+  }
+}
+
+function buildMiniGrid() {
+  const grid = document.getElementById('miniGrid');
+  grid.innerHTML = '';
+  filteredWords.forEach((w, i) => {
+    const mc = document.createElement('div');
+    mc.className = 'mini-card' + (i === currentIdx ? ' active-mini' : '');
+    mc.innerHTML = `<span class="m-emoji hint-emoji"${showEmoji ? '' : ' style="display:none"'}>${w.emoji}</span>${w.word}`;
+    mc.onclick = () => { resetFlip(); currentIdx = i; updateCard(); };
+    grid.appendChild(mc);
+  });
+}
+
+let showEmoji = true;
+
+function toggleEmoji() {
+  showEmoji = !showEmoji;
+  const track = document.getElementById('toggleTrack');
+  const label = document.getElementById('toggleLabel');
+  // Card emojis
+  document.querySelectorAll('.card-emoji-wrap').forEach(w => w.classList.toggle('hidden', !showEmoji));
+  // All hint-emoji spans (buttons + mini grid)
+  document.querySelectorAll('.hint-emoji').forEach(el => {
+    el.style.display = showEmoji ? '' : 'none';
+  });
+  track.classList.toggle('on', showEmoji);
+  label.textContent = showEmoji ? '🖼️ Show Emoji Hint' : '🙈 Emoji Hidden';
+}
+
+// Init
+buildFilters();
+buildMiniGrid();
+updateCard();
+</script>
+</body>
+</html>
