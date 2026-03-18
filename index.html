@@ -166,6 +166,9 @@
     .card:nth-child(4) { animation-delay: 0.54s; background: linear-gradient(145deg, #5bc8f5, #3a7bd5); box-shadow: 0 10px 0 #2156b0, 0 14px 30px #5bc8f560; }
     .card:nth-child(5) { animation-delay: 0.67s; background: linear-gradient(145deg, #ffa07a, #ff6347); box-shadow: 0 10px 0 #c0392b, 0 14px 30px #ff634760; }
     .card:nth-child(6) { animation-delay: 0.80s; background: linear-gradient(145deg, #a8edcf, #43b89c); box-shadow: 0 10px 0 #1e7d6a, 0 14px 30px #43b89c60; }
+    /* New cards */
+    .card:nth-child(7) { animation-delay: 0.93s; background: linear-gradient(145deg, #f9a8d4, #e879f9); box-shadow: 0 10px 0 #a21caf, 0 14px 30px #e879f960; }
+    .card:nth-child(8) { animation-delay: 1.06s; background: linear-gradient(145deg, #93c5fd, #3b82f6); box-shadow: 0 10px 0 #1d4ed8, 0 14px 30px #3b82f660; }
 
     @keyframes card-pop {
       from { opacity: 0; transform: scale(0.6) translateY(30px); }
@@ -178,6 +181,7 @@
     .card:nth-child(2):hover { transform: translateY(-10px) scale(1.06) rotate(1.5deg); }
     .card:nth-child(4):hover { transform: translateY(-10px) scale(1.06) rotate(1.5deg); }
     .card:nth-child(6):hover { transform: translateY(-10px) scale(1.06) rotate(1.5deg); }
+    .card:nth-child(8):hover { transform: translateY(-10px) scale(1.06) rotate(1.5deg); }
     .card:active { transform: scale(0.96) translateY(2px); }
 
     /* Card shine */
@@ -205,6 +209,8 @@
     .card:nth-child(4) .card-icon { animation-delay: 1.8s; }
     .card:nth-child(5) .card-icon { animation-delay: 2.4s; }
     .card:nth-child(6) .card-icon { animation-delay: 3.0s; }
+    .card:nth-child(7) .card-icon { animation-delay: 3.6s; }
+    .card:nth-child(8) .card-icon { animation-delay: 4.2s; }
 
     @keyframes wiggle {
       0%, 90%, 100% { transform: rotate(0deg) scale(1); }
@@ -481,6 +487,20 @@
         <div class="card-icon">💻</div>
         <div class="card-title">Computer</div>
         <div class="card-desc">Tech & gadgets!</div>
+      </a>
+
+      <a class="card" href="https://djiordhan.github.io/color" target="_blank" rel="noopener">
+        <div class="card-badge">🎨</div>
+        <div class="card-icon">🌈</div>
+        <div class="card-title">Colors</div>
+        <div class="card-desc">Paint the world!</div>
+      </a>
+
+      <a class="card" href="https://djiordhan.github.io/car" target="_blank" rel="noopener">
+        <div class="card-badge">🏎️</div>
+        <div class="card-icon">🚗</div>
+        <div class="card-title">Cars</div>
+        <div class="card-desc">Vroom & zoom!</div>
       </a>
 
     </div>
