@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Dash 5K — Fun Run Event | June 14, 2025 · Manila Bay</title>
+
+  <!-- ── Primary SEO ── -->
+  <meta name="description" content="Join the Neon Dash 5K — Manila's most electric fun run. 5K of light, music, and speed along Manila Bay Boulevard on June 14, 2025. Register now for ₱850." />
+  <meta name="keywords" content="Neon Dash 5K, fun run Manila 2025, Manila Bay fun run, 5K race Philippines, running event Manila, neon run, night run Manila" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Neon Dash Events" />
+  <link rel="canonical" href="https://neondash5k.ph/" />
+
+  <!-- ── Open Graph / Facebook ── -->
+  <meta property="og:type" content="event" />
+  <meta property="og:site_name" content="Neon Dash 5K" />
+  <meta property="og:title" content="Neon Dash 5K — Fun Run | June 14, 2025 · Manila Bay" />
+  <meta property="og:description" content="Manila's most electric fun run. 5K of light, music, and speed along Manila Bay Boulevard. Register for ₱850 — limited slots only." />
+  <meta property="og:image" content="https://images.pexels.com/photos/2524871/pexels-photo-2524871.jpeg?auto=compress&cs=tinysrgb&w=1200" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://neondash5k.ph/" />
+  <meta property="og:locale" content="en_PH" />
+
+  <!-- ── Twitter Card ── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Neon Dash 5K — Fun Run | June 14, 2025" />
+  <meta name="twitter:description" content="Manila's most electric fun run. 5K of light, music, and speed along Manila Bay. Register from ₱850." />
+  <meta name="twitter:image" content="https://images.pexels.com/photos/2524871/pexels-photo-2524871.jpeg?auto=compress&cs=tinysrgb&w=1200" />
+
+  <!-- ── JSON-LD Event Schema ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    "name": "Neon Dash 5K",
+    "description": "Manila's most electric fun run — 5K of light, music, and speed along Manila Bay Boulevard.",
+    "startDate": "2025-06-14T05:30:00+08:00",
+    "endDate": "2025-06-14T10:00:00+08:00",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "location": {
+      "@type": "Place",
+      "name": "Manila Bay Esplanade",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Manila Bay Boulevard, near CCP",
+        "addressLocality": "Manila",
+        "addressRegion": "Metro Manila",
+        "addressCountry": "PH"
+      }
+    },
+    "organizer": {
+      "@type": "Organization",
+      "name": "Neon Dash Events",
+      "url": "https://neondash5k.ph",
+      "email": "info@neondash5k.ph",
+      "telephone": "+639170000000"
+    },
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "5K Fun Run",
+        "price": "850",
+        "priceCurrency": "PHP",
+        "availability": "https://schema.org/InStock",
+        "url": "https://neondash5k.ph/#register"
+      },
+      {
+        "@type": "Offer",
+        "name": "5K Competitive",
+        "price": "950",
+        "priceCurrency": "PHP",
+        "availability": "https://schema.org/InStock",
+        "url": "https://neondash5k.ph/#register"
+      },
+      {
+        "@type": "Offer",
+        "name": "Kids Dash",
+        "price": "500",
+        "priceCurrency": "PHP",
+        "availability": "https://schema.org/InStock",
+        "url": "https://neondash5k.ph/#register"
+      }
+    ],
+    "image": "https://images.pexels.com/photos/2524871/pexels-photo-2524871.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "sport": "Running",
+    "url": "https://neondash5k.ph/"
+  }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Bebas Neue"', 'sans-serif'],
+            body: ['"DM Sans"', 'sans-serif'],
+          },
+          colors: {
+            neon: '#C8FF00',
+            dark: '#0D0D0D',
+            charcoal: '#1A1A1A',
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --neon: #C8FF00;
+      --dark: #0D0D0D;
+      --charcoal: #1A1A1A;
+      --muted: #888888;
+      --white: #F5F5F0;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--dark);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    #main-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--dark);
+      border-bottom: 1px solid #222;
+      transition: padding 0.3s ease, backdrop-filter 0.3s ease;
+    }
+    #main-nav.scrolled {
+      backdrop-filter: blur(12px);
+      background: rgba(13,13,13,0.85);
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 1rem;
+    }
+
+    /* ─── COUNTDOWN ─── */
+    .countdown-block {
+      display: inline-block;
+      text-align: center;
+      min-width: 70px;
+    }
+    .countdown-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: var(--neon);
+      line-height: 1;
+    }
+    .countdown-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .countdown-sep {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--neon);
+      opacity: 0.4;
+      margin: 0 4px;
+      line-height: 1;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+
+    /* ─── SCROLL INDICATOR ─── */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--neon), transparent);
+      animation: scrollPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 1; transform: scaleY(1); }
+      50% { opacity: 0.3; transform: scaleY(0.6); }
+    }
+
+    /* ─── PARALLAX PANELS ─── */
+    .parallax-panel {
+      height: 80vh;
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .parallax-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+    }
+    .parallax-text {
+      position: relative;
+      z-index: 1;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 10vw, 9rem);
+      color: var(--neon);
+      text-shadow: 0 0 40px rgba(200,255,0,0.4), 0 4px 30px rgba(0,0,0,0.8);
+      letter-spacing: 0.05em;
+      text-align: center;
+      padding: 0 1rem;
+    }
+    @media (max-width: 768px) {
+      .parallax-panel { background-attachment: scroll; }
+    }
+
+    /* ─── VIDEO SCRUB ─── */
+    #video-scrub {
+      height: 300vh;
+      position: relative;
+    }
+    #video-scrub-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #scrub-video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    #scrub-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .scrub-text {
+      position: absolute;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      color: var(--white);
+      letter-spacing: 0.06em;
+      text-align: center;
+      padding: 0 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .scrub-text.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── GALLERY ─── */
+    .gallery-track {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 8px 4px 16px;
+      cursor: grab;
+    }
+    .gallery-track:active { cursor: grabbing; }
+    .gallery-track::-webkit-scrollbar { display: none; }
+    .gallery-item {
+      flex: 0 0 auto;
+      width: 340px;
+      height: 320px;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      scroll-snap-align: start;
+    }
+    .gallery-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.04); }
+    .gallery-hover {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .gallery-item:hover .gallery-hover { opacity: 1; }
+
+    /* ─── REGISTRATION CARD ─── */
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff;
+      color: #111;
+    }
+    .form-input:focus { border-color: var(--neon); }
+    .form-input.error { border-color: #e53e3e; }
+    .field-error {
+      font-size: 0.75rem;
+      color: #e53e3e;
+      margin-top: 3px;
+      display: none;
+    }
+    .field-error.show { display: block; }
+
+    /* ─── PRICING CARDS ─── */
+    .price-card {
+      border: 1.5px solid #333;
+      border-radius: 6px;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      text-align: center;
+    }
+    .price-card.active {
+      border-color: var(--neon);
+      background: rgba(200,255,0,0.06);
+    }
+
+    /* ─── FAQ ─── */
+    .faq-item { border-bottom: 1px solid #222; }
+    .faq-trigger {
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: left;
+    }
+    .faq-icon {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      color: var(--neon);
+      line-height: 1;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+      margin-left: 16px;
+    }
+    .faq-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .faq-body p {
+      padding-bottom: 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ─── REVEAL ANIMATIONS ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.animate-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── ROUTE SVG ─── */
+    .route-map {
+      background: var(--charcoal);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    /* ─── SUCCESS STATE ─── */
+    #success-state {
+      display: none;
+      text-align: center;
+      padding: 48px 24px;
+      animation: successIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes successIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* ─── MARQUEE ─── */
+    .marquee-wrapper { overflow: hidden; }
+    .marquee-track {
+      display: flex;
+      gap: 16px;
+      width: max-content;
+      animation: marquee 30s linear infinite;
+    }
+    .marquee-wrapper:hover .marquee-track { animation-play-state: paused; }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ─── EVENT CARD ─── */
+    .event-card {
+      border-left: 3px solid var(--neon);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .event-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+
+    /* ─── STAT NUMBERS ─── */
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      color: var(--neon);
+      line-height: 1;
+    }
+  </style>
+</head>
+<body class="font-body bg-dark text-white">
+
+  <!-- ══════════════════════════════════════════
+       1. STICKY NAVIGATION
+  ══════════════════════════════════════════ -->
+  <nav id="main-nav" class="py-4 px-6">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="#hero" class="font-display text-2xl tracking-widest text-neon">RUN•2025</a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#about" class="text-sm font-medium text-white/70 hover:text-white transition-colors">About</a>
+        <a href="#route" class="text-sm font-medium text-white/70 hover:text-white transition-colors">Route</a>
+        <a href="#register" class="text-sm font-medium text-white/70 hover:text-white transition-colors">Register</a>
+        <a href="#faq" class="text-sm font-medium text-white/70 hover:text-white transition-colors">FAQ</a>
+        <a href="#register" class="bg-neon text-dark text-sm font-semibold px-5 py-2.5 rounded hover:scale-105 transition-transform">
+          REGISTER NOW →
+        </a>
+      </div>
+      <!-- Mobile hamburger -->
+      <button id="mobile-menu-btn" class="md:hidden text-white p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden mt-3 pb-3 border-t border-white/10">
+      <div class="flex flex-col gap-3 pt-3 px-2">
+        <a href="#about" class="text-sm font-medium text-white/70">About</a>
+        <a href="#route" class="text-sm font-medium text-white/70">Route</a>
+        <a href="#register" class="text-sm font-medium text-white/70">Register</a>
+        <a href="#faq" class="text-sm font-medium text-white/70">FAQ</a>
+        <a href="#register" class="bg-neon text-dark text-sm font-semibold px-5 py-2.5 rounded text-center mt-1">REGISTER NOW →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════
+       2. HERO SECTION
+  ══════════════════════════════════════════ -->
+  <section id="hero">
+    <video id="hero-video" muted loop playsinline preload="metadata" poster="https://images.pexels.com/photos/2524871/pexels-photo-2524871.jpeg?auto=compress&cs=tinysrgb&w=1400">
+      <source src="https://videos.pexels.com/video-files/856973/856973-hd_1920_1080_25fps.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="text-xs md:text-sm font-semibold tracking-[0.3em] text-neon/80 uppercase mb-4 reveal">
+        June 14, 2025 · Manila Bay Boulevard
+      </p>
+      <h1 class="font-display text-[clamp(4rem,18vw,160px)] leading-none text-white tracking-wide reveal" style="transition-delay:0.1s">
+        NEON DASH 5K
+      </h1>
+      <p class="mt-4 text-base md:text-xl text-white/70 max-w-xl mx-auto leading-relaxed reveal" style="transition-delay:0.2s">
+        The city's most electric fun run — 5K of light, music, and speed.
+      </p>
+      <div class="flex flex-wrap gap-4 justify-center mt-8 reveal" style="transition-delay:0.3s">
+        <a href="#register" class="bg-neon text-dark font-semibold px-8 py-3.5 rounded hover:scale-105 transition-transform text-sm tracking-widest uppercase">
+          Register Now
+        </a>
+        <a href="#route" class="border border-white/40 text-white font-semibold px-8 py-3.5 rounded hover:border-white transition-colors text-sm tracking-widest uppercase">
+          View Route
+        </a>
+      </div>
+      <!-- Countdown -->
+      <div class="flex items-start justify-center gap-1 mt-10 reveal" style="transition-delay:0.4s" id="countdown-wrapper">
+        <div class="countdown-block">
+          <div class="countdown-num" id="cd-days">00</div>
+          <div class="countdown-label">Days</div>
+        </div>
+        <div class="countdown-sep">|</div>
+        <div class="countdown-block">
+          <div class="countdown-num" id="cd-hours">00</div>
+          <div class="countdown-label">Hours</div>
+        </div>
+        <div class="countdown-sep">|</div>
+        <div class="countdown-block">
+          <div class="countdown-num" id="cd-mins">00</div>
+          <div class="countdown-label">Mins</div>
+        </div>
+        <div class="countdown-sep">|</div>
+        <div class="countdown-block">
+          <div class="countdown-num" id="cd-secs">00</div>
+          <div class="countdown-label">Secs</div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       3. STATS BAR
+  ══════════════════════════════════════════ -->
+  <section class="bg-charcoal border-y border-white/5 py-10 px-6" id="about">
+    <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div class="reveal">
+        <div class="stat-num" data-target="5" data-suffix="K">0K</div>
+        <div class="text-xs font-semibold tracking-[0.2em] text-muted uppercase mt-1">Distance</div>
+      </div>
+      <div class="border-white/10 md:border-l reveal" style="transition-delay:0.1s">
+        <div class="stat-num" data-target="500" data-suffix="+">0+</div>
+        <div class="text-xs font-semibold tracking-[0.2em] text-muted uppercase mt-1">Runners</div>
+      </div>
+      <div class="border-white/10 md:border-l reveal" style="transition-delay:0.2s">
+        <div class="stat-num" data-target="850" data-prefix="₱">₱0</div>
+        <div class="text-xs font-semibold tracking-[0.2em] text-muted uppercase mt-1">Entry Fee</div>
+      </div>
+      <div class="border-white/10 md:border-l reveal" style="transition-delay:0.3s">
+        <div class="stat-num" data-target="50" data-prefix="TOP ">TOP 0</div>
+        <div class="text-xs font-semibold tracking-[0.2em] text-muted uppercase mt-1">Finisher Medals</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       4. PARALLAX IMAGE SECTION
+  ══════════════════════════════════════════ -->
+  <div>
+    <div class="parallax-panel" style="background-image: url('https://images.pexels.com/photos/2524871/pexels-photo-2524871.jpeg?auto=compress&cs=tinysrgb&w=1400')">
+      <div class="parallax-text reveal">EVERY STEP COUNTS</div>
+    </div>
+    <div class="parallax-panel" style="background-image: url('https://images.pexels.com/photos/1571939/pexels-photo-1571939.jpeg?auto=compress&cs=tinysrgb&w=1400')">
+      <div class="parallax-text reveal">RUN YOUR PACE</div>
+    </div>
+    <div class="parallax-panel" style="background-image: url('https://images.pexels.com/photos/1390403/pexels-photo-1390403.jpeg?auto=compress&cs=tinysrgb&w=1400')">
+      <div class="parallax-text reveal">CROSS THE LINE</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       5. VIDEO FRAME SCRUBBING
+  ══════════════════════════════════════════ -->
+  <section id="video-scrub">
+    <div id="video-scrub-sticky">
+      <video id="scrub-video" preload="auto" muted playsinline
+        poster="https://images.pexels.com/photos/1571939/pexels-photo-1571939.jpeg?auto=compress&cs=tinysrgb&w=1400">
+        <source src="https://videos.pexels.com/video-files/3048659/3048659-uhd_2560_1440_25fps.mp4" type="video/mp4" />
+      </video>
+      <div id="scrub-overlay">
+        <div class="scrub-text" id="scrub-t1">THE ROUTE</div>
+        <div class="scrub-text" id="scrub-t2">5 KILOMETERS OF PURE ENERGY</div>
+        <div class="scrub-text" id="scrub-t3">YOUR FINISH LINE AWAITS</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       6. EVENT DETAILS GRID
+  ══════════════════════════════════════════ -->
+  <section class="bg-dark py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <p class="text-xs tracking-[0.3em] text-neon uppercase font-semibold mb-3">Event Info</p>
+        <h2 class="font-display text-5xl md:text-7xl text-white">RACE DAY DETAILS</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+        <div class="event-card bg-charcoal p-8 rounded reveal">
+          <div class="text-2xl mb-4">📍</div>
+          <h3 class="font-display text-2xl text-neon mb-4 tracking-wider">Start / Finish</h3>
+          <ul class="space-y-2 text-white/70 text-sm leading-relaxed">
+            <li>Manila Bay Esplanade, near CCP</li>
+            <li>Assembly at Tent A</li>
+            <li>Bag deposit available</li>
+          </ul>
+        </div>
+        <!-- Card 2 -->
+        <div class="event-card bg-charcoal p-8 rounded reveal" style="transition-delay:0.1s">
+          <div class="text-2xl mb-4">🕗</div>
+          <h3 class="font-display text-2xl text-neon mb-4 tracking-wider">Schedule</h3>
+          <ul class="space-y-2 text-white/70 text-sm leading-relaxed">
+            <li>5:00 AM – Warmup</li>
+            <li>5:30 AM – Race Start</li>
+            <li>7:30 AM – Awarding Ceremony</li>
+            <li>8:00 AM – Post-race Party</li>
+          </ul>
+        </div>
+        <!-- Card 3 -->
+        <div class="event-card bg-charcoal p-8 rounded reveal" style="transition-delay:0.2s">
+          <div class="text-2xl mb-4">🏅</div>
+          <h3 class="font-display text-2xl text-neon mb-4 tracking-wider">Categories</h3>
+          <ul class="space-y-2 text-white/70 text-sm leading-relaxed">
+            <li>5K Fun Run (Open)</li>
+            <li>5K Competitive</li>
+            <li>Kids Dash (Below 12)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       7. ROUTE MAP
+  ══════════════════════════════════════════ -->
+  <section id="route" class="bg-charcoal py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <p class="text-xs tracking-[0.3em] text-neon uppercase font-semibold mb-3">Manila Bay</p>
+        <h2 class="font-display text-5xl md:text-7xl text-white">THE 5K ROUTE</h2>
+      </div>
+      <!-- SVG Route Map -->
+      <div class="route-map reveal" style="transition-delay:0.1s">
+        <svg viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+          <!-- Background grid -->
+          <rect width="800" height="480" fill="#111"/>
+          <defs>
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e1e1e" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect width="800" height="480" fill="url(#grid)"/>
+
+          <!-- Water (bay) -->
+          <ellipse cx="400" cy="520" rx="500" ry="180" fill="#0a1a2a" opacity="0.8"/>
+          <text x="400" y="450" text-anchor="middle" fill="#1a3a5a" font-size="14" font-family="DM Sans">MANILA BAY</text>
+
+          <!-- City blocks (charcoal rectangles) -->
+          <rect x="60" y="60" width="120" height="80" fill="#1e1e1e" rx="2"/>
+          <rect x="200" y="60" width="100" height="80" fill="#1e1e1e" rx="2"/>
+          <rect x="320" y="60" width="140" height="80" fill="#1e1e1e" rx="2"/>
+          <rect x="480" y="60" width="100" height="80" fill="#1e1e1e" rx="2"/>
+          <rect x="600" y="60" width="120" height="80" fill="#1e1e1e" rx="2"/>
+          <rect x="60" y="170" width="120" height="80" fill="#1e1e1e" rx="2"/>
+          <rect x="200" y="170" width="100" height="80" fill="#1e1e1e" rx="2"/>
+          <rect x="480" y="170" width="100" height="80" fill="#1e1e1e" rx="2"/>
+          <rect x="600" y="170" width="120" height="80" fill="#1e1e1e" rx="2"/>
+
+          <!-- Road labels -->
+          <text x="400" y="168" text-anchor="middle" fill="#333" font-size="11" font-family="DM Sans" font-weight="500">ROXAS BOULEVARD</text>
+          <text x="400" y="275" text-anchor="middle" fill="#333" font-size="11" font-family="DM Sans" font-weight="500">BAY DRIVE</text>
+          <text x="155" y="200" text-anchor="middle" fill="#333" font-size="10" font-family="DM Sans">CCP COMPLEX</text>
+
+          <!-- Route path (neon) -->
+          <path d="M 400 310
+                   L 200 310
+                   Q 140 310 140 250
+                   L 140 180
+                   Q 140 155 165 155
+                   L 630 155
+                   Q 655 155 655 180
+                   L 655 250
+                   Q 655 310 600 310
+                   L 400 310"
+            fill="none"
+            stroke="#C8FF00"
+            stroke-width="4"
+            stroke-dasharray="12 5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+
+          <!-- Route direction arrows -->
+          <polygon points="330,306 330,314 340,310" fill="#C8FF00"/>
+          <polygon points="155,210 163,210 159,200" fill="#C8FF00"/>
+          <polygon points="470,151 470,159 480,155" fill="#C8FF00"/>
+          <polygon points="644,240 652,240 648,250" fill="#C8FF00"/>
+
+          <!-- Distance markers -->
+          <circle cx="280" cy="310" r="14" fill="#C8FF00" opacity="0.15" stroke="#C8FF00" stroke-width="1.5"/>
+          <text x="280" y="314" text-anchor="middle" fill="#C8FF00" font-size="11" font-family="Bebas Neue" font-weight="bold">1K</text>
+
+          <circle cx="140" cy="210" r="14" fill="#C8FF00" opacity="0.15" stroke="#C8FF00" stroke-width="1.5"/>
+          <text x="140" y="214" text-anchor="middle" fill="#C8FF00" font-size="11" font-family="Bebas Neue" font-weight="bold">2K</text>
+
+          <circle cx="390" cy="155" r="14" fill="#C8FF00" opacity="0.15" stroke="#C8FF00" stroke-width="1.5"/>
+          <text x="390" y="159" text-anchor="middle" fill="#C8FF00" font-size="11" font-family="Bebas Neue" font-weight="bold">3K</text>
+
+          <circle cx="655" cy="215" r="14" fill="#C8FF00" opacity="0.15" stroke="#C8FF00" stroke-width="1.5"/>
+          <text x="655" y="219" text-anchor="middle" fill="#C8FF00" font-size="11" font-family="Bebas Neue" font-weight="bold">4K</text>
+
+          <!-- Start/Finish star marker -->
+          <g transform="translate(400,310)">
+            <circle r="18" fill="#C8FF00" opacity="0.2"/>
+            <circle r="10" fill="#C8FF00"/>
+            <text y="4" text-anchor="middle" fill="#0D0D0D" font-size="10" font-family="Bebas Neue" font-weight="bold">S/F</text>
+          </g>
+
+          <!-- Legend -->
+          <rect x="20" y="390" width="200" height="76" rx="4" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
+          <text x="32" y="411" fill="#888" font-size="10" font-family="DM Sans">LEGEND</text>
+          <circle cx="36" cy="430" r="6" fill="#C8FF00"/>
+          <text x="48" y="434" fill="#F5F5F0" font-size="11" font-family="DM Sans">Start / Finish</text>
+          <line x1="30" y1="452" x2="50" y2="452" stroke="#C8FF00" stroke-width="3" stroke-dasharray="6 3"/>
+          <text x="58" y="456" fill="#F5F5F0" font-size="11" font-family="DM Sans">5K Route</text>
+        </svg>
+      </div>
+      <!-- Route notes -->
+      <div class="grid md:grid-cols-3 gap-4 mt-8">
+        <div class="flex items-start gap-3 reveal">
+          <span class="text-neon mt-0.5">✅</span>
+          <span class="text-white/70 text-sm">Flat route, road closures from 3AM</span>
+        </div>
+        <div class="flex items-start gap-3 reveal" style="transition-delay:0.1s">
+          <span class="text-neon mt-0.5">✅</span>
+          <span class="text-white/70 text-sm">Water stations at every 1.5K</span>
+        </div>
+        <div class="flex items-start gap-3 reveal" style="transition-delay:0.2s">
+          <span class="text-neon mt-0.5">✅</span>
+          <span class="text-white/70 text-sm">Medical tent at Start/Finish</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       8. PHOTO GALLERY
+  ══════════════════════════════════════════ -->
+  <section class="bg-dark py-24 px-6 overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-end justify-between mb-10 reveal">
+        <div>
+          <p class="text-xs tracking-[0.3em] text-neon uppercase font-semibold mb-3">Memories</p>
+          <h2 class="font-display text-5xl md:text-7xl text-white">RACE DAY 2024</h2>
+        </div>
+        <div class="hidden md:flex gap-3">
+          <button id="gallery-prev" class="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center hover:border-neon hover:text-neon transition-colors text-white">
+            ←
+          </button>
+          <button id="gallery-next" class="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center hover:border-neon hover:text-neon transition-colors text-white">
+            →
+          </button>
+        </div>
+      </div>
+      <div class="marquee-wrapper reveal" style="transition-delay:0.1s">
+        <div class="marquee-track" id="gallery-track">
+          <!-- Original items -->
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/618612/pexels-photo-618612.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race Day" loading="lazy"/>
+            <div class="gallery-hover"><span class="text-white font-semibold text-sm tracking-wider">📸 Race Day 2024</span></div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/1904769/pexels-photo-1904769.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race Day" loading="lazy"/>
+            <div class="gallery-hover"><span class="text-white font-semibold text-sm tracking-wider">📸 Race Day 2024</span></div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/2402777/pexels-photo-2402777.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race Day" loading="lazy"/>
+            <div class="gallery-hover"><span class="text-white font-semibold text-sm tracking-wider">📸 Race Day 2024</span></div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/3621185/pexels-photo-3621185.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race Day" loading="lazy"/>
+            <div class="gallery-hover"><span class="text-white font-semibold text-sm tracking-wider">📸 Race Day 2024</span></div>
+          </div>
+          <!-- Duplicates for infinite marquee -->
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/618612/pexels-photo-618612.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race Day" loading="lazy"/>
+            <div class="gallery-hover"><span class="text-white font-semibold text-sm tracking-wider">📸 Race Day 2024</span></div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/1904769/pexels-photo-1904769.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race Day" loading="lazy"/>
+            <div class="gallery-hover"><span class="text-white font-semibold text-sm tracking-wider">📸 Race Day 2024</span></div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/2402777/pexels-photo-2402777.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race Day" loading="lazy"/>
+            <div class="gallery-hover"><span class="text-white font-semibold text-sm tracking-wider">📸 Race Day 2024</span></div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/3621185/pexels-photo-3621185.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race Day" loading="lazy"/>
+            <div class="gallery-hover"><span class="text-white font-semibold text-sm tracking-wider">📸 Race Day 2024</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       9. REGISTRATION
+  ══════════════════════════════════════════ -->
+  <section id="register" class="bg-charcoal py-24 px-6">
+    <div class="max-w-2xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <p class="text-xs tracking-[0.3em] text-neon uppercase font-semibold mb-3">Limited Slots</p>
+        <h2 class="font-display text-5xl md:text-7xl text-white">SECURE YOUR SLOT</h2>
+      </div>
+
+      <!-- Pricing -->
+      <div class="grid grid-cols-3 gap-3 mb-8 reveal" style="transition-delay:0.1s">
+        <div class="price-card active" data-category="5K Fun Run" data-price="₱850">
+          <div class="font-display text-lg text-neon tracking-wider">5K FUN RUN</div>
+          <div class="text-2xl font-bold text-white mt-1">₱850</div>
+        </div>
+        <div class="price-card" data-category="5K Competitive" data-price="₱950">
+          <div class="font-display text-lg text-neon tracking-wider">5K COMPETITIVE</div>
+          <div class="text-2xl font-bold text-white mt-1">₱950</div>
+        </div>
+        <div class="price-card" data-category="Kids Dash" data-price="₱500">
+          <div class="font-display text-lg text-neon tracking-wider">KIDS DASH</div>
+          <div class="text-2xl font-bold text-white mt-1">₱500</div>
+        </div>
+      </div>
+
+      <!-- Form card -->
+      <div class="bg-white rounded-lg p-8 shadow-2xl reveal" style="transition-delay:0.2s" id="reg-card">
+        <!-- Success state -->
+        <div id="success-state">
+          <div class="text-5xl mb-4">✅</div>
+          <h3 class="font-display text-4xl text-dark mb-2 tracking-wide">YOU'RE IN!</h3>
+          <p class="text-gray-500 text-sm mb-1">Check your email for confirmation.</p>
+          <p class="text-gray-800 font-semibold" id="success-name-msg"></p>
+        </div>
+
+        <!-- Registration form -->
+        <form id="reg-form" novalidate>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Full Name *</label>
+              <input type="text" class="form-input" id="f-name" placeholder="Juan dela Cruz" required />
+              <div class="field-error" id="e-name">Please enter your full name.</div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Email Address *</label>
+              <input type="email" class="form-input" id="f-email" placeholder="you@email.com" required />
+              <div class="field-error" id="e-email">Please enter a valid email.</div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Contact Number *</label>
+              <input type="tel" class="form-input" id="f-phone" placeholder="+63 917 000 0000" required />
+              <div class="field-error" id="e-phone">Please enter your contact number.</div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Age *</label>
+              <input type="number" class="form-input" id="f-age" placeholder="25" min="7" required />
+              <div class="field-error" id="e-age">Age must be 7 or older.</div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Gender *</label>
+              <select class="form-input" id="f-gender" required>
+                <option value="">Select gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Non-binary</option>
+                <option>Prefer not to say</option>
+              </select>
+              <div class="field-error" id="e-gender">Please select your gender.</div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Category *</label>
+              <select class="form-input" id="f-category" required>
+                <option value="">Select category</option>
+                <option>5K Fun Run</option>
+                <option>5K Competitive</option>
+                <option>Kids Dash</option>
+              </select>
+              <div class="field-error" id="e-category">Please select a category.</div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">T-Shirt Size *</label>
+              <select class="form-input" id="f-size" required>
+                <option value="">Select size</option>
+                <option>XS</option><option>S</option><option>M</option>
+                <option>L</option><option>XL</option><option>XXL</option>
+              </select>
+              <div class="field-error" id="e-size">Please select a shirt size.</div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Emergency Contact Name *</label>
+              <input type="text" class="form-input" id="f-ec-name" placeholder="Maria dela Cruz" required />
+              <div class="field-error" id="e-ec-name">Please enter an emergency contact name.</div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Emergency Contact Number *</label>
+              <input type="tel" class="form-input" id="f-ec-phone" placeholder="+63 917 000 0001" required />
+              <div class="field-error" id="e-ec-phone">Please enter an emergency contact number.</div>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">How did you hear about us?</label>
+              <select class="form-input" id="f-source">
+                <option value="">Select an option</option>
+                <option>Social Media</option>
+                <option>Friend</option>
+                <option>Poster</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" id="f-agree" class="mt-1 w-4 h-4 accent-yellow-400 flex-shrink-0" />
+                <span class="text-sm text-gray-600">I agree to the event rules and liability waiver *</span>
+              </label>
+              <div class="field-error" id="e-agree">You must agree to the waiver to register.</div>
+            </div>
+          </div>
+          <button type="submit" class="w-full mt-6 bg-neon text-dark font-semibold py-4 rounded tracking-widest text-sm hover:scale-[1.02] transition-transform uppercase">
+            Secure My Slot →
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       10. FAQ
+  ══════════════════════════════════════════ -->
+  <section id="faq" class="bg-dark py-24 px-6">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <p class="text-xs tracking-[0.3em] text-neon uppercase font-semibold mb-3">Got Questions?</p>
+        <h2 class="font-display text-5xl md:text-7xl text-white">FREQUENTLY ASKED</h2>
+      </div>
+      <div id="faq-list" class="border-t border-white/10">
+
+        <div class="faq-item reveal">
+          <button class="faq-trigger" aria-expanded="false">
+            <span>What's included in the registration fee?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-body">
+            <p>Your registration includes a race bib, finisher medal (for the first 50 finishers), event T-shirt, race kit bag, timing chip, and access to the post-race party with food and live music. Water stations are provided throughout the course.</p>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" style="transition-delay:0.05s">
+          <button class="faq-trigger" aria-expanded="false">
+            <span>Is the route suitable for beginners?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-body">
+            <p>Absolutely! The 5K Fun Run category is designed for all fitness levels. The route is completely flat along Manila Bay Boulevard with no elevation changes. There is no cut-off time for the Fun Run category — run, jog, or walk at your own pace.</p>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" style="transition-delay:0.1s">
+          <button class="faq-trigger" aria-expanded="false">
+            <span>Can I join without a running background?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-body">
+            <p>Yes, everyone is welcome! The Fun Run category has no requirements regarding pace or running experience. We encourage first-timers to join. Just make sure you're in reasonably good health — if you have any medical conditions, please consult your doctor beforehand.</p>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" style="transition-delay:0.15s">
+          <button class="faq-trigger" aria-expanded="false">
+            <span>What do I wear? Is there a dress code?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-body">
+            <p>Wear your event T-shirt, comfortable running shoes, and athletic bottoms. We encourage neon colors and glow accessories to match the Neon Dash theme — but there is no strict dress code. We'll have a glow station at the assembly area with light accessories for participants!</p>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" style="transition-delay:0.2s">
+          <button class="faq-trigger" aria-expanded="false">
+            <span>Where do I pick up my race kit?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-body">
+            <p>Race kit claiming is on June 12–13, 2025 (2:00PM – 8:00PM) at SM Mall of Asia Activity Center, Pasay City. On race day (June 14), late kit claiming will be available from 3:30AM–5:00AM at Tent A near the start line. Bring a valid ID and your registration confirmation email.</p>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" style="transition-delay:0.25s">
+          <button class="faq-trigger" aria-expanded="false">
+            <span>What happens if it rains?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-body">
+            <p>The event is rain or shine! Light to moderate rain will not cancel the race. In case of a severe weather advisory (Signal No. 1 or higher), the event organizers will make an official announcement via our social media pages no later than 4:00AM on race day. Registered participants will be informed by email as well.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       11. FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="bg-charcoal border-t border-white/5 py-16 px-6">
+    <div class="max-w-5xl mx-auto text-center">
+      <div class="font-display text-4xl md:text-5xl text-neon tracking-widest mb-2">NEON DASH 5K</div>
+      <p class="text-muted text-sm mb-8">June 14, 2025 · Manila, Philippines</p>
+      <!-- Social icons -->
+      <div class="flex items-center justify-center gap-5 mb-8">
+        <!-- Facebook -->
+        <a href="#" aria-label="Facebook" class="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center hover:border-neon hover:text-neon transition-colors text-white/50">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+          </svg>
+        </a>
+        <!-- Instagram -->
+        <a href="#" aria-label="Instagram" class="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center hover:border-neon hover:text-neon transition-colors text-white/50">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+        </a>
+        <!-- X / Twitter -->
+        <a href="#" aria-label="Twitter/X" class="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center hover:border-neon hover:text-neon transition-colors text-white/50">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </a>
+      </div>
+      <div class="text-sm text-muted/60 space-y-1">
+        <p>© 2025 Neon Dash Events. All rights reserved.</p>
+        <p>info@neondash5k.ph | +63 917 000 0000</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════════════════ -->
+  <script>
+    // ── NAV scroll compress ──────────────────
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        nav.classList.add('scrolled');
+        nav.style.paddingTop = '10px';
+        nav.style.paddingBottom = '10px';
+      } else {
+        nav.classList.remove('scrolled');
+        nav.style.paddingTop = '';
+        nav.style.paddingBottom = '';
+      }
+    }, { passive: true });
+
+    // ── Mobile menu ──────────────────────────
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+    });
+
+    // ── Countdown timer ──────────────────────
+    const target = new Date('2025-06-14T05:30:00+08:00');
+    function updateCountdown() {
+      const now = new Date();
+      const diff = target - now;
+      if (diff <= 0) {
+        document.getElementById('cd-days').textContent = '00';
+        document.getElementById('cd-hours').textContent = '00';
+        document.getElementById('cd-mins').textContent = '00';
+        document.getElementById('cd-secs').textContent = '00';
+        return;
+      }
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
+      document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+      document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // ── Reveal on scroll ─────────────────────
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ── Count-up stats ───────────────────────
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.dataset.target, 10);
+          const prefix = el.dataset.prefix || '';
+          const suffix = el.dataset.suffix || '';
+          const duration = 1400;
+          const step = 16;
+          const steps = duration / step;
+          let current = 0;
+          const increment = target / steps;
+          const timer = setInterval(() => {
+            current = Math.min(current + increment, target);
+            el.textContent = prefix + Math.round(current) + suffix;
+            if (current >= target) clearInterval(timer);
+          }, step);
+          countObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-target]').forEach(el => countObserver.observe(el));
+
+    // ── Hero video: play only when in view ──
+    const heroVideo = document.getElementById('hero-video');
+    const heroObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          heroVideo.play().catch(() => {});
+        } else {
+          heroVideo.pause();
+        }
+      });
+    }, { threshold: 0.25 });
+    heroObserver.observe(document.getElementById('hero'));
+
+    // ── Video scrub ──────────────────────────
+    const scrubSection = document.getElementById('video-scrub');
+    const scrubVideo = document.getElementById('scrub-video');
+    const scrubT1 = document.getElementById('scrub-t1');
+    const scrubT2 = document.getElementById('scrub-t2');
+    const scrubT3 = document.getElementById('scrub-t3');
+
+    // Ensure video is paused and loaded
+    scrubVideo.pause();
+
+    window.addEventListener('scroll', () => {
+      const rect = scrubSection.getBoundingClientRect();
+      const sectionHeight = scrubSection.offsetHeight - window.innerHeight;
+      const scrolled = -rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / sectionHeight));
+
+      if (scrubVideo.readyState >= 2) {
+        scrubVideo.currentTime = progress * scrubVideo.duration;
+      }
+
+      // Text overlays
+      const showT1 = progress >= 0 && progress < 0.25;
+      const showT2 = progress >= 0.30 && progress < 0.65;
+      const showT3 = progress >= 0.70;
+
+      scrubT1.classList.toggle('visible', showT1);
+      scrubT2.classList.toggle('visible', showT2);
+      scrubT3.classList.toggle('visible', showT3);
+    }, { passive: true });
+
+    // ── Gallery drag scroll ──────────────────
+    const galleryTrack = document.getElementById('gallery-track');
+    let isDragging = false, dragStartX, scrollStartLeft;
+
+    galleryTrack.addEventListener('mousedown', e => {
+      isDragging = true;
+      dragStartX = e.pageX - galleryTrack.offsetLeft;
+      scrollStartLeft = galleryTrack.scrollLeft;
+      galleryTrack.style.cursor = 'grabbing';
+      galleryTrack.style.animation = 'none';
+    });
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+      galleryTrack.style.cursor = 'grab';
+    });
+    galleryTrack.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - galleryTrack.offsetLeft;
+      galleryTrack.scrollLeft = scrollStartLeft - (x - dragStartX);
+    });
+
+    // Arrow buttons for gallery
+    document.getElementById('gallery-prev').addEventListener('click', () => {
+      galleryTrack.style.animation = 'none';
+      galleryTrack.scrollBy({ left: -360, behavior: 'smooth' });
+    });
+    document.getElementById('gallery-next').addEventListener('click', () => {
+      galleryTrack.style.animation = 'none';
+      galleryTrack.scrollBy({ left: 360, behavior: 'smooth' });
+    });
+
+    // ── Pricing card selection ───────────────
+    document.querySelectorAll('.price-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.price-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        const cat = card.dataset.category;
+        const sel = document.getElementById('f-category');
+        if (sel) {
+          for (let i = 0; i < sel.options.length; i++) {
+            if (sel.options[i].text === cat) {
+              sel.selectedIndex = i;
+              break;
+            }
+          }
+        }
+      });
+    });
+
+    // ── Form validation & submit ─────────────
+    const form = document.getElementById('reg-form');
+    const successState = document.getElementById('success-state');
+
+    function setError(fieldId, errId, condition) {
+      const field = document.getElementById(fieldId);
+      const err = document.getElementById(errId);
+      if (condition) {
+        field.classList.add('error');
+        err.classList.add('show');
+        return true;
+      } else {
+        field.classList.remove('error');
+        err.classList.remove('show');
+        return false;
+      }
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      let hasError = false;
+
+      const name = document.getElementById('f-name').value.trim();
+      const email = document.getElementById('f-email').value.trim();
+      const phone = document.getElementById('f-phone').value.trim();
+      const age = parseInt(document.getElementById('f-age').value, 10);
+      const gender = document.getElementById('f-gender').value;
+      const category = document.getElementById('f-category').value;
+      const size = document.getElementById('f-size').value;
+      const ecName = document.getElementById('f-ec-name').value.trim();
+      const ecPhone = document.getElementById('f-ec-phone').value.trim();
+      const agree = document.getElementById('f-agree').checked;
+
+      if (setError('f-name', 'e-name', !name)) hasError = true;
+      if (setError('f-email', 'e-email', !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) hasError = true;
+      if (setError('f-phone', 'e-phone', !phone)) hasError = true;
+      if (setError('f-age', 'e-age', isNaN(age) || age < 7)) hasError = true;
+      if (setError('f-gender', 'e-gender', !gender)) hasError = true;
+      if (setError('f-category', 'e-category', !category)) hasError = true;
+      if (setError('f-size', 'e-size', !size)) hasError = true;
+      if (setError('f-ec-name', 'e-ec-name', !ecName)) hasError = true;
+      if (setError('f-ec-phone', 'e-ec-phone', !ecPhone)) hasError = true;
+      if (setError('f-agree', 'e-agree', !agree)) hasError = true;
+
+      if (hasError) return;
+
+      // Show success
+      form.style.display = 'none';
+      successState.style.display = 'block';
+      document.getElementById('success-name-msg').textContent =
+        `See you at the starting line, ${name}!`;
+    });
+
+    // ── FAQ accordion ────────────────────────
+    document.querySelectorAll('.faq-trigger').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const item = trigger.parentElement;
+        const body = item.querySelector('.faq-body');
+        const icon = trigger.querySelector('.faq-icon');
+        const isOpen = body.style.maxHeight && body.style.maxHeight !== '0px';
+
+        // Close all
+        document.querySelectorAll('.faq-body').forEach(b => b.style.maxHeight = '0px');
+        document.querySelectorAll('.faq-trigger').forEach(t => {
+          t.setAttribute('aria-expanded', 'false');
+          t.querySelector('.faq-icon').textContent = '+';
+          t.querySelector('.faq-icon').style.transform = 'rotate(0deg)';
+        });
+
+        if (!isOpen) {
+          body.style.maxHeight = body.scrollHeight + 'px';
+          trigger.setAttribute('aria-expanded', 'true');
+          icon.textContent = '−';
+          icon.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
+
+    // ── Hero reveals on load ─────────────────
+    window.addEventListener('load', () => {
+      document.querySelectorAll('#hero .reveal').forEach((el, i) => {
+        setTimeout(() => el.classList.add('animate-in'), 300 + i * 120);
+      });
+    });
+  </script>
+</body>
+</html>
