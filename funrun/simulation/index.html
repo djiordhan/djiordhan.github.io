@@ -1,0 +1,388 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --brand:#1a3a2a;--brand-light:#e8f5ee;--brand-mid:#2d6a4f;
+    --accent:#f0a500;--accent-light:#fff8e6;
+    --danger:#e24b4a;--danger-light:#fcebeb;
+    --success:#3b6d11;--success-light:#eaf3de;
+    --info:#185fa5;--info-light:#e6f1fb;
+    --mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;
+  }
+  body{font-family:var(--sans);background:var(--color-background-tertiary,#f5f5f0);color:var(--color-text-primary)}
+  .shell{padding:1.25rem;max-width:1100px;margin:0 auto}
+
+  /* top bar */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;gap:12px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo-mark{width:36px;height:36px;background:var(--brand);border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .logo-mark svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2}
+  .logo-text{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:0.04em;color:var(--brand)}
+  .logo-sub{font-size:11px;color:var(--color-text-secondary);font-family:var(--sans);font-weight:400}
+  .status-bar{display:flex;align-items:center;gap:8px;font-size:13px;font-family:var(--mono)}
+  .pulse{width:8px;height:8px;border-radius:50%;background:#3b6d11;animation:blink 1s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .status-text{color:var(--color-text-secondary)}
+  .sim-btn{font-family:var(--sans);font-size:13px;padding:8px 16px;border-radius:8px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;cursor:pointer;font-weight:500;transition:all .15s}
+  .sim-btn:hover{background:var(--brand-mid)}
+  .sim-btn.stop{background:var(--danger-light);border-color:var(--danger);color:var(--danger)}
+  .sim-btn.stop:hover{background:#f7c1c1}
+
+  /* stat cards */
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.25rem}
+  .stat-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:10px;padding:.9rem 1rem}
+  .stat-label{font-size:11px;color:var(--color-text-secondary);font-weight:500;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
+  .stat-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--color-text-primary)}
+  .stat-sub{font-size:11px;color:var(--color-text-secondary);margin-top:3px}
+
+  /* main grid */
+  .main-grid{display:grid;grid-template-columns:1fr 340px;gap:12px;align-items:start}
+  @media(max-width:760px){.main-grid{grid-template-columns:1fr}}
+
+  /* panel */
+  .panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;overflow:hidden}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+  .panel-title{font-size:13px;font-weight:600;font-family:var(--mono);letter-spacing:.03em;color:var(--color-text-primary)}
+  .panel-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;font-family:var(--sans)}
+
+  /* finish feed */
+  .feed{max-height:400px;overflow-y:auto}
+  .feed::-webkit-scrollbar{width:4px}
+  .feed::-webkit-scrollbar-track{background:transparent}
+  .feed::-webkit-scrollbar-thumb{background:var(--color-border-tertiary);border-radius:2px}
+  .feed-row{display:grid;grid-template-columns:44px 1fr 90px 80px 70px;align-items:center;gap:8px;padding:.6rem 1rem;border-bottom:0.5px solid var(--color-border-tertiary);transition:background .3s;animation:slideIn .3s ease}
+  .feed-row:last-child{border-bottom:none}
+  @keyframes slideIn{from{transform:translateX(-8px);opacity:0}to{transform:none;opacity:1}}
+  .feed-row.new{background:var(--brand-light);animation:highlight .8s ease forwards}
+  @keyframes highlight{0%{background:#c0f0d8}100%{background:transparent}}
+  .rank{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--color-text-secondary);text-align:center}
+  .rank.gold{color:#c8860a}
+  .rank.silver{color:#6b7280}
+  .rank.bronze{color:#92500a}
+  .runner-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+  .runner-bib{font-size:11px;color:var(--color-text-secondary);font-family:var(--mono)}
+  .cat-tag{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;display:inline-block;width:fit-content}
+  .cat-5k{background:#e6f1fb;color:#185fa5}
+  .cat-10k{background:#fff8e6;color:#854f0b}
+  .cat-21k{background:#fcebeb;color:#a32d2d}
+  .cat-fun{background:#eaf3de;color:#3b6d11}
+  .finish-time{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--color-text-primary);text-align:right}
+  .chip-badge{font-size:10px;font-family:var(--mono);color:var(--color-text-secondary);text-align:right}
+
+  /* feed header */
+  .feed-header{display:grid;grid-template-columns:44px 1fr 90px 80px 70px;gap:8px;padding:.5rem 1rem;border-bottom:0.5px solid var(--color-border-secondary)}
+  .feed-col{font-size:10px;font-weight:600;color:var(--color-text-secondary);letter-spacing:.05em;text-transform:uppercase}
+
+  /* category panel */
+  .cat-list{padding:.5rem 0}
+  .cat-row{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;border-bottom:0.5px solid var(--color-border-tertiary);gap:8px}
+  .cat-row:last-child{border-bottom:none}
+  .cat-info{display:flex;align-items:center;gap:8px}
+  .cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .cat-name{font-size:13px;font-weight:500}
+  .cat-progress{flex:1;height:6px;background:var(--color-background-tertiary);border-radius:3px;margin:0 8px;overflow:hidden}
+  .cat-bar{height:100%;border-radius:3px;transition:width .4s ease}
+  .cat-count{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--color-text-primary);white-space:nowrap}
+
+  /* recent chip scan */
+  .scan-flash{padding:.75rem 1rem;text-align:center;font-family:var(--mono);font-size:12px;color:var(--color-text-secondary);min-height:44px;display:flex;align-items:center;justify-content:center;gap:8px;border-top:0.5px solid var(--color-border-tertiary)}
+  .scan-id{color:var(--brand-mid);font-weight:700;font-size:13px;letter-spacing:.06em}
+
+  /* speed controls */
+  .controls{display:flex;align-items:center;gap:10px;padding:.75rem 1rem;border-top:0.5px solid var(--color-border-tertiary)}
+  .controls label{font-size:12px;color:var(--color-text-secondary)}
+  .controls select{font-family:var(--sans);font-size:12px;padding:4px 8px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary)}
+
+  .empty-feed{padding:2.5rem 1rem;text-align:center;color:var(--color-text-secondary);font-size:13px}
+  .empty-icon{font-size:32px;margin-bottom:.5rem;opacity:.4}
+</style>
+
+<div class="shell">
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">FINISHLINE OS</div>
+        <div class="logo-sub">RFID Timing System — Organizer View</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div class="status-bar">
+        <div class="pulse" id="pulse-dot"></div>
+        <span class="status-text" id="status-label">Reader offline</span>
+      </div>
+      <button class="sim-btn" id="main-btn" onclick="toggleSim()">Start Simulation</button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Total Finishers</div>
+      <div class="stat-val" id="s-total">0</div>
+      <div class="stat-sub">across all categories</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">5K Finishers</div>
+      <div class="stat-val" id="s-5k" style="color:#185fa5">0</div>
+      <div class="stat-sub" id="sub-5k">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">10K Finishers</div>
+      <div class="stat-val" id="s-10k" style="color:#854f0b">0</div>
+      <div class="stat-sub" id="sub-10k">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">21K Finishers</div>
+      <div class="stat-val" id="s-21k" style="color:#a32d2d">0</div>
+      <div class="stat-sub" id="sub-21k">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Fun Run</div>
+      <div class="stat-val" id="s-fun" style="color:#3b6d11">0</div>
+      <div class="stat-sub" id="sub-fun">—</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Finish Line Feed</span>
+        <span class="panel-badge" id="live-badge" style="background:#eaf3de;color:#3b6d11">● STANDBY</span>
+      </div>
+      <div class="feed-header">
+        <div class="feed-col">Rank</div>
+        <div class="feed-col">Runner</div>
+        <div class="feed-col">Category</div>
+        <div class="feed-col">Time</div>
+        <div class="feed-col" style="text-align:right">Chip ID</div>
+      </div>
+      <div class="feed" id="feed">
+        <div class="empty-feed">
+          <div class="empty-icon">🏁</div>
+          <div>Simulation not running.<br>Press <strong>Start Simulation</strong> to begin.</div>
+        </div>
+      </div>
+      <div class="scan-flash" id="scan-flash">
+        <span>Awaiting RFID signal...</span>
+      </div>
+      <div class="controls">
+        <label>Scan interval:</label>
+        <select id="speed-sel" onchange="setSpeed(this.value)">
+          <option value="1800">Slow (every ~2s)</option>
+          <option value="900" selected>Normal (~1s)</option>
+          <option value="400">Fast (~0.4s)</option>
+        </select>
+        <label style="margin-left:8px">Total expected:</label>
+        <select id="total-sel">
+          <option value="30">30 runners</option>
+          <option value="60" selected>60 runners</option>
+          <option value="100">100 runners</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Category Breakdown</span>
+        </div>
+        <div class="cat-list" id="cat-list">
+          <!-- filled by JS -->
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Reader Status</span>
+          <span class="panel-badge" id="reader-badge" style="background:var(--danger-light);color:var(--danger)">OFFLINE</span>
+        </div>
+        <div style="padding:.75rem 1rem;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--color-text-secondary)">Reader IP</span>
+            <span style="font-family:var(--mono);font-size:12px" id="reader-ip">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--color-text-secondary)">Protocol</span>
+            <span style="font-family:var(--mono);font-size:12px">UHF / TCP</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--color-text-secondary)">Port</span>
+            <span style="font-family:var(--mono);font-size:12px">6000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--color-text-secondary)">Last ping</span>
+            <span style="font-family:var(--mono);font-size:12px" id="last-ping">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--color-text-secondary)">Tags read</span>
+            <span style="font-family:var(--mono);font-size:12px;font-weight:700" id="tags-read">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const NAMES=[
+  'Ana Reyes','Marco Santos','Leila Cruz','Dante Villanueva','Sofia Lim',
+  'Rafael Tan','Mara dela Cruz','Ivan Torres','Camille Bautista','Paulo Mendez',
+  'Trisha Gomez','Gio Aquino','Bea Ramos','Noel Castillo','Jasmine Ocampo',
+  'Carlo Fernandez','Aina Pascual','Rex Mercado','Daphne Soriano','Ben Navarro',
+  'Chloe Valdez','Aldrin Perez','Nina Lopez','Franz Dela Rosa','Kate Manalo',
+  'Alvin Chan','Rica Salazar','Diego Flores','Hazel Reyes','Miko Aguilar',
+  'Christine Uy','Erwin Santos','Maxine Tiu','Joey Vergara','Donna Macapagal',
+  'Bryan Ong','Stella Buenaventura','Ron Villarin','Gizelle Espiritu','Nino Recto',
+  'Tanya Miranda','Jolo Abante','Faye Corpus','Mark Garcia','Sandra Cruz',
+  'Edmar Cayabyab','Iris Domingo','Arvin Alcantara','Lorna Padilla','Nico Chua',
+  'Rachel Yap','Aldous de Leon','Carmen Lagdameo','Rodel Sy','Mayi Basco',
+  'Louie Almario','Anna Trinidad','Jayson Belen','Reina Fabella','Cesar Liwanag'
+];
+const CATS=['5K','10K','21K','Fun Run'];
+const CAT_COLORS={'5K':'#185fa5','10K':'#854f0b','21K':'#a32d2d','Fun Run':'#3b6d11'};
+const CAT_CSS={'5K':'cat-5k','10K':'cat-10k','21K':'cat-21k','Fun Run':'cat-fun'};
+const START_TIMES={'5K':25*60,'10K':50*60,'21K':110*60,'Fun Run':20*60};
+const SPREAD={'5K':12*60,'10K':20*60,'21K':30*60,'Fun Run':15*60};
+
+let simRunning=false,simTimer=null,interval=900;
+let usedNames=[],counters={'5K':0,'10K':0,'21K':0,'Fun Run':0};
+let catTotals={'5K':0,'10K':0,'21K':0,'Fun Run':0};
+let globalRank=0,tagsRead=0;
+let raceStart=null;
+let runnerPool=[];
+let nextIdx=0;
+
+function fmt(sec){const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=sec%60;return h>0?`${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${m}:${String(s).padStart(2,'0')}`}
+
+function genChip(){return 'E2'+Array.from({length:5},()=>Math.floor(Math.random()*65536).toString(16).toUpperCase().padStart(4,'0')).join('')}
+
+function buildPool(total){
+  runnerPool=[];
+  const perCat={};
+  CATS.forEach(c=>perCat[c]=0);
+  const shuffled=[...NAMES].sort(()=>Math.random()-.5).slice(0,Math.min(total,NAMES.length));
+  shuffled.forEach((name,i)=>{
+    const cat=CATS[i%CATS.length];
+    perCat[cat]++;
+    const finishSec=START_TIMES[cat]+Math.floor(Math.random()*SPREAD[cat]);
+    runnerPool.push({name,cat,bib:`#${String(1000+i).padStart(4,'0')}`,finishSec,chip:genChip()});
+  });
+  runnerPool.sort((a,b)=>a.finishSec-b.finishSec);
+  CATS.forEach(c=>catTotals[c]=perCat[c]);
+  renderCatList();
+}
+
+function renderCatList(){
+  const el=document.getElementById('cat-list');
+  el.innerHTML=CATS.map(c=>{
+    const done=counters[c],total=catTotals[c],pct=total?Math.round(done/total*100):0;
+    return `<div class="cat-row">
+      <div class="cat-info"><div class="cat-dot" style="background:${CAT_COLORS[c]}"></div><span class="cat-name">${c}</span></div>
+      <div class="cat-progress"><div class="cat-bar" style="width:${pct}%;background:${CAT_COLORS[c]}"></div></div>
+      <div class="cat-count">${done}/${total}</div>
+    </div>`;
+  }).join('');
+}
+
+function setSpeed(v){interval=parseInt(v)}
+
+function toggleSim(){
+  if(simRunning)stopSim();else startSim();
+}
+
+function startSim(){
+  const total=parseInt(document.getElementById('total-sel').value);
+  counters={'5K':0,'10K':0,'21K':0,'Fun Run':0};globalRank=0;tagsRead=0;nextIdx=0;
+  document.getElementById('feed').innerHTML='';
+  updateStats();
+  buildPool(total);
+  raceStart=Date.now();
+  simRunning=true;
+  document.getElementById('main-btn').textContent='Stop Simulation';
+  document.getElementById('main-btn').classList.add('stop');
+  document.getElementById('pulse-dot').style.background='#3b6d11';
+  document.getElementById('status-label').textContent='Reader active — scanning';
+  document.getElementById('live-badge').textContent='● LIVE';
+  document.getElementById('live-badge').style.background='#fcebeb';
+  document.getElementById('live-badge').style.color='#a32d2d';
+  document.getElementById('reader-badge').textContent='ONLINE';
+  document.getElementById('reader-badge').style.background='#eaf3de';
+  document.getElementById('reader-badge').style.color='#3b6d11';
+  document.getElementById('reader-ip').textContent='192.168.1.190';
+  scheduleNext();
+}
+
+function stopSim(){
+  simRunning=false;
+  clearTimeout(simTimer);
+  document.getElementById('main-btn').textContent='Restart Simulation';
+  document.getElementById('main-btn').classList.remove('stop');
+  document.getElementById('pulse-dot').style.background='#888';
+  document.getElementById('status-label').textContent='Simulation stopped';
+  document.getElementById('live-badge').textContent='● DONE';
+  document.getElementById('live-badge').style.background='#e6f1fb';
+  document.getElementById('live-badge').style.color='#185fa5';
+}
+
+function scheduleNext(){
+  if(!simRunning||nextIdx>=runnerPool.length){if(simRunning&&nextIdx>=runnerPool.length)stopSim();return;}
+  const jitter=interval*0.4*(Math.random()-.5)*2;
+  simTimer=setTimeout(()=>{fireFinish();scheduleNext();},Math.max(200,interval+jitter));
+}
+
+function fireFinish(){
+  if(nextIdx>=runnerPool.length)return;
+  const r=runnerPool[nextIdx++];
+  tagsRead++;
+  globalRank++;
+  counters[r.cat]++;
+  document.getElementById('tags-read').textContent=tagsRead;
+  document.getElementById('last-ping').textContent=new Date().toLocaleTimeString();
+  updateStats();
+  renderCatList();
+  addFeedRow(r,globalRank,fmt(r.finishSec));
+  flashScan(r);
+}
+
+function addFeedRow(r,rank,timeStr){
+  const feed=document.getElementById('feed');
+  const catRank=counters[r.cat];
+  let rankDisp=rank<=3?['🥇','🥈','🥉'][rank-1]:rank;
+  let rankClass=rank===1?'gold':rank===2?'silver':rank===3?'bronze':'';
+  const row=document.createElement('div');
+  row.className='feed-row new';
+  row.innerHTML=`
+    <div class="rank ${rankClass}">${rankDisp}</div>
+    <div><div class="runner-name">${r.name}</div><div class="runner-bib">${r.bib}</div></div>
+    <div><span class="cat-tag ${CAT_CSS[r.cat]}">${r.cat}</span><div style="font-size:10px;color:var(--color-text-secondary);margin-top:3px">#${catRank} in cat.</div></div>
+    <div class="finish-time">${timeStr}</div>
+    <div class="chip-badge">${r.chip.slice(0,12)}</div>
+  `;
+  feed.insertBefore(row,feed.firstChild);
+  setTimeout(()=>row.classList.remove('new'),900);
+}
+
+function flashScan(r){
+  const el=document.getElementById('scan-flash');
+  el.innerHTML=`<span style="color:var(--color-text-secondary);font-size:11px">RFID DETECTED</span><span class="scan-id">${r.chip}</span><span style="color:var(--color-text-secondary);font-size:11px">→ ${r.name} (${r.cat})</span>`;
+  el.style.background=r.cat==='5K'?'#e6f1fb':r.cat==='10K'?'#fff8e6':r.cat==='21K'?'#fcebeb':'#eaf3de';
+  setTimeout(()=>{el.style.background='transparent';el.innerHTML='<span>Awaiting next RFID signal...</span>';},1800);
+}
+
+function updateStats(){
+  document.getElementById('s-total').textContent=globalRank;
+  CATS.forEach(c=>{
+    const key=c.toLowerCase().replace(' ','');
+    const el=document.getElementById('s-'+key)||document.getElementById('s-fun');
+    if(c==='Fun Run')document.getElementById('s-fun').textContent=counters[c];
+    else if(c==='5K')document.getElementById('s-5k').textContent=counters[c];
+    else if(c==='10K')document.getElementById('s-10k').textContent=counters[c];
+    else if(c==='21K')document.getElementById('s-21k').textContent=counters[c];
+  });
+}
+
+renderCatList();
+</script>
