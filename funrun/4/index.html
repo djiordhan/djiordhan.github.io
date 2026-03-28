@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Dash 5K</title>
+  <meta name="description" content="Neon Dash 5K is a bright, modern fun run event in Manila with a bayfront route, live countdown, registration form, and scroll-driven race storytelling.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Syne"', 'sans-serif'],
+            body: ['"Inter"', 'sans-serif'],
+          },
+          colors: {
+            accent: '#FF5C2B',
+            'accent-light': '#FFF0EB',
+            ink: '#1A1A18',
+            surface: '#FAFAF7',
+            'warm-border': '#E8E6E0',
+          },
+          boxShadow: {
+            soft: '0 22px 60px rgba(26, 26, 24, 0.08)',
+            float: '0 20px 45px rgba(255, 92, 43, 0.16)',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --accent: #FF5C2B;
+      --accent-light: #FFF0EB;
+      --ink: #1A1A18;
+      --body: #3D3D3A;
+      --muted: #9A9990;
+      --surface: #FAFAF7;
+      --card: #FFFFFF;
+      --border: #E8E6E0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Inter", sans-serif;
+      color: var(--body);
+      background:
+        radial-gradient(circle at top left, rgba(255, 92, 43, 0.12), transparent 25%),
+        radial-gradient(circle at top right, rgba(255, 176, 122, 0.12), transparent 18%),
+        var(--surface);
+      overflow-x: hidden;
+    }
+
+    .nav-scrolled { background: rgba(255, 255, 255, 0.96); box-shadow: 0 14px 35px rgba(26, 26, 24, 0.07); }
+    .hero-overlay { background: linear-gradient(180deg, rgba(250, 240, 230, 0.18) 0%, rgba(250, 240, 230, 0.35) 100%), linear-gradient(120deg, rgba(255, 255, 255, 0.08), rgba(255, 92, 43, 0.06)); }
+    .frost-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.animate-in { opacity: 1; transform: translateY(0); }
+    .countdown-pill { background: rgba(255, 255, 255, 0.62); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .gallery-track { scrollbar-width: none; cursor: grab; }
+    .gallery-track.dragging { cursor: grabbing; user-select: none; }
+    .gallery-track::-webkit-scrollbar { display: none; }
+    .gallery-card:hover img { transform: scale(1.03); }
+    .gallery-card:hover .gallery-overlay { opacity: 1; }
+    .pricing-card.active { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 20px 40px rgba(255, 92, 43, 0.18); }
+    .field-error { border-color: #dc2626 !important; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12); }
+    .error-text { display: none; margin-top: 0.45rem; color: #dc2626; font-size: 0.82rem; }
+    .error-text.visible { display: block; }
+    .faq-item[data-open="true"] { border-left-color: var(--accent); }
+    .faq-item[data-open="true"] .faq-answer { max-height: 220px; opacity: 1; }
+    .faq-item[data-open="true"] .faq-toggle { transform: rotate(45deg); }
+    .faq-answer { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.3s ease, opacity 0.3s ease; }
+    .success-card { animation: popIn 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+
+    .scroll-line::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      width: 2px;
+      height: 18px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: var(--accent);
+      animation: pulseDown 1.7s infinite;
+    }
+
+    .parallax-panel {
+      min-height: 80vh;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      isolation: isolate;
+    }
+
+    .parallax-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(255, 92, 43, 0.6) 0%, transparent 60%);
+      z-index: -1;
+    }
+
+    .parallax-quote { text-shadow: 0 6px 20px rgba(26, 26, 24, 0.3); }
+    .scrub-text { position: absolute; inset: auto 0 0; opacity: 0; transform: translateY(24px); transition: opacity 0.25s ease, transform 0.25s ease; }
+
+    @keyframes pulseDown {
+      0% { transform: translate(-50%, 0); opacity: 0; }
+      30% { opacity: 1; }
+      100% { transform: translate(-50%, 18px); opacity: 0; }
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.96) translateY(14px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @media (max-width: 767px) {
+      .parallax-panel { background-attachment: scroll; }
+    }
+  </style>
+</head>
+<body class="bg-surface text-[color:var(--body)] antialiased">
+  <nav id="site-nav" class="fixed inset-x-0 top-0 z-50 border-b border-[color:var(--border)] bg-surface/90 transition-all duration-300">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 md:px-8">
+      <a href="#hero" class="font-display text-2xl font-extrabold tracking-[0.12em] text-accent md:text-3xl">RUN&#8226;2025</a>
+      <div class="hidden items-center gap-8 text-sm font-medium text-[color:var(--body)] md:flex">
+        <a href="#about" class="transition hover:text-accent">About</a>
+        <a href="#route" class="transition hover:text-accent">Route</a>
+        <a href="#register" class="transition hover:text-accent">Register</a>
+        <a href="#faq" class="transition hover:text-accent">FAQ</a>
+      </div>
+      <div class="hidden md:block">
+        <a href="#register" class="inline-flex items-center rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:brightness-95">REGISTER NOW &#8594;</a>
+      </div>
+      <button id="mobile-toggle" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--border)] text-[color:var(--ink)] md:hidden" type="button" aria-expanded="false" aria-label="Open menu">
+        <span class="space-y-1.5">
+          <span class="block h-0.5 w-5 bg-current"></span>
+          <span class="block h-0.5 w-5 bg-current"></span>
+          <span class="block h-0.5 w-5 bg-current"></span>
+        </span>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden border-t border-[color:var(--border)] bg-white md:hidden">
+      <div class="mx-auto flex max-w-7xl flex-col px-4 py-4 text-sm font-medium text-[color:var(--body)]">
+        <a href="#about" class="py-3">About</a>
+        <a href="#route" class="py-3">Route</a>
+        <a href="#register" class="py-3">Register</a>
+        <a href="#faq" class="py-3">FAQ</a>
+        <a href="#register" class="mt-3 inline-flex items-center justify-center rounded-full bg-accent px-5 py-3 font-semibold text-white">REGISTER NOW &#8594;</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section id="hero" class="relative flex min-h-screen items-end overflow-hidden pt-24">
+      <video class="absolute inset-0 h-full w-full object-cover" autoplay muted loop playsinline poster="https://images.pexels.com/photos/2803158/pexels-photo-2803158.jpeg?auto=compress&cs=tinysrgb&w=1400">
+        <source src="https://videos.pexels.com/video-files/4164292/4164292-uhd_2560_1440_25fps.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay absolute inset-0"></div>
+      <div class="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-surface via-surface/40 to-transparent"></div>
+
+      <div class="relative mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 pb-12 pt-16 md:px-8 md:pb-16">
+        <div class="reveal max-w-4xl rounded-[2rem] border border-white/60 p-6 shadow-soft frost-card md:p-10">
+          <p class="text-xs font-semibold uppercase tracking-[0.34em] text-accent md:text-sm">June 14, 2025 &#183; Manila Bay Boulevard</p>
+          <h1 class="mt-4 font-display text-6xl font-extrabold uppercase leading-[0.88] text-ink sm:text-7xl md:text-[7.5rem] lg:text-[9rem]">Neon Dash 5K</h1>
+          <p class="mt-4 max-w-2xl text-base leading-7 text-[color:var(--body)] md:text-lg">The city's most electric fun run &#8212; 5K of light, music, and speed.</p>
+          <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+            <a href="#register" class="inline-flex items-center justify-center rounded-full bg-accent px-7 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-white transition hover:brightness-95">Register Now</a>
+            <a href="#route" class="inline-flex items-center justify-center rounded-full border border-white/80 px-7 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-ink transition hover:border-accent hover:text-accent">View Route</a>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div class="reveal flex flex-wrap gap-3" id="countdown">
+            <div class="countdown-pill rounded-full border border-white/70 px-5 py-3 text-center shadow-soft"><div data-countdown-value="days" class="font-display text-3xl font-bold text-ink">00</div><div class="text-[0.65rem] uppercase tracking-[0.3em] text-[color:var(--muted)]">DD</div></div>
+            <div class="countdown-pill rounded-full border border-white/70 px-5 py-3 text-center shadow-soft"><div data-countdown-value="hours" class="font-display text-3xl font-bold text-ink">00</div><div class="text-[0.65rem] uppercase tracking-[0.3em] text-[color:var(--muted)]">HH</div></div>
+            <div class="countdown-pill rounded-full border border-white/70 px-5 py-3 text-center shadow-soft"><div data-countdown-value="minutes" class="font-display text-3xl font-bold text-ink">00</div><div class="text-[0.65rem] uppercase tracking-[0.3em] text-[color:var(--muted)]">MM</div></div>
+            <div class="countdown-pill rounded-full border border-white/70 px-5 py-3 text-center shadow-soft"><div data-countdown-value="seconds" class="font-display text-3xl font-bold text-ink">00</div><div class="text-[0.65rem] uppercase tracking-[0.3em] text-[color:var(--muted)]">SS</div></div>
+          </div>
+          <div class="reveal flex items-center gap-4 text-[color:var(--muted)]">
+            <span class="text-xs font-medium uppercase tracking-[0.32em]">Scroll</span>
+            <span class="scroll-line relative h-14 w-8 rounded-full border border-[color:var(--border)] bg-white/60"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-accent text-white">
+      <div class="mx-auto grid max-w-7xl divide-y divide-white/20 px-4 py-6 md:grid-cols-4 md:divide-x md:divide-y-0 md:px-8">
+        <div class="reveal px-2 py-4 text-center"><div class="stat-value font-display text-5xl font-extrabold" data-target="5" data-prefix="" data-suffix="K">0</div><p class="mt-2 text-xs uppercase tracking-[0.26em] text-white/80">Distance</p></div>
+        <div class="reveal px-2 py-4 text-center"><div class="stat-value font-display text-5xl font-extrabold" data-target="500" data-prefix="" data-suffix="+">0</div><p class="mt-2 text-xs uppercase tracking-[0.26em] text-white/80">Runners</p></div>
+        <div class="reveal px-2 py-4 text-center"><div class="stat-value font-display text-5xl font-extrabold" data-target="850" data-prefix="&#8369;" data-suffix="">0</div><p class="mt-2 text-xs uppercase tracking-[0.26em] text-white/80">Entry Fee</p></div>
+        <div class="reveal px-2 py-4 text-center"><div class="stat-value font-display text-5xl font-extrabold" data-target="50" data-prefix="TOP " data-suffix="">0</div><p class="mt-2 text-xs uppercase tracking-[0.26em] text-white/80">Finisher Medals</p></div>
+      </div>
+    </section>
+
+    <section id="about" class="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
+      <div class="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+        <div class="reveal">
+          <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">About The Run</p>
+          <h2 class="mt-4 max-w-4xl font-display text-5xl font-extrabold uppercase leading-[0.95] text-ink md:text-7xl">A bright bayfront race with magazine-cover energy.</h2>
+          <p class="mt-6 max-w-2xl text-base leading-8 text-[color:var(--body)] md:text-lg">Neon Dash 5K brings sunrise light, music, and fast flat pavement together for a race morning that feels polished from warmup through finish chute. It is built for first-timers, competitive runners, and families who want a sharper event experience.</p>
+        </div>
+        <div class="reveal rounded-[1.75rem] border border-[color:var(--border)] bg-white p-7 shadow-soft">
+          <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">Why It Stands Out</p>
+          <ul class="mt-5 space-y-4 text-[color:var(--body)]">
+            <li>Sunrise start along Manila Bay with warm, open views.</li>
+            <li>On-course music zones and a post-race celebration village.</li>
+            <li>Fast support setup with hydration, medics, and clean route signage.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Parallax highlights">
+      <div class="parallax-panel" style="background-image: url('https://images.pexels.com/photos/2803158/pexels-photo-2803158.jpeg?auto=compress&cs=tinysrgb&w=1400');">
+        <h2 class="parallax-quote reveal mb-14 px-4 text-center font-display text-5xl font-extrabold uppercase tracking-[0.08em] text-white md:mb-16 md:text-7xl">Every Step Counts</h2>
+      </div>
+      <div class="parallax-panel" style="background-image: url('https://images.pexels.com/photos/3076509/pexels-photo-3076509.jpeg?auto=compress&cs=tinysrgb&w=1400');">
+        <h2 class="parallax-quote reveal mb-14 px-4 text-center font-display text-5xl font-extrabold uppercase tracking-[0.08em] text-white md:mb-16 md:text-7xl">Run Your Pace</h2>
+      </div>
+      <div class="parallax-panel" style="background-image: url('https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=1400');">
+        <h2 class="parallax-quote reveal mb-14 px-4 text-center font-display text-5xl font-extrabold uppercase tracking-[0.08em] text-white md:mb-16 md:text-7xl">Cross The Line</h2>
+      </div>
+    </section>
+
+    <section class="bg-surface py-20 md:py-28">
+      <div class="mx-auto max-w-7xl px-4 md:px-8">
+        <div class="reveal mb-10 max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">Signature Scroll</p>
+          <h2 class="mt-4 font-display text-5xl font-extrabold uppercase leading-[0.95] text-ink md:text-7xl">The route unfolds as you move.</h2>
+        </div>
+      </div>
+      <div id="video-scrub" class="relative h-[300vh]">
+        <div class="sticky top-0 flex h-screen items-center">
+          <div class="mx-auto w-full max-w-6xl px-4 md:px-8">
+            <div class="relative overflow-hidden rounded-[2rem] border border-white bg-white shadow-soft">
+              <div class="absolute inset-0 z-10 hidden bg-cover bg-center" id="scrub-fallback" style="background-image: linear-gradient(180deg, rgba(250,240,230,0.1), rgba(255,92,43,0.15)), url('https://images.pexels.com/photos/2803158/pexels-photo-2803158.jpeg?auto=compress&cs=tinysrgb&w=1400');"></div>
+              <video id="scrub-video" class="aspect-video w-full bg-[#f2eee8] object-cover" preload="auto" muted playsinline poster="https://images.pexels.com/photos/2803158/pexels-photo-2803158.jpeg?auto=compress&cs=tinysrgb&w=1400">
+                <source src="https://videos.pexels.com/video-files/6276266/6276266-uhd_2560_1440_25fps.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="mt-4 h-1.5 overflow-hidden rounded-full bg-[color:var(--border)]">
+              <div id="scrub-progress" class="h-full w-0 rounded-full bg-accent"></div>
+            </div>
+            <div class="relative mt-8 min-h-[120px] text-center">
+              <div id="scrub-text-1" class="scrub-text font-display text-4xl font-extrabold uppercase tracking-[0.08em] text-ink md:text-6xl">The Route</div>
+              <div id="scrub-text-2" class="scrub-text font-display text-3xl font-extrabold uppercase tracking-[0.08em] text-accent md:text-5xl">5 Kilometers Of Pure Energy</div>
+              <div id="scrub-text-3" class="scrub-text font-display text-4xl font-extrabold uppercase tracking-[0.08em] text-ink md:text-6xl">Your Finish Line Awaits</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-surface py-20 md:py-28">
+      <div class="mx-auto max-w-7xl px-4 md:px-8">
+        <div class="reveal mb-10 max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">Event Details</p>
+          <h2 class="mt-4 font-display text-5xl font-extrabold uppercase leading-[0.95] text-ink md:text-7xl">Everything set before race morning.</h2>
+        </div>
+        <div class="grid gap-6 md:grid-cols-3">
+          <article class="reveal rounded-2xl border border-[color:var(--border)] border-l-4 border-l-accent bg-white p-7 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-float">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--accent-light)] text-2xl text-accent">&#128205;</div>
+            <h3 class="mt-5 text-xl font-semibold text-ink">Start/Finish</h3>
+            <ul class="mt-4 space-y-3 text-[color:var(--body)]">
+              <li>Manila Bay Esplanade, near CCP</li>
+              <li>Assembly at Tent A</li>
+              <li>Bag deposit available</li>
+            </ul>
+          </article>
+          <article class="reveal rounded-2xl border border-[color:var(--border)] border-l-4 border-l-accent bg-white p-7 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-float">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--accent-light)] text-2xl text-accent">&#128343;</div>
+            <h3 class="mt-5 text-xl font-semibold text-ink">Schedule</h3>
+            <ul class="mt-4 space-y-3 text-[color:var(--body)]">
+              <li>5:00AM &#8211; Warmup</li>
+              <li>5:30AM &#8211; Race Start</li>
+              <li>7:30AM &#8211; Awarding Ceremony</li>
+              <li>8:00AM &#8211; Post-race Party</li>
+            </ul>
+          </article>
+          <article class="reveal rounded-2xl border border-[color:var(--border)] border-l-4 border-l-accent bg-white p-7 shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-float">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--accent-light)] text-2xl text-accent">&#127942;</div>
+            <h3 class="mt-5 text-xl font-semibold text-ink">Categories</h3>
+            <ul class="mt-4 space-y-3 text-[color:var(--body)]">
+              <li>5K Fun Run (Open)</li>
+              <li>5K Competitive</li>
+              <li>Kids Dash (Below 12)</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="route" class="bg-white py-20 md:py-28">
+      <div class="mx-auto grid max-w-7xl gap-10 px-4 md:px-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
+        <div class="reveal rounded-[2rem] border border-[color:var(--border)] bg-white p-4 shadow-soft md:p-6">
+          <svg viewBox="0 0 720 520" class="w-full rounded-[1.5rem] bg-[color:var(--surface)]" role="img" aria-label="Stylized 5K route map">
+            <rect x="0" y="0" width="720" height="520" fill="#FAFAF7"></rect>
+            <g stroke="#E8E6E0" stroke-width="1.2">
+              <path d="M40 90 H680"></path><path d="M40 180 H680"></path><path d="M40 270 H680"></path><path d="M40 360 H680"></path>
+              <path d="M110 40 V470"></path><path d="M250 40 V470"></path><path d="M390 40 V470"></path><path d="M530 40 V470"></path><path d="M620 40 V470"></path>
+            </g>
+            <path d="M128 375 C185 314, 236 175, 326 155 S510 154, 571 245 S515 385, 392 398 S194 429, 128 375" fill="none" stroke="#FF5C2B" stroke-width="11" stroke-linecap="round"></path>
+            <circle cx="128" cy="375" r="16" fill="#FF5C2B"></circle>
+            <circle cx="195" cy="302" r="8" fill="#FF5C2B"></circle><circle cx="301" cy="170" r="8" fill="#FF5C2B"></circle><circle cx="490" cy="176" r="8" fill="#FF5C2B"></circle><circle cx="548" cy="310" r="8" fill="#FF5C2B"></circle>
+            <g fill="#1A1A18" font-size="18" font-family="Inter, sans-serif">
+              <text x="84" y="414">Start / Finish</text><text x="165" y="292">1K</text><text x="281" y="160">2K</text><text x="501" y="165">3K</text><text x="560" y="300">4K</text><text x="60" y="72">Bay Drive</text><text x="504" y="72">Roxas Blvd</text><text x="456" y="448">CCP Complex</text>
+            </g>
+          </svg>
+        </div>
+        <div class="reveal">
+          <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">Route Map</p>
+          <h2 class="mt-4 font-display text-5xl font-extrabold uppercase leading-[0.95] text-ink md:text-7xl">A clean 5K loop built for pace and flow.</h2>
+          <p class="mt-5 max-w-xl text-base leading-8 text-[color:var(--body)] md:text-lg">The course stays flat and spectator-friendly along the bayfront, with clear kilometer markers and ample room to settle into your own rhythm.</p>
+          <div class="mt-8 space-y-3 text-[color:var(--body)]">
+            <p>&#9989; Flat route, road closures from 3AM</p>
+            <p>&#9989; Water stations at every 1.5K</p>
+            <p>&#9989; Medical tent at Start/Finish</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-surface py-20 md:py-24">
+      <div class="mx-auto max-w-7xl px-4 md:px-8">
+        <div class="mb-8 flex items-end justify-between gap-6">
+          <div class="reveal max-w-3xl">
+            <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">Gallery</p>
+            <h2 class="mt-4 font-display text-5xl font-extrabold uppercase leading-[0.95] text-ink md:text-7xl">Race-day moments with room to breathe.</h2>
+          </div>
+          <div class="hidden gap-3 md:flex">
+            <button class="gallery-arrow inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent text-xl text-white shadow-soft transition hover:brightness-95" data-dir="-1" type="button" aria-label="Scroll gallery left">&#8592;</button>
+            <button class="gallery-arrow inline-flex h-12 w-12 items-center justify-center rounded-full bg-accent text-xl text-white shadow-soft transition hover:brightness-95" data-dir="1" type="button" aria-label="Scroll gallery right">&#8594;</button>
+          </div>
+        </div>
+        <div id="gallery-track" class="gallery-track flex gap-5 overflow-x-auto pb-4">
+          <figure class="gallery-card reveal relative min-w-[280px] overflow-hidden rounded-2xl border border-[color:var(--border)] bg-white shadow-soft md:min-w-[360px]">
+            <img class="h-[300px] w-full object-cover transition duration-500" src="https://images.pexels.com/photos/3621188/pexels-photo-3621188.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Runners smiling after a race">
+            <figcaption class="gallery-overlay absolute inset-0 flex items-end bg-[rgba(255,92,43,0.3)] p-6 text-lg font-semibold text-white opacity-0 transition duration-300">&#128248; Race Day 2024</figcaption>
+          </figure>
+          <figure class="gallery-card reveal relative min-w-[280px] overflow-hidden rounded-2xl border border-[color:var(--border)] bg-white shadow-soft md:min-w-[360px]">
+            <img class="h-[300px] w-full object-cover transition duration-500" src="https://images.pexels.com/photos/2422283/pexels-photo-2422283.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Runner preparing for a race">
+            <figcaption class="gallery-overlay absolute inset-0 flex items-end bg-[rgba(255,92,43,0.3)] p-6 text-lg font-semibold text-white opacity-0 transition duration-300">&#128248; Race Day 2024</figcaption>
+          </figure>
+          <figure class="gallery-card reveal relative min-w-[280px] overflow-hidden rounded-2xl border border-[color:var(--border)] bg-white shadow-soft md:min-w-[360px]">
+            <img class="h-[300px] w-full object-cover transition duration-500" src="https://images.pexels.com/photos/1571939/pexels-photo-1571939.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Runner on a sunny road">
+            <figcaption class="gallery-overlay absolute inset-0 flex items-end bg-[rgba(255,92,43,0.3)] p-6 text-lg font-semibold text-white opacity-0 transition duration-300">&#128248; Race Day 2024</figcaption>
+          </figure>
+          <figure class="gallery-card reveal relative min-w-[280px] overflow-hidden rounded-2xl border border-[color:var(--border)] bg-white shadow-soft md:min-w-[360px]">
+            <img class="h-[300px] w-full object-cover transition duration-500" src="https://images.pexels.com/photos/2403045/pexels-photo-2403045.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Runner celebrating at the finish line">
+            <figcaption class="gallery-overlay absolute inset-0 flex items-end bg-[rgba(255,92,43,0.3)] p-6 text-lg font-semibold text-white opacity-0 transition duration-300">&#128248; Race Day 2024</figcaption>
+          </figure>
+        </div>
+        <div class="mt-5 flex gap-3 md:hidden">
+          <button class="gallery-arrow inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent text-white shadow-soft" data-dir="-1" type="button" aria-label="Scroll gallery left">&#8592;</button>
+          <button class="gallery-arrow inline-flex h-11 w-11 items-center justify-center rounded-full bg-accent text-white shadow-soft" data-dir="1" type="button" aria-label="Scroll gallery right">&#8594;</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="register" class="bg-[color:var(--accent-light)] py-20 md:py-28">
+      <div class="mx-auto max-w-7xl px-4 md:px-8">
+        <div class="grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-start">
+          <div class="reveal">
+            <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">Registration</p>
+            <h2 class="mt-4 font-display text-5xl font-extrabold uppercase leading-[0.95] text-ink md:text-7xl">Claim a slot before the start line fills.</h2>
+            <p class="mt-5 max-w-xl text-base leading-8 text-[color:var(--body)] md:text-lg">Choose your category, complete the runner profile, and lock in your race kit. The registration card below validates everything on submit and switches into a success state when complete.</p>
+          </div>
+          <div id="registration-shell" class="reveal rounded-[2rem] border border-[color:var(--border)] bg-white p-6 shadow-soft md:p-8">
+            <div class="grid gap-4 md:grid-cols-3">
+              <button class="pricing-card active rounded-2xl border border-[color:var(--border)] p-4 text-left transition" data-category="5K Fun Run" type="button"><div class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">5K Fun Run</div><div class="mt-2 font-display text-4xl font-extrabold text-ink">&#8369;850</div></button>
+              <button class="pricing-card rounded-2xl border border-[color:var(--border)] p-4 text-left transition" data-category="5K Competitive" type="button"><div class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">5K Competitive</div><div class="mt-2 font-display text-4xl font-extrabold text-ink">&#8369;950</div></button>
+              <button class="pricing-card rounded-2xl border border-[color:var(--border)] p-4 text-left transition" data-category="Kids Dash" type="button"><div class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">Kids Dash</div><div class="mt-2 font-display text-4xl font-extrabold text-ink">&#8369;500</div></button>
+            </div>
+
+            <div id="form-state" class="mt-8">
+              <form id="registration-form" novalidate class="space-y-5">
+                <div class="grid gap-5 md:grid-cols-2">
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-ink">Full Name</span><input class="w-full rounded-2xl border border-[color:var(--border)] px-4 py-3 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" type="text" name="fullName" required><span class="error-text">Please enter your full name.</span></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-ink">Email Address</span><input class="w-full rounded-2xl border border-[color:var(--border)] px-4 py-3 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" type="email" name="email" required><span class="error-text">Please enter a valid email address.</span></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-ink">Contact Number</span><input class="w-full rounded-2xl border border-[color:var(--border)] px-4 py-3 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" type="tel" name="phone" required><span class="error-text">Please enter a contact number.</span></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-ink">Age</span><input class="w-full rounded-2xl border border-[color:var(--border)] px-4 py-3 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" type="number" name="age" min="7" required><span class="error-text">Age must be at least 7.</span></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-ink">Gender</span><select class="w-full rounded-2xl border border-[color:var(--border)] px-4 py-3 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" name="gender" required><option value="">Select one</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select><span class="error-text">Please select a gender option.</span></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-ink">Category</span><select class="w-full rounded-2xl border border-[color:var(--border)] px-4 py-3 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" name="category" required><option value="">Select one</option><option>5K Fun Run</option><option>5K Competitive</option><option>Kids Dash</option></select><span class="error-text">Please select a category.</span></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-ink">T-Shirt Size</span><select class="w-full rounded-2xl border border-[color:var(--border)] px-4 py-3 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" name="shirt" required><option value="">Select one</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select><span class="error-text">Please select a T-shirt size.</span></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-ink">Emergency Contact Name</span><input class="w-full rounded-2xl border border-[color:var(--border)] px-4 py-3 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" type="text" name="emergencyName" required><span class="error-text">Please enter an emergency contact name.</span></label>
+                  <label class="block"><span class="mb-2 block text-sm font-medium text-ink">Emergency Contact Number</span><input class="w-full rounded-2xl border border-[color:var(--border)] px-4 py-3 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" type="tel" name="emergencyPhone" required><span class="error-text">Please enter an emergency contact number.</span></label>
+                  <label class="block md:col-span-2"><span class="mb-2 block text-sm font-medium text-ink">How did you hear about us?</span><select class="w-full rounded-2xl border border-[color:var(--border)] px-4 py-3 outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20" name="source" required><option value="">Select one</option><option>Social Media</option><option>Friend</option><option>Poster</option><option>Other</option></select><span class="error-text">Please select an option.</span></label>
+                </div>
+
+                <div>
+                  <label class="flex items-start gap-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-4">
+                    <input class="mt-1 h-4 w-4 accent-accent" type="checkbox" name="agreement" required>
+                    <span class="text-sm leading-6 text-[color:var(--body)]">I agree to the event rules and liability waiver</span>
+                  </label>
+                  <span class="error-text" data-checkbox-error>Please accept the event rules and liability waiver.</span>
+                </div>
+
+                <button class="w-full rounded-full bg-accent px-6 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:brightness-95" type="submit">Secure My Slot &#8594;</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="bg-surface py-20 md:py-28">
+      <div class="mx-auto max-w-4xl px-4 md:px-8">
+        <div class="reveal mb-10">
+          <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">FAQ</p>
+          <h2 class="mt-4 font-display text-5xl font-extrabold uppercase leading-[0.95] text-ink md:text-7xl">Questions before race day.</h2>
+        </div>
+        <div class="space-y-4">
+          <article class="faq-item reveal rounded-2xl border border-[color:var(--border)] border-l-4 border-l-transparent bg-white px-6 py-5" data-open="true"><button class="flex w-full items-center justify-between gap-6 text-left" type="button"><span class="text-lg font-semibold text-ink">What's included in the registration fee?</span><span class="faq-toggle text-3xl font-light text-accent transition">+</span></button><div class="faq-answer"><p class="pt-4 leading-7 text-[color:var(--body)]">Your slot includes bib, event shirt, hydration support, route marshals, finisher medal eligibility, and access to the post-race program.</p></div></article>
+          <article class="faq-item reveal rounded-2xl border border-[color:var(--border)] border-l-4 border-l-transparent bg-white px-6 py-5" data-open="false"><button class="flex w-full items-center justify-between gap-6 text-left" type="button"><span class="text-lg font-semibold text-ink">Is the route suitable for beginners?</span><span class="faq-toggle text-3xl font-light text-accent transition">+</span></button><div class="faq-answer"><p class="pt-4 leading-7 text-[color:var(--body)]">Yes. The loop is flat, clearly marked, and intended to work for both first-time runners and faster competitive entries.</p></div></article>
+          <article class="faq-item reveal rounded-2xl border border-[color:var(--border)] border-l-4 border-l-transparent bg-white px-6 py-5" data-open="false"><button class="flex w-full items-center justify-between gap-6 text-left" type="button"><span class="text-lg font-semibold text-ink">Can I join without a running background?</span><span class="faq-toggle text-3xl font-light text-accent transition">+</span></button><div class="faq-answer"><p class="pt-4 leading-7 text-[color:var(--body)]">You can. The fun run category is designed for casual runners, walkers, and friend groups who want the event atmosphere without pressure.</p></div></article>
+          <article class="faq-item reveal rounded-2xl border border-[color:var(--border)] border-l-4 border-l-transparent bg-white px-6 py-5" data-open="false"><button class="flex w-full items-center justify-between gap-6 text-left" type="button"><span class="text-lg font-semibold text-ink">What do I wear? Is there a dress code?</span><span class="faq-toggle text-3xl font-light text-accent transition">+</span></button><div class="faq-answer"><p class="pt-4 leading-7 text-[color:var(--body)]">Breathable athletic gear is best. Your event shirt or any light, comfortable running outfit is fine, with bright accents encouraged.</p></div></article>
+          <article class="faq-item reveal rounded-2xl border border-[color:var(--border)] border-l-4 border-l-transparent bg-white px-6 py-5" data-open="false"><button class="flex w-full items-center justify-between gap-6 text-left" type="button"><span class="text-lg font-semibold text-ink">Where do I pick up my race kit?</span><span class="faq-toggle text-3xl font-light text-accent transition">+</span></button><div class="faq-answer"><p class="pt-4 leading-7 text-[color:var(--body)]">Race kit release details are sent by email after confirmation, with pickup windows before event day and limited same-day assistance onsite.</p></div></article>
+          <article class="faq-item reveal rounded-2xl border border-[color:var(--border)] border-l-4 border-l-transparent bg-white px-6 py-5" data-open="false"><button class="flex w-full items-center justify-between gap-6 text-left" type="button"><span class="text-lg font-semibold text-ink">What happens if it rains?</span><span class="faq-toggle text-3xl font-light text-accent transition">+</span></button><div class="faq-answer"><p class="pt-4 leading-7 text-[color:var(--body)]">The run proceeds in normal rain. Severe weather adjustments are announced through official email and social channels before gun time.</p></div></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-ink px-4 py-12 text-white md:px-8">
+    <div class="mx-auto max-w-7xl">
+      <div class="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 class="font-display text-4xl font-extrabold uppercase tracking-[0.08em] text-accent">Neon Dash 5K</h2>
+          <p class="mt-2 text-white/75">June 14, 2025 &#183; Manila, Philippines</p>
+          <div class="mt-6 flex items-center gap-4">
+            <a href="#" aria-label="Facebook" class="rounded-full border border-white/15 p-3 text-white/75 transition hover:border-accent hover:text-accent"><svg viewBox="0 0 24 24" class="h-4 w-4 fill-current"><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.4V10H7.5v3h2.8v8h3.2Z"/></svg></a>
+            <a href="#" aria-label="Instagram" class="rounded-full border border-white/15 p-3 text-white/75 transition hover:border-accent hover:text-accent"><svg viewBox="0 0 24 24" class="h-4 w-4 fill-current"><path d="M7.5 3h9A4.5 4.5 0 0 1 21 7.5v9a4.5 4.5 0 0 1-4.5 4.5h-9A4.5 4.5 0 0 1 3 16.5v-9A4.5 4.5 0 0 1 7.5 3Zm0 1.8A2.7 2.7 0 0 0 4.8 7.5v9a2.7 2.7 0 0 0 2.7 2.7h9a2.7 2.7 0 0 0 2.7-2.7v-9a2.7 2.7 0 0 0-2.7-2.7h-9Zm9.6 1.35a1.05 1.05 0 1 1 0 2.1 1.05 1.05 0 0 1 0-2.1ZM12 7.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5Zm0 1.8A2.7 2.7 0 1 0 14.7 12 2.7 2.7 0 0 0 12 9.3Z"/></svg></a>
+            <a href="#" aria-label="Twitter X" class="rounded-full border border-white/15 p-3 text-white/75 transition hover:border-accent hover:text-accent"><svg viewBox="0 0 24 24" class="h-4 w-4 fill-current"><path d="M18.9 3H21l-6.8 7.8L22 21h-6.1l-4.8-6.3L5.6 21H3.5l7.3-8.3L2 3h6.3l4.3 5.7L18.9 3Zm-2.1 16.3h1.7L7.3 4.6H5.5l11.3 14.7Z"/></svg></a>
+          </div>
+        </div>
+        <div class="text-sm leading-7 text-white/65 md:text-right">
+          <div class="mb-4 h-px w-full bg-white/15"></div>
+          <p>&#169; 2025 Neon Dash Events. All rights reserved.</p>
+          <p>info@neondash5k.ph | +63 917 000 0000</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('site-nav');
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const countdownTarget = new Date('2025-06-14T05:30:00+08:00');
+    const countdownEls = {
+      days: document.querySelector('[data-countdown-value="days"]'),
+      hours: document.querySelector('[data-countdown-value="hours"]'),
+      minutes: document.querySelector('[data-countdown-value="minutes"]'),
+      seconds: document.querySelector('[data-countdown-value="seconds"]'),
+    };
+
+    const pad = (value) => String(value).padStart(2, '0');
+
+    function updateCountdown() {
+      const diff = Math.max(0, countdownTarget.getTime() - Date.now());
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+      countdownEls.days.textContent = pad(days);
+      countdownEls.hours.textContent = pad(hours);
+      countdownEls.minutes.textContent = pad(minutes);
+      countdownEls.seconds.textContent = pad(seconds);
+    }
+
+    function setNavState() {
+      nav.classList.toggle('nav-scrolled', window.scrollY > 24);
+    }
+
+    updateCountdown();
+    window.setInterval(updateCountdown, 1000);
+    setNavState();
+    window.addEventListener('scroll', setNavState, { passive: true });
+
+    mobileToggle.addEventListener('click', () => {
+      const expanded = mobileToggle.getAttribute('aria-expanded') === 'true';
+      mobileToggle.setAttribute('aria-expanded', String(!expanded));
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const targetId = link.getAttribute('href');
+        if (!targetId || targetId === '#') return;
+        const target = document.querySelector(targetId);
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        mobileMenu.classList.add('hidden');
+        mobileToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('animate-in');
+        revealObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach((el, index) => {
+      el.style.transitionDelay = `${(index % 4) * 100}ms`;
+      revealObserver.observe(el);
+    });
+
+    function animateStat(el) {
+      const target = Number(el.dataset.target || 0);
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      const start = performance.now();
+      const duration = 1300;
+
+      function frame(now) {
+        const progress = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.innerHTML = `${prefix}${Math.round(target * eased)}${suffix}`;
+        if (progress < 1) requestAnimationFrame(frame);
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    const statObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting || entry.target.dataset.animated === 'true') return;
+        entry.target.dataset.animated = 'true';
+        animateStat(entry.target);
+      });
+    }, { threshold: 0.45 });
+
+    document.querySelectorAll('.stat-value').forEach((stat) => statObserver.observe(stat));
+
+    const scrubSection = document.getElementById('video-scrub');
+    const scrubVideo = document.getElementById('scrub-video');
+    const scrubFallback = document.getElementById('scrub-fallback');
+    const scrubProgress = document.getElementById('scrub-progress');
+    const scrubText1 = document.getElementById('scrub-text-1');
+    const scrubText2 = document.getElementById('scrub-text-2');
+    const scrubText3 = document.getElementById('scrub-text-3');
+    let scrubReady = false;
+
+    scrubVideo.pause();
+    scrubVideo.addEventListener('play', () => scrubVideo.pause());
+    scrubVideo.addEventListener('timeupdate', () => scrubVideo.pause());
+
+    scrubVideo.addEventListener('loadedmetadata', () => {
+      scrubReady = true;
+      scrubVideo.pause();
+      updateScrub();
+    });
+
+    scrubVideo.addEventListener('error', () => {
+      scrubFallback.classList.remove('hidden');
+      scrubReady = false;
+    });
+
+    function updateScrubText(progress) {
+      scrubText1.style.opacity = progress < 0.25 ? '1' : String(Math.max(0, 1 - (progress - 0.25) / 0.1));
+      scrubText1.style.transform = `translateY(${progress < 0.25 ? 0 : -(progress - 0.25) * 60}px)`;
+
+      const t2In = Math.min(1, Math.max(0, (progress - 0.30) / 0.08));
+      const t2Out = Math.min(1, Math.max(0, (progress - 0.62) / 0.08));
+      scrubText2.style.opacity = String(t2In * (1 - t2Out));
+      scrubText2.style.transform = 'translateY(0)';
+
+      scrubText3.style.opacity = String(Math.min(1, Math.max(0, (progress - 0.75) / 0.1)));
+      scrubText3.style.transform = `translateY(${progress > 0.75 ? 0 : (0.75 - progress) * 40}px)`;
+    }
+
+    function updateScrub() {
+      const rect = scrubSection.getBoundingClientRect();
+      const sectionScrollable = scrubSection.offsetHeight - window.innerHeight;
+      const scrolled = -rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / sectionScrollable));
+      scrubProgress.style.width = `${progress * 100}%`;
+      updateScrubText(progress);
+
+      if (scrubReady && scrubVideo.readyState >= 2 && scrubVideo.duration) {
+        scrubVideo.currentTime = progress * scrubVideo.duration;
+      }
+    }
+
+    updateScrubText(0);
+    window.addEventListener('scroll', updateScrub, { passive: true });
+    window.addEventListener('resize', updateScrub);
+    updateScrub();
+
+    const galleryTrack = document.getElementById('gallery-track');
+    document.querySelectorAll('.gallery-arrow').forEach((button) => {
+      button.addEventListener('click', () => {
+        const direction = Number(button.dataset.dir || 1);
+        galleryTrack.scrollBy({ left: direction * 380, behavior: 'smooth' });
+      });
+    });
+
+    let isDragging = false;
+    let startX = 0;
+    let startScroll = 0;
+
+    galleryTrack.addEventListener('pointerdown', (event) => {
+      isDragging = true;
+      startX = event.clientX;
+      startScroll = galleryTrack.scrollLeft;
+      galleryTrack.classList.add('dragging');
+      galleryTrack.setPointerCapture(event.pointerId);
+    });
+
+    galleryTrack.addEventListener('pointermove', (event) => {
+      if (!isDragging) return;
+      const delta = event.clientX - startX;
+      galleryTrack.scrollLeft = startScroll - delta;
+    });
+
+    function stopDragging() {
+      isDragging = false;
+      galleryTrack.classList.remove('dragging');
+    }
+
+    galleryTrack.addEventListener('pointerup', stopDragging);
+    galleryTrack.addEventListener('pointerleave', stopDragging);
+    galleryTrack.addEventListener('pointercancel', stopDragging);
+
+    const priceCards = document.querySelectorAll('.pricing-card');
+    const categorySelect = document.querySelector('select[name="category"]');
+
+    function syncPricing(category) {
+      priceCards.forEach((card) => {
+        const active = card.dataset.category === category;
+        card.classList.toggle('active', active);
+        const title = card.querySelector('div');
+        const price = card.querySelectorAll('div')[1];
+        title.classList.toggle('text-accent', !active);
+        title.classList.toggle('text-white', active);
+        price.classList.toggle('text-ink', !active);
+        price.classList.toggle('text-white', active);
+      });
+    }
+
+    priceCards.forEach((card) => {
+      card.addEventListener('click', () => {
+        categorySelect.value = card.dataset.category;
+        syncPricing(card.dataset.category);
+      });
+    });
+
+    categorySelect.value = '5K Fun Run';
+    syncPricing('5K Fun Run');
+    categorySelect.addEventListener('change', () => syncPricing(categorySelect.value));
+
+    const form = document.getElementById('registration-form');
+    const formState = document.getElementById('form-state');
+    const checkboxError = document.querySelector('[data-checkbox-error]');
+
+    function validateField(field) {
+      let valid = true;
+
+      if (field.type === 'checkbox') {
+        valid = field.checked;
+        checkboxError.classList.toggle('visible', !valid);
+        return valid;
+      }
+
+      if (field.type === 'email') {
+        valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value.trim());
+      } else if (field.type === 'number') {
+        valid = field.value.trim() !== '' && Number(field.value) >= Number(field.min || 0);
+      } else if (field.tagName === 'SELECT') {
+        valid = field.value.trim() !== '';
+      } else {
+        valid = field.value.trim() !== '';
+      }
+
+      field.classList.toggle('field-error', !valid);
+      const error = field.parentElement.querySelector('.error-text');
+      if (error) error.classList.toggle('visible', !valid);
+      return valid;
+    }
+
+    form.querySelectorAll('input, select').forEach((field) => {
+      const eventName = field.type === 'checkbox' || field.tagName === 'SELECT' ? 'change' : 'input';
+      field.addEventListener(eventName, () => validateField(field));
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const fields = Array.from(form.querySelectorAll('input, select'));
+      const isValid = fields.map(validateField).every(Boolean);
+      if (!isValid) return;
+
+      const fullName = form.elements.fullName.value.trim();
+      formState.innerHTML = `
+        <div class="success-card rounded-[1.75rem] border border-[color:var(--border)] bg-[color:var(--surface)] p-8 text-center shadow-soft">
+          <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent text-3xl text-white">&#127941;</div>
+          <h3 class="mt-6 font-display text-5xl font-extrabold uppercase tracking-[0.06em] text-ink">You're In, ${fullName}!</h3>
+          <p class="mt-4 text-lg text-[color:var(--body)]">Check your email for your confirmation and race kit details.</p>
+          <p class="mt-2 text-[color:var(--body)]">See you at the starting line on June 14!</p>
+        </div>
+      `;
+    });
+
+    document.querySelectorAll('.faq-item button').forEach((button) => {
+      button.addEventListener('click', () => {
+        const item = button.parentElement;
+        const open = item.dataset.open === 'true';
+        document.querySelectorAll('.faq-item').forEach((faq) => {
+          faq.dataset.open = 'false';
+        });
+        item.dataset.open = String(!open);
+      });
+    });
+  </script>
+</body>
+</html>
