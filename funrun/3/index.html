@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Dash 5K</title>
+  <meta name="description" content="Neon Dash 5K is Manila's most electric fun run. Register for a bold race day experience with lights, music, and a flat bayfront route.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Bebas Neue"', 'sans-serif'],
+            body: ['"DM Sans"', 'sans-serif']
+          },
+          colors: {
+            neon: '#C8FF00',
+            dark: '#0D0D0D',
+            charcoal: '#1A1A1A'
+          },
+          boxShadow: {
+            neon: '0 0 30px rgba(200, 255, 0, 0.22)'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --neon: #C8FF00;
+      --dark: #0D0D0D;
+      --charcoal: #1A1A1A;
+      --muted: #888888;
+      --white: #F5F5F0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "DM Sans", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(200, 255, 0, 0.14), transparent 26%),
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.06), transparent 18%),
+        var(--dark);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    .grid-overlay {
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .nav-scrolled {
+      padding-top: 0.7rem;
+      padding-bottom: 0.7rem;
+      background: rgba(13, 13, 13, 0.78);
+      backdrop-filter: blur(14px);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .hero-overlay {
+      background:
+        linear-gradient(180deg, rgba(13, 13, 13, 0.4) 0%, rgba(13, 13, 13, 0.65) 72%, rgba(13, 13, 13, 0.92) 100%),
+        linear-gradient(120deg, rgba(200, 255, 0, 0.1), transparent 40%);
+    }
+
+    .section-label { letter-spacing: 0.24em; text-transform: uppercase; }
+
+    .countdown-segment {
+      min-width: 82px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+    }
+
+    .scroll-indicator::before {
+      content: "";
+      position: absolute;
+      inset: 8px 8px auto 8px;
+      height: 12px;
+      background: var(--neon);
+      border-radius: 9999px;
+      animation: scrollPulse 1.6s infinite;
+    }
+
+    @keyframes scrollPulse {
+      0% { transform: translateY(0); opacity: 0; }
+      30% { opacity: 1; }
+      100% { transform: translateY(18px); opacity: 0; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.animate-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .parallax-panel {
+      min-height: 80vh;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .parallax-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(13, 13, 13, 0.35), rgba(13, 13, 13, 0.68));
+      z-index: -1;
+    }
+
+    .parallax-title {
+      text-shadow: 0 0 24px rgba(200, 255, 0, 0.3), 0 3px 14px rgba(0, 0, 0, 0.55);
+    }
+
+    .scrub-copy {
+      opacity: 0;
+      transform: translateY(24px) scale(0.98);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+      pointer-events: none;
+    }
+
+    .scrub-copy.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .field-error {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.55);
+    }
+
+    .error-text {
+      color: #fca5a5;
+      font-size: 0.85rem;
+      margin-top: 0.4rem;
+      display: none;
+    }
+
+    .error-text.visible { display: block; }
+
+    .gallery-track { scrollbar-width: none; }
+    .gallery-track::-webkit-scrollbar { display: none; }
+
+    .faq-item[data-open="true"] .faq-answer { grid-template-rows: 1fr; }
+    .faq-item[data-open="true"] .faq-icon { transform: rotate(45deg); }
+
+    .faq-answer {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease;
+    }
+
+    .faq-answer > div { overflow: hidden; }
+
+    @media (max-width: 767px) {
+      .parallax-panel { background-attachment: scroll; }
+    }
+  </style>
+</head>
+<body class="bg-dark text-[var(--white)] antialiased">
+  <nav id="site-nav" class="fixed inset-x-0 top-0 z-50 border-b border-white/10 px-4 py-4 transition-all duration-300 md:px-8">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
+      <a href="#top" class="font-display text-3xl tracking-[0.12em] text-neon md:text-4xl">RUN&#8226;2025</a>
+      <div class="hidden items-center gap-8 text-sm uppercase tracking-[0.18em] text-white/80 md:flex">
+        <a href="#about" class="transition hover:text-neon">About</a>
+        <a href="#route" class="transition hover:text-neon">Route</a>
+        <a href="#register" class="transition hover:text-neon">Register</a>
+        <a href="#faq" class="transition hover:text-neon">FAQ</a>
+      </div>
+      <a href="#register" class="rounded-full bg-neon px-5 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-black transition hover:scale-[1.03] md:px-6">Register Now &#8594;</a>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="relative flex min-h-screen items-end overflow-hidden pt-24" id="hero">
+      <video class="absolute inset-0 h-full w-full object-cover" autoplay muted loop playsinline poster="https://images.pexels.com/photos/2524871/pexels-photo-2524871.jpeg?auto=compress&cs=tinysrgb&w=1400">
+        <source src="https://videos.pexels.com/video-files/856973/856973-hd_1920_1080_25fps.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay absolute inset-0"></div>
+      <div class="grid-overlay absolute inset-0 opacity-20"></div>
+
+      <div class="relative mx-auto flex w-full max-w-7xl flex-col gap-10 px-4 pb-14 pt-20 md:px-8 md:pb-20">
+        <div class="reveal max-w-4xl">
+          <p class="section-label mb-4 text-xs font-medium text-neon/90 md:text-sm">June 14, 2025 &#183; Manila Bay Boulevard</p>
+          <h1 class="font-display text-[5rem] leading-[0.85] tracking-[0.05em] text-white sm:text-[6.5rem] md:text-[9rem] lg:text-[10rem]">Neon Dash 5K</h1>
+          <p class="mt-5 max-w-2xl text-lg text-white/80 md:text-xl">The city's most electric fun run &#8212; 5K of light, music, and speed.</p>
+        </div>
+
+        <div class="reveal flex flex-col gap-4 sm:flex-row">
+          <a href="#register" class="inline-flex items-center justify-center rounded-full bg-neon px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:scale-[1.03]">Register Now</a>
+          <a href="#route" class="inline-flex items-center justify-center rounded-full border border-white/30 px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-neon hover:text-neon">View Route</a>
+        </div>
+
+        <div class="reveal flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div class="flex flex-wrap gap-3" id="countdown">
+            <div class="countdown-segment rounded-2xl px-5 py-4 text-center">
+              <div class="text-3xl font-semibold text-neon" data-countdown-value="days">00</div>
+              <div class="mt-1 text-[0.65rem] uppercase tracking-[0.24em] text-white/60">DD</div>
+            </div>
+            <div class="countdown-segment rounded-2xl px-5 py-4 text-center">
+              <div class="text-3xl font-semibold text-neon" data-countdown-value="hours">00</div>
+              <div class="mt-1 text-[0.65rem] uppercase tracking-[0.24em] text-white/60">HH</div>
+            </div>
+            <div class="countdown-segment rounded-2xl px-5 py-4 text-center">
+              <div class="text-3xl font-semibold text-neon" data-countdown-value="minutes">00</div>
+              <div class="mt-1 text-[0.65rem] uppercase tracking-[0.24em] text-white/60">MM</div>
+            </div>
+            <div class="countdown-segment rounded-2xl px-5 py-4 text-center">
+              <div class="text-3xl font-semibold text-neon" data-countdown-value="seconds">00</div>
+              <div class="mt-1 text-[0.65rem] uppercase tracking-[0.24em] text-white/60">SS</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 self-start lg:self-end">
+            <span class="text-xs uppercase tracking-[0.3em] text-white/45">Scroll</span>
+            <div class="scroll-indicator relative h-14 w-8 rounded-full border border-white/20"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-white/10 bg-black/60">
+      <div class="mx-auto grid max-w-7xl gap-0 divide-y divide-white/10 px-4 py-8 md:grid-cols-4 md:divide-x md:divide-y-0 md:px-8">
+        <div class="reveal px-2 py-5 text-center">
+          <div class="stat-value font-display text-6xl tracking-[0.08em] text-neon" data-target="5" data-prefix="" data-suffix="K">0</div>
+          <p class="mt-2 text-xs uppercase tracking-[0.3em] text-white/60">Distance</p>
+        </div>
+        <div class="reveal px-2 py-5 text-center">
+          <div class="stat-value font-display text-6xl tracking-[0.08em] text-neon" data-target="500" data-prefix="" data-suffix="+">0</div>
+          <p class="mt-2 text-xs uppercase tracking-[0.3em] text-white/60">Runners</p>
+        </div>
+        <div class="reveal px-2 py-5 text-center">
+          <div class="stat-value font-display text-6xl tracking-[0.08em] text-neon" data-target="850" data-prefix="&#8369;" data-suffix="">0</div>
+          <p class="mt-2 text-xs uppercase tracking-[0.3em] text-white/60">Entry Fee</p>
+        </div>
+        <div class="reveal px-2 py-5 text-center">
+          <div class="stat-value font-display text-6xl tracking-[0.08em] text-neon" data-target="50" data-prefix="Top " data-suffix="">0</div>
+          <p class="mt-2 text-xs uppercase tracking-[0.3em] text-white/60">Finisher Medals</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
+      <div class="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+        <div class="reveal">
+          <p class="section-label text-xs text-neon/90 md:text-sm">About The Event</p>
+          <h2 class="mt-4 font-display text-6xl leading-none tracking-[0.06em] text-white md:text-8xl">A city run built like a night headline.</h2>
+          <p class="mt-6 max-w-2xl text-base leading-7 text-white/72 md:text-lg">
+            Neon Dash 5K turns Manila Bay into a kinetic race corridor: sharp lights, loud beats, flat pavement, and a crowd that keeps the pace alive from warmup to finish chute.
+          </p>
+        </div>
+        <div class="reveal rounded-[2rem] border border-white/10 bg-charcoal/80 p-7 shadow-neon">
+          <p class="text-sm uppercase tracking-[0.24em] text-neon">Why it hits different</p>
+          <ul class="mt-5 space-y-4 text-white/70">
+            <li>Sunrise start along the bayfront with a fully closed road section.</li>
+            <li>Live MC, music zones, and a post-race party built into the finish area.</li>
+            <li>Open, competitive, and kids categories in one event village.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Motivation panels">
+      <div class="parallax-panel flex items-center justify-center" style="background-image: url('https://images.pexels.com/photos/2524871/pexels-photo-2524871.jpeg?auto=compress&cs=tinysrgb&w=1400');">
+        <h2 class="parallax-title reveal px-4 text-center font-display text-6xl tracking-[0.1em] text-neon md:text-8xl lg:text-9xl">Every Step Counts</h2>
+      </div>
+      <div class="parallax-panel flex items-center justify-center" style="background-image: url('https://images.pexels.com/photos/1571939/pexels-photo-1571939.jpeg?auto=compress&cs=tinysrgb&w=1400');">
+        <h2 class="parallax-title reveal px-4 text-center font-display text-6xl tracking-[0.1em] text-neon md:text-8xl lg:text-9xl">Run Your Pace</h2>
+      </div>
+      <div class="parallax-panel flex items-center justify-center" style="background-image: url('https://images.pexels.com/photos/1390403/pexels-photo-1390403.jpeg?auto=compress&cs=tinysrgb&w=1400');">
+        <h2 class="parallax-title reveal px-4 text-center font-display text-6xl tracking-[0.1em] text-neon md:text-8xl lg:text-9xl">Cross The Line</h2>
+      </div>
+    </section>
+
+    <section id="video-scrub" class="relative h-[300vh] bg-black">
+      <div class="sticky top-0 flex h-screen items-center overflow-hidden">
+        <div class="absolute inset-0 bg-black"></div>
+        <video id="scrub-video" class="absolute inset-0 h-full w-full object-cover opacity-90" preload="auto" muted playsinline poster="https://images.pexels.com/photos/1571939/pexels-photo-1571939.jpeg?auto=compress&cs=tinysrgb&w=1400">
+          <source src="https://videos.pexels.com/video-files/3048659/3048659-uhd_2560_1440_25fps.mp4" type="video/mp4">
+        </video>
+        <div id="scrub-fallback" class="absolute inset-0 hidden bg-cover bg-center" style="background-image: linear-gradient(rgba(13, 13, 13, 0.45), rgba(13, 13, 13, 0.7)), url('https://images.pexels.com/photos/1571939/pexels-photo-1571939.jpeg?auto=compress&cs=tinysrgb&w=1400');"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/70"></div>
+
+        <div class="relative z-10 mx-auto flex h-full w-full max-w-6xl items-center justify-center px-4 text-center md:px-8">
+          <div>
+            <div class="scrub-copy active font-display text-6xl uppercase tracking-[0.12em] text-neon md:text-8xl" data-range="0,0.2">The Route</div>
+            <div class="scrub-copy font-display text-5xl uppercase tracking-[0.12em] text-white md:text-7xl" data-range="0.3,0.6">5 Kilometers Of Pure Energy</div>
+            <div class="scrub-copy font-display text-5xl uppercase tracking-[0.12em] text-neon md:text-7xl" data-range="0.7,1">Your Finish Line Awaits</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-charcoal/70 py-20 md:py-28">
+      <div class="mx-auto max-w-7xl px-4 md:px-8">
+        <div class="reveal mb-12 max-w-3xl">
+          <p class="section-label text-xs text-neon/90 md:text-sm">Event Details</p>
+          <h2 class="mt-4 font-display text-5xl tracking-[0.08em] md:text-7xl">Everything you need before race morning.</h2>
+        </div>
+        <div class="grid gap-6 md:grid-cols-3">
+          <article class="reveal rounded-[1.75rem] border border-white/10 border-l-[6px] border-l-neon bg-black/35 p-7 transition duration-300 hover:-translate-y-1 hover:shadow-neon">
+            <p class="text-2xl">&#128205;</p>
+            <h3 class="mt-4 text-xl font-semibold text-white">Start / Finish</h3>
+            <ul class="mt-5 space-y-3 text-white/72">
+              <li>Manila Bay Esplanade, near CCP</li>
+              <li>Assembly at Tent A</li>
+              <li>Bag deposit available</li>
+            </ul>
+          </article>
+          <article class="reveal rounded-[1.75rem] border border-white/10 border-l-[6px] border-l-neon bg-black/35 p-7 transition duration-300 hover:-translate-y-1 hover:shadow-neon">
+            <p class="text-2xl">&#128343;</p>
+            <h3 class="mt-4 text-xl font-semibold text-white">Schedule</h3>
+            <ul class="mt-5 space-y-3 text-white/72">
+              <li>5:00AM &#8212; Warmup</li>
+              <li>5:30AM &#8212; Race Start</li>
+              <li>7:30AM &#8212; Awarding Ceremony</li>
+              <li>8:00AM &#8212; Post-race Party</li>
+            </ul>
+          </article>
+          <article class="reveal rounded-[1.75rem] border border-white/10 border-l-[6px] border-l-neon bg-black/35 p-7 transition duration-300 hover:-translate-y-1 hover:shadow-neon">
+            <p class="text-2xl">&#127942;</p>
+            <h3 class="mt-4 text-xl font-semibold text-white">Categories</h3>
+            <ul class="mt-5 space-y-3 text-white/72">
+              <li>5K Fun Run (Open)</li>
+              <li>5K Competitive</li>
+              <li>Kids Dash (Below 12)</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="route" class="mx-auto max-w-7xl px-4 py-20 md:px-8 md:py-28">
+      <div class="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
+        <div class="reveal rounded-[2rem] border border-white/10 bg-charcoal/70 p-4 md:p-6">
+          <svg viewBox="0 0 700 500" class="h-full w-full rounded-[1.5rem] bg-[#121212]" role="img" aria-label="Stylized 5K route map">
+            <rect x="0" y="0" width="700" height="500" fill="#121212"></rect>
+            <g stroke="#2b2b2b" stroke-width="1">
+              <path d="M50 80 H650"></path>
+              <path d="M50 170 H650"></path>
+              <path d="M50 260 H650"></path>
+              <path d="M50 350 H650"></path>
+              <path d="M110 40 V460"></path>
+              <path d="M250 40 V460"></path>
+              <path d="M390 40 V460"></path>
+              <path d="M530 40 V460"></path>
+            </g>
+            <path d="M130 365 C190 310, 220 180, 320 160 S500 155, 560 240 S500 380, 380 392 S190 420, 130 365" fill="none" stroke="#C8FF00" stroke-width="10" stroke-linecap="round"></path>
+            <circle cx="130" cy="365" r="15" fill="#C8FF00"></circle>
+            <polygon points="130,337 136,354 154,354 140,365 145,382 130,372 115,382 120,365 106,354 124,354" fill="#F5F5F0"></polygon>
+            <g fill="#F5F5F0" font-size="18" font-family="DM Sans, sans-serif">
+              <text x="95" y="410">Start / Finish</text>
+              <text x="165" y="330">1K</text>
+              <text x="265" y="185">2K</text>
+              <text x="450" y="180">3K</text>
+              <text x="530" y="310">4K</text>
+              <text x="68" y="72">Bay Drive</text>
+              <text x="505" y="72">Roxas Blvd</text>
+              <text x="468" y="442">CCP Complex</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="reveal">
+          <p class="section-label text-xs text-neon/90 md:text-sm">Route Map</p>
+          <h2 class="mt-4 font-display text-5xl tracking-[0.08em] md:text-7xl">Fast, flat, and built for a strong finish.</h2>
+          <p class="mt-5 max-w-xl text-white/72">
+            The 5K loop keeps runners on a broad, spectator-friendly section of Manila Bay Boulevard with clear kilometer markers and full support from first horn to finish.
+          </p>
+          <a href="#" class="mt-7 inline-flex items-center rounded-full border border-neon px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-neon transition hover:bg-neon hover:text-black">View Full Route</a>
+          <div class="mt-8 space-y-3 text-white/80">
+            <p>&#9989; Flat route, road closures from 3AM</p>
+            <p>&#9989; Water stations at every 1.5K</p>
+            <p>&#9989; Medical tent at Start/Finish</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="overflow-hidden border-y border-white/10 bg-black/55 py-20 md:py-24">
+      <div class="mx-auto max-w-7xl px-4 md:px-8">
+        <div class="mb-10 flex items-end justify-between gap-6">
+          <div class="reveal">
+            <p class="section-label text-xs text-neon/90 md:text-sm">Gallery</p>
+            <h2 class="mt-4 font-display text-5xl tracking-[0.08em] md:text-7xl">Race day, full volume.</h2>
+          </div>
+          <div class="hidden gap-3 md:flex">
+            <button class="gallery-btn rounded-full border border-white/15 px-4 py-3 text-sm uppercase tracking-[0.18em] text-white/80 transition hover:border-neon hover:text-neon" data-dir="-1">Prev</button>
+            <button class="gallery-btn rounded-full border border-white/15 px-4 py-3 text-sm uppercase tracking-[0.18em] text-white/80 transition hover:border-neon hover:text-neon" data-dir="1">Next</button>
+          </div>
+        </div>
+        <div id="gallery-track" class="gallery-track flex gap-5 overflow-x-auto pb-2">
+          <figure class="group reveal relative min-w-[82vw] overflow-hidden rounded-[1.75rem] md:min-w-[32%]">
+            <img src="https://images.pexels.com/photos/618612/pexels-photo-618612.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Runners starting together" class="h-[320px] w-full object-cover transition duration-500 group-hover:scale-[1.03]">
+            <figcaption class="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 to-transparent p-6 text-sm font-medium uppercase tracking-[0.18em] text-white opacity-0 transition group-hover:opacity-100">&#128247; Race Day 2024</figcaption>
+          </figure>
+          <figure class="group reveal relative min-w-[82vw] overflow-hidden rounded-[1.75rem] md:min-w-[32%]">
+            <img src="https://images.pexels.com/photos/1904769/pexels-photo-1904769.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Runner pushing through the road section" class="h-[320px] w-full object-cover transition duration-500 group-hover:scale-[1.03]">
+            <figcaption class="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 to-transparent p-6 text-sm font-medium uppercase tracking-[0.18em] text-white opacity-0 transition group-hover:opacity-100">&#128247; Race Day 2024</figcaption>
+          </figure>
+          <figure class="group reveal relative min-w-[82vw] overflow-hidden rounded-[1.75rem] md:min-w-[32%]">
+            <img src="https://images.pexels.com/photos/2402777/pexels-photo-2402777.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Group of runners in action" class="h-[320px] w-full object-cover transition duration-500 group-hover:scale-[1.03]">
+            <figcaption class="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 to-transparent p-6 text-sm font-medium uppercase tracking-[0.18em] text-white opacity-0 transition group-hover:opacity-100">&#128247; Race Day 2024</figcaption>
+          </figure>
+          <figure class="group reveal relative min-w-[82vw] overflow-hidden rounded-[1.75rem] md:min-w-[32%]">
+            <img src="https://images.pexels.com/photos/3621185/pexels-photo-3621185.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Finish area celebration" class="h-[320px] w-full object-cover transition duration-500 group-hover:scale-[1.03]">
+            <figcaption class="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 to-transparent p-6 text-sm font-medium uppercase tracking-[0.18em] text-white opacity-0 transition group-hover:opacity-100">&#128247; Race Day 2024</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="register" class="py-20 md:py-28">
+      <div class="mx-auto max-w-7xl px-4 md:px-8">
+        <div class="mb-12 max-w-3xl reveal">
+          <p class="section-label text-xs text-neon/90 md:text-sm">Registration</p>
+          <h2 class="mt-4 font-display text-5xl tracking-[0.08em] md:text-7xl">Lock your bib before the line fills up.</h2>
+        </div>
+
+        <div class="grid gap-8 lg:grid-cols-[0.82fr_1.18fr]">
+          <div class="reveal space-y-4">
+            <button type="button" class="price-card w-full rounded-[1.6rem] border border-white/10 bg-charcoal/70 p-6 text-left transition hover:border-neon" data-category="5K Fun Run">
+              <span class="block text-xs uppercase tracking-[0.24em] text-neon">5K Fun Run</span>
+              <span class="mt-2 block font-display text-5xl tracking-[0.08em] text-white">&#8369;850</span>
+            </button>
+            <button type="button" class="price-card w-full rounded-[1.6rem] border border-white/10 bg-charcoal/70 p-6 text-left transition hover:border-neon" data-category="5K Competitive">
+              <span class="block text-xs uppercase tracking-[0.24em] text-neon">5K Competitive</span>
+              <span class="mt-2 block font-display text-5xl tracking-[0.08em] text-white">&#8369;950</span>
+            </button>
+            <button type="button" class="price-card w-full rounded-[1.6rem] border border-white/10 bg-charcoal/70 p-6 text-left transition hover:border-neon" data-category="Kids Dash">
+              <span class="block text-xs uppercase tracking-[0.24em] text-neon">Kids Dash</span>
+              <span class="mt-2 block font-display text-5xl tracking-[0.08em] text-white">&#8369;500</span>
+            </button>
+          </div>
+
+          <div class="reveal rounded-[2rem] bg-[#f4f0e8] p-6 text-black md:p-8">
+            <div id="form-state">
+              <form id="registration-form" novalidate class="space-y-5">
+                <div class="grid gap-5 md:grid-cols-2">
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-medium">Full Name</span>
+                    <input name="fullName" type="text" required class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black">
+                    <span class="error-text">Please enter your full name.</span>
+                  </label>
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-medium">Email Address</span>
+                    <input name="email" type="email" required class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black">
+                    <span class="error-text">Please enter a valid email address.</span>
+                  </label>
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-medium">Contact Number</span>
+                    <input name="phone" type="tel" required class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black">
+                    <span class="error-text">Please enter your contact number.</span>
+                  </label>
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-medium">Age</span>
+                    <input name="age" type="number" min="7" required class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black">
+                    <span class="error-text">Age must be 7 or older.</span>
+                  </label>
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-medium">Gender</span>
+                    <select name="gender" required class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black">
+                      <option value="">Select one</option>
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Non-binary</option>
+                      <option>Prefer not to say</option>
+                    </select>
+                    <span class="error-text">Please select a gender option.</span>
+                  </label>
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-medium">Category</span>
+                    <select name="category" required class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black">
+                      <option value="">Select one</option>
+                      <option>5K Fun Run</option>
+                      <option>5K Competitive</option>
+                      <option>Kids Dash</option>
+                    </select>
+                    <span class="error-text">Please select a category.</span>
+                  </label>
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-medium">T-Shirt Size</span>
+                    <select name="shirt" required class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black">
+                      <option value="">Select one</option>
+                      <option>XS</option>
+                      <option>S</option>
+                      <option>M</option>
+                      <option>L</option>
+                      <option>XL</option>
+                      <option>XXL</option>
+                    </select>
+                    <span class="error-text">Please select a shirt size.</span>
+                  </label>
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-medium">Emergency Contact Name</span>
+                    <input name="emergencyName" type="text" required class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black">
+                    <span class="error-text">Please enter an emergency contact name.</span>
+                  </label>
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-medium">Emergency Contact Number</span>
+                    <input name="emergencyPhone" type="tel" required class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black">
+                    <span class="error-text">Please enter an emergency contact number.</span>
+                  </label>
+                  <label class="block md:col-span-2">
+                    <span class="mb-2 block text-sm font-medium">How did you hear about us?</span>
+                    <select name="referrer" required class="w-full rounded-xl border border-black/10 bg-white px-4 py-3 outline-none transition focus:border-black">
+                      <option value="">Select one</option>
+                      <option>Social Media</option>
+                      <option>Friend</option>
+                      <option>Poster</option>
+                      <option>Other</option>
+                    </select>
+                    <span class="error-text">Please select an option.</span>
+                  </label>
+                </div>
+
+                <label class="flex items-start gap-3 rounded-xl border border-black/10 bg-white/70 p-4">
+                  <input name="agreement" type="checkbox" required class="mt-1 h-4 w-4 accent-black">
+                  <span class="text-sm leading-6">I agree to the event rules and liability waiver</span>
+                </label>
+                <span class="error-text -mt-3 block" data-checkbox-error>Please accept the event rules and liability waiver.</span>
+
+                <button type="submit" class="w-full rounded-full bg-neon px-6 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-black transition hover:scale-[1.01]">Secure My Slot &#8594;</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="border-t border-white/10 bg-black/45 py-20 md:py-28">
+      <div class="mx-auto max-w-4xl px-4 md:px-8">
+        <div class="reveal mb-10">
+          <p class="section-label text-xs text-neon/90 md:text-sm">FAQ</p>
+          <h2 class="mt-4 font-display text-5xl tracking-[0.08em] md:text-7xl">Know before you run.</h2>
+        </div>
+        <div class="space-y-4">
+          <article class="faq-item reveal rounded-[1.5rem] border border-white/10 bg-charcoal/70 px-6 py-5" data-open="true">
+            <button class="flex w-full items-center justify-between gap-6 text-left" type="button">
+              <span class="text-lg font-medium text-white">What's included in the registration fee?</span>
+              <span class="faq-icon text-3xl text-neon transition">+</span>
+            </button>
+            <div class="faq-answer">
+              <div>
+                <p class="pt-4 text-white/70">Race bib, timing support, event shirt, hydration access, finisher medal eligibility, and entry to the post-race program.</p>
+              </div>
+            </div>
+          </article>
+          <article class="faq-item reveal rounded-[1.5rem] border border-white/10 bg-charcoal/70 px-6 py-5" data-open="false">
+            <button class="flex w-full items-center justify-between gap-6 text-left" type="button">
+              <span class="text-lg font-medium text-white">Is the route suitable for beginners?</span>
+              <span class="faq-icon text-3xl text-neon transition">+</span>
+            </button>
+            <div class="faq-answer">
+              <div>
+                <p class="pt-4 text-white/70">Yes. The route is flat, well-marked, and designed for both first-time runners and faster competitive participants.</p>
+              </div>
+            </div>
+          </article>
+          <article class="faq-item reveal rounded-[1.5rem] border border-white/10 bg-charcoal/70 px-6 py-5" data-open="false">
+            <button class="flex w-full items-center justify-between gap-6 text-left" type="button">
+              <span class="text-lg font-medium text-white">Can I join without a running background?</span>
+              <span class="faq-icon text-3xl text-neon transition">+</span>
+            </button>
+            <div class="faq-answer">
+              <div>
+                <p class="pt-4 text-white/70">Absolutely. The fun run category is open to casual runners, walkers, and groups looking for a high-energy event atmosphere.</p>
+              </div>
+            </div>
+          </article>
+          <article class="faq-item reveal rounded-[1.5rem] border border-white/10 bg-charcoal/70 px-6 py-5" data-open="false">
+            <button class="flex w-full items-center justify-between gap-6 text-left" type="button">
+              <span class="text-lg font-medium text-white">What do I wear? Is there a dress code?</span>
+              <span class="faq-icon text-3xl text-neon transition">+</span>
+            </button>
+            <div class="faq-answer">
+              <div>
+                <p class="pt-4 text-white/70">Wear your race shirt or breathable athletic gear. Neon accents are encouraged, but comfort and visibility matter more than matching the theme.</p>
+              </div>
+            </div>
+          </article>
+          <article class="faq-item reveal rounded-[1.5rem] border border-white/10 bg-charcoal/70 px-6 py-5" data-open="false">
+            <button class="flex w-full items-center justify-between gap-6 text-left" type="button">
+              <span class="text-lg font-medium text-white">Where do I pick up my race kit?</span>
+              <span class="faq-icon text-3xl text-neon transition">+</span>
+            </button>
+            <div class="faq-answer">
+              <div>
+                <p class="pt-4 text-white/70">Race kits are released at the event partner store and the venue registration tent during the published pre-race collection window.</p>
+              </div>
+            </div>
+          </article>
+          <article class="faq-item reveal rounded-[1.5rem] border border-white/10 bg-charcoal/70 px-6 py-5" data-open="false">
+            <button class="flex w-full items-center justify-between gap-6 text-left" type="button">
+              <span class="text-lg font-medium text-white">What happens if it rains?</span>
+              <span class="faq-icon text-3xl text-neon transition">+</span>
+            </button>
+            <div class="faq-answer">
+              <div>
+                <p class="pt-4 text-white/70">The event proceeds under normal rain conditions. Severe weather protocols and schedule adjustments will be announced through email and social channels.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10 bg-black px-4 py-10 md:px-8">
+    <div class="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h2 class="font-display text-4xl tracking-[0.1em] text-neon">Neon Dash 5K</h2>
+        <p class="mt-2 text-white/70">June 14, 2025 &#183; Manila, Philippines</p>
+        <div class="mt-5 flex items-center gap-4">
+          <a href="#" aria-label="Facebook" class="rounded-full border border-white/10 p-3 text-white/80 transition hover:border-neon hover:text-neon">
+            <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current"><path d="M13.5 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6H17V3.8c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.4V10H7.5v3h2.8v8h3.2Z"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram" class="rounded-full border border-white/10 p-3 text-white/80 transition hover:border-neon hover:text-neon">
+            <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current"><path d="M7.5 3h9A4.5 4.5 0 0 1 21 7.5v9a4.5 4.5 0 0 1-4.5 4.5h-9A4.5 4.5 0 0 1 3 16.5v-9A4.5 4.5 0 0 1 7.5 3Zm0 1.8A2.7 2.7 0 0 0 4.8 7.5v9a2.7 2.7 0 0 0 2.7 2.7h9a2.7 2.7 0 0 0 2.7-2.7v-9a2.7 2.7 0 0 0-2.7-2.7h-9Zm9.6 1.35a1.05 1.05 0 1 1 0 2.1 1.05 1.05 0 0 1 0-2.1ZM12 7.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5Zm0 1.8A2.7 2.7 0 1 0 14.7 12 2.7 2.7 0 0 0 12 9.3Z"/></svg>
+          </a>
+          <a href="#" aria-label="Twitter X" class="rounded-full border border-white/10 p-3 text-white/80 transition hover:border-neon hover:text-neon">
+            <svg viewBox="0 0 24 24" class="h-4 w-4 fill-current"><path d="M18.9 3H21l-6.8 7.8L22 21h-6.1l-4.8-6.3L5.6 21H3.5l7.3-8.3L2 3h6.3l4.3 5.7L18.9 3Zm-2.1 16.3h1.7L7.3 4.6H5.5l11.3 14.7Z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="text-sm leading-7 text-white/55 md:text-right">
+        <p>&#169; 2025 Neon Dash Events. All rights reserved.</p>
+        <p>info@neondash5k.ph | +63 917 000 0000</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('site-nav');
+    const countdownTarget = new Date('2025-06-14T05:30:00+08:00');
+    const countdownEls = {
+      days: document.querySelector('[data-countdown-value="days"]'),
+      hours: document.querySelector('[data-countdown-value="hours"]'),
+      minutes: document.querySelector('[data-countdown-value="minutes"]'),
+      seconds: document.querySelector('[data-countdown-value="seconds"]')
+    };
+
+    const pad = (value) => String(value).padStart(2, '0');
+
+    function updateCountdown() {
+      const diff = Math.max(0, countdownTarget.getTime() - Date.now());
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      countdownEls.days.textContent = pad(days);
+      countdownEls.hours.textContent = pad(hours);
+      countdownEls.minutes.textContent = pad(minutes);
+      countdownEls.seconds.textContent = pad(seconds);
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    const scrubSection = document.getElementById('video-scrub');
+    const scrubVideo = document.getElementById('scrub-video');
+    const scrubFallback = document.getElementById('scrub-fallback');
+    const scrubTexts = document.querySelectorAll('.scrub-copy');
+    let scrubVideoReady = false;
+
+    function updateScrub() {
+      if (!scrubSection) return;
+      const rect = scrubSection.getBoundingClientRect();
+      const sectionHeight = scrubSection.offsetHeight - window.innerHeight;
+      const scrolled = -rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / sectionHeight));
+
+      scrubTexts.forEach((text) => {
+        const [start, end] = text.dataset.range.split(',').map(Number);
+        text.classList.toggle('active', progress >= start && progress <= end);
+      });
+
+      if (scrubVideoReady && scrubVideo.duration && scrubVideo.readyState >= 2) {
+        scrubVideo.currentTime = progress * scrubVideo.duration;
+      }
+    }
+
+    scrubVideo.addEventListener('loadedmetadata', () => {
+      scrubVideo.pause();
+      scrubVideoReady = true;
+      updateScrub();
+    });
+
+    scrubVideo.addEventListener('error', () => {
+      scrubFallback.classList.remove('hidden');
+      scrubVideo.classList.add('hidden');
+    });
+
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('nav-scrolled', window.scrollY > 24);
+      updateScrub();
+    }, { passive: true });
+
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const targetId = link.getAttribute('href');
+        if (!targetId || targetId === '#') return;
+        const target = document.querySelector(targetId);
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('animate-in');
+        revealObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.15 });
+
+    revealEls.forEach((el, index) => {
+      el.style.transitionDelay = ((index % 4) * 100) + 'ms';
+      revealObserver.observe(el);
+    });
+
+    const stats = document.querySelectorAll('.stat-value');
+    const statObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting || entry.target.dataset.animated === 'true') return;
+        entry.target.dataset.animated = 'true';
+        animateStat(entry.target);
+      });
+    }, { threshold: 0.5 });
+
+    function animateStat(el) {
+      const target = Number(el.dataset.target || 0);
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      const start = performance.now();
+      const duration = 1300;
+
+      function tick(now) {
+        const progress = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const value = Math.round(target * eased);
+        el.innerHTML = prefix + value + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    stats.forEach((stat) => statObserver.observe(stat));
+    updateScrub();
+
+    const galleryTrack = document.getElementById('gallery-track');
+    document.querySelectorAll('.gallery-btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        const direction = Number(button.dataset.dir || 1);
+        galleryTrack.scrollBy({ left: direction * 380, behavior: 'smooth' });
+      });
+    });
+
+    const priceCards = document.querySelectorAll('.price-card');
+    const categorySelect = document.querySelector('select[name="category"]');
+
+    function syncCategory(category) {
+      priceCards.forEach((card) => {
+        const active = card.dataset.category === category;
+        card.classList.toggle('border-neon', active);
+        card.classList.toggle('bg-neon', active);
+        card.classList.toggle('text-black', active);
+        card.classList.toggle('shadow-neon', active);
+        const neonLabel = card.querySelector('span');
+        const priceValue = card.querySelectorAll('span')[1];
+        if (active) {
+          neonLabel.classList.remove('text-neon');
+          neonLabel.classList.add('text-black/70');
+          priceValue.classList.add('text-black');
+          priceValue.classList.remove('text-white');
+        } else {
+          neonLabel.classList.add('text-neon');
+          neonLabel.classList.remove('text-black/70');
+          priceValue.classList.remove('text-black');
+          priceValue.classList.add('text-white');
+        }
+      });
+    }
+
+    priceCards.forEach((card) => {
+      card.addEventListener('click', () => {
+        categorySelect.value = card.dataset.category;
+        syncCategory(card.dataset.category);
+      });
+    });
+
+    categorySelect.addEventListener('change', () => syncCategory(categorySelect.value));
+    categorySelect.value = '5K Fun Run';
+    syncCategory('5K Fun Run');
+
+    const form = document.getElementById('registration-form');
+    const formState = document.getElementById('form-state');
+    const checkboxError = document.querySelector('[data-checkbox-error]');
+
+    function validateField(input) {
+      const wrapper = input.closest('label');
+      const error = wrapper ? wrapper.querySelector('.error-text') : null;
+      let valid = true;
+
+      if (input.type === 'checkbox') {
+        valid = input.checked;
+      } else if (input.type === 'email') {
+        valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+      } else if (input.type === 'number') {
+        valid = input.value.trim() !== '' && Number(input.value) >= Number(input.min || 0);
+      } else if (input.tagName === 'SELECT') {
+        valid = input.value.trim() !== '';
+      } else {
+        valid = input.value.trim() !== '';
+      }
+
+      if (input.type !== 'checkbox') {
+        input.classList.toggle('field-error', !valid);
+      } else {
+        checkboxError.classList.toggle('visible', !valid);
+      }
+
+      if (error) {
+        error.classList.toggle('visible', !valid);
+      }
+
+      return valid;
+    }
+
+    form.querySelectorAll('input, select').forEach((field) => {
+      const eventName = field.type === 'checkbox' || field.tagName === 'SELECT' ? 'change' : 'input';
+      field.addEventListener(eventName, () => validateField(field));
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const fields = Array.from(form.querySelectorAll('input, select'));
+      const valid = fields.map(validateField).every(Boolean);
+      if (!valid) return;
+
+      const name = form.elements.fullName.value.trim().split(' ')[0] || 'Runner';
+      formState.innerHTML = `
+        <div class="origin-center animate-in rounded-[1.6rem] border border-black/10 bg-white p-8 text-center shadow-[0_18px_40px_rgba(0,0,0,0.12)]">
+          <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-neon text-3xl">&#10003;</div>
+          <h3 class="mt-6 font-display text-6xl uppercase tracking-[0.08em] text-black">You're In!</h3>
+          <p class="mt-3 text-lg text-black/75">Check your email for confirmation.</p>
+          <p class="mt-2 text-black/70">See you at the starting line, ${name}!</p>
+        </div>
+      `;
+    });
+
+    document.querySelectorAll('.faq-item button').forEach((button) => {
+      button.addEventListener('click', () => {
+        const item = button.parentElement;
+        const isOpen = item.dataset.open === 'true';
+        document.querySelectorAll('.faq-item').forEach((faq) => {
+          faq.dataset.open = 'false';
+        });
+        item.dataset.open = String(!isOpen);
+      });
+    });
+  </script>
+</body>
+</html>
