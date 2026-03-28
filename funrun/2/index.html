@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Dash 5K — June 14, 2025</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Syne"', 'sans-serif'],
+            body: ['"Inter"', 'sans-serif'],
+          },
+          colors: {
+            accent: '#FF5C2B',
+            'accent-light': '#FFF0EB',
+            ink: '#1A1A18',
+            surface: '#FAFAF7',
+            'warm-border': '#E8E6E0',
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --accent: #FF5C2B;
+      --accent-light: #FFF0EB;
+      --ink: #1A1A18;
+      --body: #3D3D3A;
+      --muted: #9A9990;
+      --surface: #FAFAF7;
+      --card: #FFFFFF;
+      --border: #E8E6E0;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--surface);
+      color: var(--body);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Syne', sans-serif;
+    }
+
+    /* ── Reveal animations ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.animate-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Nav ── */
+    #navbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    #navbar.scrolled {
+      background: #ffffff;
+      box-shadow: 0 2px 16px rgba(26,26,24,0.08);
+    }
+
+    /* ── Hero ── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    #hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(250, 240, 230, 0.35);
+      z-index: 1;
+    }
+    #hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Frosted glass card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+
+    /* Countdown pill */
+    .countdown-pill {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.45);
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      width: 2px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 1.6s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%   { opacity: 1; transform: scaleY(1) translateY(0); }
+      100% { opacity: 0; transform: scaleY(0.6) translateY(12px); }
+    }
+
+    /* ── Stats bar ── */
+    #stats-bar {
+      background: var(--accent);
+    }
+
+    /* ── Parallax panels ── */
+    .parallax-panel {
+      height: 80vh;
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    @media (max-width: 768px) {
+      .parallax-panel {
+        background-attachment: scroll;
+      }
+    }
+    .parallax-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(255,92,43,0.6) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .parallax-panel .panel-text {
+      position: relative;
+      z-index: 1;
+      padding-bottom: 3rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.5rem, 7vw, 6rem);
+      color: white;
+      text-shadow: 0 2px 24px rgba(0,0,0,0.25);
+      text-align: center;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Video scrub section ── */
+    #video-scrub {
+      position: relative;
+      height: 300vh;
+    }
+    #scrub-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      overflow: hidden;
+    }
+    #scrub-video-wrapper {
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: 0 8px 48px rgba(26,26,24,0.12);
+      overflow: hidden;
+      position: relative;
+      width: min(860px, 90vw);
+    }
+    #scrub-video-wrapper video {
+      width: 100%;
+      display: block;
+      border-radius: 20px;
+    }
+    #scrub-progress-bar {
+      height: 3px;
+      background: var(--accent);
+      width: 0%;
+      border-radius: 0 0 20px 20px;
+      transition: width 0.05s linear;
+    }
+    .scrub-text {
+      position: absolute;
+      left: 0; right: 0;
+      text-align: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: var(--ink);
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      padding: 0 1rem;
+    }
+    #scrub-text-1 { bottom: -3.5rem; }
+    #scrub-text-2 { bottom: -3.5rem; opacity: 0; }
+    #scrub-text-3 { bottom: -3.5rem; opacity: 0; }
+
+    /* ── Detail cards ── */
+    .detail-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 16px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .detail-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(255,92,43,0.1);
+    }
+
+    /* ── Gallery ── */
+    #gallery-track {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      cursor: grab;
+      user-select: none;
+    }
+    #gallery-track::-webkit-scrollbar { display: none; }
+    #gallery-track.grabbing { cursor: grabbing; }
+    .gallery-item {
+      flex: 0 0 auto;
+      height: 300px;
+      width: auto;
+      aspect-ratio: 4/3;
+      border-radius: 12px;
+      overflow: hidden;
+      scroll-snap-align: start;
+      position: relative;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.03); }
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 92, 43, 0.0);
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+      transition: background 0.3s ease;
+    }
+    .gallery-overlay span {
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .gallery-item:hover .gallery-overlay {
+      background: rgba(255, 92, 43, 0.3);
+    }
+    .gallery-item:hover .gallery-overlay span { opacity: 1; }
+
+    /* ── Pricing cards ── */
+    .pricing-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .pricing-card:hover {
+      border-color: var(--accent);
+    }
+    .pricing-card.selected {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    .pricing-card.selected .pricing-label,
+    .pricing-card.selected .pricing-amount { color: white; }
+
+    /* ── Form ── */
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255,92,43,0.12);
+    }
+    .form-input.error {
+      border-color: #e53e3e;
+      box-shadow: 0 0 0 3px rgba(229,62,62,0.1);
+    }
+    .form-error {
+      color: #e53e3e;
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+    .form-error.visible { display: block; }
+
+    /* ── FAQ ── */
+    .faq-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+    .faq-item.open {
+      border-left: 4px solid var(--accent);
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.38s cubic-bezier(0.16, 1, 0.3, 1), padding 0.2s ease;
+    }
+    .faq-answer.open {
+      max-height: 300px;
+    }
+
+    /* ── Success state ── */
+    #success-state {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+      animation: successPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes successPop {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* ── Mobile nav ── */
+    #mobile-menu {
+      display: none;
+      border-top: 1px solid var(--border);
+    }
+    #mobile-menu.open { display: block; }
+
+    /* SVG route map */
+    .route-svg {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Hamburger lines */
+    .hamburger-line {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--ink);
+      transition: all 0.25s ease;
+      transform-origin: center;
+    }
+  </style>
+</head>
+<body class="font-body">
+
+  <!-- ════════════════════════════════════════
+       1. STICKY NAVIGATION
+  ════════════════════════════════════════ -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="#hero" class="font-display text-xl font-bold tracking-tight" style="color:var(--accent)">
+        RUN•2025
+      </a>
+
+      <!-- Desktop links -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#about" class="text-sm font-medium hover:text-accent transition-colors" style="color:var(--body)">About</a>
+        <a href="#route" class="text-sm font-medium hover:text-accent transition-colors" style="color:var(--body)">Route</a>
+        <a href="#register" class="text-sm font-medium hover:text-accent transition-colors" style="color:var(--body)">Register</a>
+        <a href="#faq" class="text-sm font-medium hover:text-accent transition-colors" style="color:var(--body)">FAQ</a>
+      </div>
+
+      <!-- CTA + hamburger -->
+      <div class="flex items-center gap-4">
+        <a href="#register" class="hidden md:inline-flex items-center gap-1 px-5 py-2 rounded-full text-white text-sm font-semibold transition-all hover:opacity-90 active:scale-95" style="background:var(--accent)">
+          REGISTER NOW <span class="ml-1">→</span>
+        </a>
+        <button id="hamburger" class="md:hidden flex flex-col gap-1.5 p-1" aria-label="Menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" style="background:var(--card)">
+      <div class="flex flex-col px-6 py-4 gap-4">
+        <a href="#about" class="text-sm font-medium py-2 border-b" style="border-color:var(--border); color:var(--body)">About</a>
+        <a href="#route" class="text-sm font-medium py-2 border-b" style="border-color:var(--border); color:var(--body)">Route</a>
+        <a href="#register" class="text-sm font-medium py-2 border-b" style="border-color:var(--border); color:var(--body)">Register</a>
+        <a href="#faq" class="text-sm font-medium py-2" style="color:var(--body)">FAQ</a>
+        <a href="#register" class="w-full text-center py-3 rounded-full text-white text-sm font-semibold mt-1" style="background:var(--accent)">
+          REGISTER NOW →
+        </a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ════════════════════════════════════════
+       2. HERO SECTION
+  ════════════════════════════════════════ -->
+  <section id="hero">
+    <video id="hero-video" autoplay muted loop playsinline>
+      <source src="https://videos.pexels.com/video-files/4164292/4164292-uhd_2560_1440_25fps.mp4" type="video/mp4" />
+    </video>
+    <div id="hero-overlay"></div>
+
+    <div id="hero-content" class="h-full flex flex-col items-center justify-center px-6 pt-16">
+      <div class="glass-card rounded-3xl px-8 py-10 md:px-14 md:py-14 max-w-3xl w-full text-center">
+        <!-- Pre-heading -->
+        <p class="text-xs md:text-sm font-semibold tracking-[0.22em] uppercase mb-4" style="color:var(--accent)">
+          June 14, 2025 · Manila Bay Boulevard
+        </p>
+
+        <!-- Main title -->
+        <h1 class="font-display font-extrabold leading-none mb-4" style="font-size: clamp(3.5rem, 12vw, 9rem); color:var(--ink)">
+          NEON DASH 5K
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-base md:text-xl font-light mb-8" style="color:var(--body)">
+          The city's most electric fun run — 5K of light, music, and speed.
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-col sm:flex-row gap-3 justify-center mb-10">
+          <a href="#register" class="px-8 py-3.5 rounded-full text-white font-semibold text-sm md:text-base transition-all hover:opacity-90 active:scale-95" style="background:var(--accent)">
+            REGISTER NOW
+          </a>
+          <a href="#route" class="px-8 py-3.5 rounded-full font-semibold text-sm md:text-base border-2 transition-all hover:bg-white/20" style="border-color:var(--accent); color:var(--accent)">
+            VIEW ROUTE
+          </a>
+        </div>
+
+        <!-- Countdown -->
+        <div class="flex items-center justify-center gap-3 flex-wrap">
+          <div class="countdown-pill rounded-xl px-4 py-2 text-center min-w-[64px]">
+            <div id="cd-days" class="font-display font-bold text-2xl" style="color:var(--ink)">00</div>
+            <div class="text-xs font-medium uppercase tracking-widest" style="color:var(--muted)">Days</div>
+          </div>
+          <span class="font-display font-bold text-2xl" style="color:var(--muted)">|</span>
+          <div class="countdown-pill rounded-xl px-4 py-2 text-center min-w-[64px]">
+            <div id="cd-hours" class="font-display font-bold text-2xl" style="color:var(--ink)">00</div>
+            <div class="text-xs font-medium uppercase tracking-widest" style="color:var(--muted)">Hours</div>
+          </div>
+          <span class="font-display font-bold text-2xl" style="color:var(--muted)">|</span>
+          <div class="countdown-pill rounded-xl px-4 py-2 text-center min-w-[64px]">
+            <div id="cd-mins" class="font-display font-bold text-2xl" style="color:var(--ink)">00</div>
+            <div class="text-xs font-medium uppercase tracking-widest" style="color:var(--muted)">Mins</div>
+          </div>
+          <span class="font-display font-bold text-2xl" style="color:var(--muted)">|</span>
+          <div class="countdown-pill rounded-xl px-4 py-2 text-center min-w-[64px]">
+            <div id="cd-secs" class="font-display font-bold text-2xl" style="color:var(--ink)">00</div>
+            <div class="text-xs font-medium uppercase tracking-widest" style="color:var(--muted)">Secs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-10">
+      <div class="scroll-indicator"></div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════
+       3. STATS BAR
+  ════════════════════════════════════════ -->
+  <section id="stats-bar" class="py-8 px-6">
+    <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-white text-center">
+      <div class="reveal">
+        <div class="font-display font-bold text-4xl md:text-5xl" data-count="5" data-suffix="K">0K</div>
+        <div class="text-xs font-semibold tracking-[0.18em] uppercase mt-1 opacity-80">Distance</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.1s">
+        <div class="font-display font-bold text-4xl md:text-5xl" data-count="500" data-suffix="+">0+</div>
+        <div class="text-xs font-semibold tracking-[0.18em] uppercase mt-1 opacity-80">Runners</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.2s">
+        <div class="font-display font-bold text-4xl md:text-5xl" data-count="850" data-prefix="₱">₱0</div>
+        <div class="text-xs font-semibold tracking-[0.18em] uppercase mt-1 opacity-80">Entry Fee</div>
+      </div>
+      <div class="reveal" style="transition-delay:0.3s">
+        <div class="font-display font-bold text-4xl md:text-5xl" data-count="50" data-prefix="TOP ">TOP 0</div>
+        <div class="text-xs font-semibold tracking-[0.18em] uppercase mt-1 opacity-80">Finisher Medals</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════
+       4. PARALLAX IMAGE SECTION
+  ════════════════════════════════════════ -->
+  <section id="about">
+    <div class="parallax-panel" style="background-image: url('https://images.pexels.com/photos/2803158/pexels-photo-2803158.jpeg?auto=compress&cs=tinysrgb&w=1400')">
+      <div class="panel-text reveal">EVERY STEP COUNTS</div>
+    </div>
+    <div class="parallax-panel" style="background-image: url('https://images.pexels.com/photos/3076509/pexels-photo-3076509.jpeg?auto=compress&cs=tinysrgb&w=1400')">
+      <div class="panel-text reveal">RUN YOUR PACE</div>
+    </div>
+    <div class="parallax-panel" style="background-image: url('https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg?auto=compress&cs=tinysrgb&w=1400')">
+      <div class="panel-text reveal">CROSS THE LINE</div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════
+       5. VIDEO FRAME SCRUBBING
+  ════════════════════════════════════════ -->
+  <section id="video-scrub">
+    <div id="scrub-sticky">
+      <div class="text-center mb-6 px-4">
+        <p class="text-xs font-semibold tracking-[0.2em] uppercase mb-2" style="color:var(--accent)">Scroll to Explore</p>
+        <h2 class="font-display font-extrabold text-3xl md:text-5xl" style="color:var(--ink)">The Route Experience</h2>
+      </div>
+
+      <div id="scrub-video-wrapper">
+        <video id="scrub-video" preload="auto" muted playsinline>
+          <source src="https://videos.pexels.com/video-files/6276266/6276266-uhd_2560_1440_25fps.mp4" type="video/mp4" />
+        </video>
+        <div id="scrub-progress-bar"></div>
+      </div>
+
+      <!-- Scrub text overlays (below video) -->
+      <div style="position:relative; height:2rem; width:min(860px,90vw); margin-top:1.5rem;">
+        <div id="scrub-text-1" class="scrub-text" style="bottom:0">THE ROUTE</div>
+        <div id="scrub-text-2" class="scrub-text" style="bottom:0; opacity:0">5 KILOMETERS OF PURE ENERGY</div>
+        <div id="scrub-text-3" class="scrub-text" style="bottom:0; opacity:0">YOUR FINISH LINE AWAITS</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════
+       6. EVENT DETAILS GRID
+  ════════════════════════════════════════ -->
+  <section id="details" class="py-24 px-6" style="background:var(--surface)">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <p class="text-xs font-semibold tracking-[0.2em] uppercase mb-3" style="color:var(--accent)">Race Day Info</p>
+        <h2 class="font-display font-extrabold text-4xl md:text-5xl" style="color:var(--ink)">Event Details</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Start/Finish -->
+        <div class="detail-card p-8 reveal">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center mb-5" style="background:var(--accent-light)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-4" style="color:var(--ink)">Start / Finish</h3>
+          <ul class="space-y-2 text-sm" style="color:var(--body)">
+            <li class="flex items-start gap-2"><span style="color:var(--accent)">—</span> Manila Bay Esplanade, near CCP</li>
+            <li class="flex items-start gap-2"><span style="color:var(--accent)">—</span> Assembly at Tent A</li>
+            <li class="flex items-start gap-2"><span style="color:var(--accent)">—</span> Bag deposit available</li>
+          </ul>
+        </div>
+
+        <!-- Schedule -->
+        <div class="detail-card p-8 reveal" style="transition-delay:0.12s">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center mb-5" style="background:var(--accent-light)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-4" style="color:var(--ink)">Schedule</h3>
+          <ul class="space-y-2 text-sm" style="color:var(--body)">
+            <li class="flex items-start gap-2"><span style="color:var(--accent)">5:00AM</span> — Warm-up</li>
+            <li class="flex items-start gap-2"><span style="color:var(--accent)">5:30AM</span> — Race Start</li>
+            <li class="flex items-start gap-2"><span style="color:var(--accent)">7:30AM</span> — Awarding Ceremony</li>
+            <li class="flex items-start gap-2"><span style="color:var(--accent)">8:00AM</span> — Post-race Party</li>
+          </ul>
+        </div>
+
+        <!-- Categories -->
+        <div class="detail-card p-8 reveal" style="transition-delay:0.24s">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center mb-5" style="background:var(--accent-light)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/>
+            </svg>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-4" style="color:var(--ink)">Categories</h3>
+          <ul class="space-y-2 text-sm" style="color:var(--body)">
+            <li class="flex items-start gap-2"><span style="color:var(--accent)">—</span> 5K Fun Run (Open)</li>
+            <li class="flex items-start gap-2"><span style="color:var(--accent)">—</span> 5K Competitive</li>
+            <li class="flex items-start gap-2"><span style="color:var(--accent)">—</span> Kids Dash (Below 12)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════
+       7. ROUTE MAP SECTION
+  ════════════════════════════════════════ -->
+  <section id="route" class="py-24 px-6" style="background:var(--card)">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <p class="text-xs font-semibold tracking-[0.2em] uppercase mb-3" style="color:var(--accent)">5K Course</p>
+        <h2 class="font-display font-extrabold text-4xl md:text-5xl" style="color:var(--ink)">The Route</h2>
+      </div>
+
+      <!-- Map card -->
+      <div class="rounded-2xl overflow-hidden reveal" style="background:var(--card); box-shadow: 0 4px 32px rgba(26,26,24,0.10); border: 1px solid var(--border)">
+        <svg viewBox="0 0 800 500" class="route-svg" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background -->
+          <rect width="800" height="500" fill="#FAFAF7"/>
+
+          <!-- Grid / city streets (subtle) -->
+          <g stroke="#E8E6E0" stroke-width="1.5" fill="none">
+            <!-- Horizontal streets -->
+            <line x1="0" y1="120" x2="800" y2="120"/>
+            <line x1="0" y1="200" x2="800" y2="200"/>
+            <line x1="0" y1="280" x2="800" y2="280"/>
+            <line x1="0" y1="360" x2="800" y2="360"/>
+            <line x1="0" y1="440" x2="800" y2="440"/>
+            <!-- Vertical streets -->
+            <line x1="100" y1="0" x2="100" y2="500"/>
+            <line x1="220" y1="0" x2="220" y2="500"/>
+            <line x1="380" y1="0" x2="380" y2="500"/>
+            <line x1="520" y1="0" x2="520" y2="500"/>
+            <line x1="650" y1="0" x2="650" y2="500"/>
+            <line x1="760" y1="0" x2="760" y2="500"/>
+          </g>
+
+          <!-- Landmark labels -->
+          <text x="60" y="115" font-family="Inter,sans-serif" font-size="11" fill="#9A9990" text-anchor="middle">Bay Drive</text>
+          <text x="400" y="115" font-family="Inter,sans-serif" font-size="11" fill="#9A9990" text-anchor="middle">Manila Bay Waterfront</text>
+          <text x="650" y="275" font-family="Inter,sans-serif" font-size="11" fill="#9A9990" text-anchor="middle">Roxas Blvd</text>
+          <text x="200" y="395" font-family="Inter,sans-serif" font-size="11" fill="#9A9990" text-anchor="middle">CCP Complex</text>
+
+          <!-- Route path — thick coral, a 5K loop -->
+          <path
+            d="M 130,250
+               L 130,160
+               Q 130,130 160,130
+               L 640,130
+               Q 670,130 670,160
+               L 670,340
+               Q 670,370 640,370
+               L 320,370
+               Q 290,370 290,340
+               L 290,250
+               Q 290,220 260,220
+               L 160,220
+               Q 130,220 130,250 Z"
+            stroke="#FF5C2B" stroke-width="6" fill="none"
+            stroke-linecap="round" stroke-linejoin="round"
+            stroke-dasharray="none"
+          />
+
+          <!-- 1K marker -->
+          <circle cx="310" cy="130" r="8" fill="#FF5C2B"/>
+          <text x="310" y="118" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#FF5C2B" text-anchor="middle">1K</text>
+
+          <!-- 2K marker -->
+          <circle cx="670" cy="245" r="8" fill="#FF5C2B"/>
+          <text x="690" y="249" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#FF5C2B" text-anchor="start">2K</text>
+
+          <!-- 3K marker -->
+          <circle cx="490" cy="370" r="8" fill="#FF5C2B"/>
+          <text x="490" y="390" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#FF5C2B" text-anchor="middle">3K</text>
+
+          <!-- 4K marker -->
+          <circle cx="290" cy="310" r="8" fill="#FF5C2B"/>
+          <text x="270" y="314" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#FF5C2B" text-anchor="end">4K</text>
+
+          <!-- Start/Finish marker -->
+          <circle cx="130" cy="250" r="14" fill="#FF5C2B"/>
+          <text x="130" y="254" font-family="Syne,sans-serif" font-size="10" font-weight="700" fill="white" text-anchor="middle">S/F</text>
+          <text x="130" y="280" font-family="Inter,sans-serif" font-size="12" font-weight="600" fill="#1A1A18" text-anchor="middle">Start / Finish</text>
+          <text x="130" y="295" font-family="Inter,sans-serif" font-size="10" fill="#9A9990" text-anchor="middle">Manila Bay Esplanade</text>
+        </svg>
+      </div>
+
+      <!-- Route highlights -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+        <div class="flex items-center gap-3 reveal" style="transition-delay:0.1s">
+          <span class="text-lg">✅</span>
+          <p class="text-sm" style="color:var(--body)">Flat route, road closures from 3AM</p>
+        </div>
+        <div class="flex items-center gap-3 reveal" style="transition-delay:0.2s">
+          <span class="text-lg">✅</span>
+          <p class="text-sm" style="color:var(--body)">Water stations at every 1.5K</p>
+        </div>
+        <div class="flex items-center gap-3 reveal" style="transition-delay:0.3s">
+          <span class="text-lg">✅</span>
+          <p class="text-sm" style="color:var(--body)">Medical tent at Start/Finish</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════
+       8. PHOTO GALLERY
+  ════════════════════════════════════════ -->
+  <section id="gallery" class="py-24" style="background:var(--surface)">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12 px-6 reveal">
+        <p class="text-xs font-semibold tracking-[0.2em] uppercase mb-3" style="color:var(--accent)">Race Day Moments</p>
+        <h2 class="font-display font-extrabold text-4xl md:text-5xl" style="color:var(--ink)">Gallery</h2>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex justify-end px-6 mb-4 gap-3">
+        <button id="gallery-prev" class="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:opacity-80" style="background:var(--accent); color:white">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button id="gallery-next" class="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:opacity-80" style="background:var(--accent); color:white">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+      </div>
+
+      <!-- Track -->
+      <div class="px-6">
+        <div id="gallery-track">
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/3621188/pexels-photo-3621188.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race day" loading="lazy"/>
+            <div class="gallery-overlay"><span>📸 Race Day 2024</span></div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/2422283/pexels-photo-2422283.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race day" loading="lazy"/>
+            <div class="gallery-overlay"><span>📸 Race Day 2024</span></div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/1571939/pexels-photo-1571939.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race day" loading="lazy"/>
+            <div class="gallery-overlay"><span>📸 Race Day 2024</span></div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.pexels.com/photos/2403045/pexels-photo-2403045.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="Race day" loading="lazy"/>
+            <div class="gallery-overlay"><span>📸 Race Day 2024</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════
+       9. REGISTRATION SECTION
+  ════════════════════════════════════════ -->
+  <section id="register" class="py-24 px-6" style="background:var(--accent-light)">
+    <div class="max-w-2xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <p class="text-xs font-semibold tracking-[0.2em] uppercase mb-3" style="color:var(--accent)">Limited Slots</p>
+        <h2 class="font-display font-extrabold text-4xl md:text-5xl" style="color:var(--ink)">Secure Your Slot</h2>
+        <p class="mt-3 text-base" style="color:var(--muted)">Join 500+ runners on June 14 at Manila Bay.</p>
+      </div>
+
+      <!-- Pricing cards -->
+      <div class="grid grid-cols-3 gap-3 mb-8 reveal">
+        <div class="pricing-card selected p-4 text-center" data-category="5K Fun Run">
+          <div class="pricing-label text-xs font-semibold uppercase tracking-widest mb-1">5K Fun Run</div>
+          <div class="pricing-amount font-display font-bold text-2xl">₱850</div>
+        </div>
+        <div class="pricing-card p-4 text-center" data-category="5K Competitive">
+          <div class="pricing-label text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--muted)">5K Competitive</div>
+          <div class="pricing-amount font-display font-bold text-2xl" style="color:var(--ink)">₱950</div>
+        </div>
+        <div class="pricing-card p-4 text-center" data-category="Kids Dash">
+          <div class="pricing-label text-xs font-semibold uppercase tracking-widest mb-1" style="color:var(--muted)">Kids Dash</div>
+          <div class="pricing-amount font-display font-bold text-2xl" style="color:var(--ink)">₱500</div>
+        </div>
+      </div>
+
+      <!-- Registration card -->
+      <div class="rounded-2xl p-8 md:p-12 reveal" style="background:var(--card); border:1px solid var(--border); box-shadow: 0 8px 40px rgba(255,92,43,0.08)">
+        <!-- Form -->
+        <form id="reg-form" novalidate>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium mb-1.5" style="color:var(--ink)">Full Name *</label>
+              <input type="text" id="f-name" class="form-input" placeholder="Juan dela Cruz" required />
+              <p class="form-error" id="err-name">Please enter your full name.</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1.5" style="color:var(--ink)">Email Address *</label>
+              <input type="email" id="f-email" class="form-input" placeholder="juan@example.com" required />
+              <p class="form-error" id="err-email">Please enter a valid email.</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1.5" style="color:var(--ink)">Contact Number *</label>
+              <input type="tel" id="f-phone" class="form-input" placeholder="+63 9XX XXX XXXX" required />
+              <p class="form-error" id="err-phone">Please enter your contact number.</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1.5" style="color:var(--ink)">Age *</label>
+              <input type="number" id="f-age" class="form-input" placeholder="18" min="7" required />
+              <p class="form-error" id="err-age">Age must be at least 7.</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1.5" style="color:var(--ink)">Gender *</label>
+              <select id="f-gender" class="form-input" required>
+                <option value="">Select gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Non-binary</option>
+                <option>Prefer not to say</option>
+              </select>
+              <p class="form-error" id="err-gender">Please select a gender.</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1.5" style="color:var(--ink)">Category *</label>
+              <select id="f-category" class="form-input" required>
+                <option value="">Select category</option>
+                <option>5K Fun Run</option>
+                <option>5K Competitive</option>
+                <option>Kids Dash</option>
+              </select>
+              <p class="form-error" id="err-category">Please select a category.</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1.5" style="color:var(--ink)">T-Shirt Size *</label>
+              <select id="f-size" class="form-input" required>
+                <option value="">Select size</option>
+                <option>XS</option><option>S</option><option>M</option>
+                <option>L</option><option>XL</option><option>XXL</option>
+              </select>
+              <p class="form-error" id="err-size">Please select a size.</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1.5" style="color:var(--ink)">Emergency Contact Name *</label>
+              <input type="text" id="f-ec-name" class="form-input" placeholder="Maria dela Cruz" required />
+              <p class="form-error" id="err-ec-name">Please enter emergency contact name.</p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1.5" style="color:var(--ink)">Emergency Contact Number *</label>
+              <input type="tel" id="f-ec-phone" class="form-input" placeholder="+63 9XX XXX XXXX" required />
+              <p class="form-error" id="err-ec-phone">Please enter emergency contact number.</p>
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium mb-1.5" style="color:var(--ink)">How did you hear about us?</label>
+              <select id="f-source" class="form-input">
+                <option value="">Select an option</option>
+                <option>Social Media</option>
+                <option>Friend</option>
+                <option>Poster</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="md:col-span-2">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" id="f-agree" class="mt-0.5 w-4 h-4 rounded accent-orange-500" required />
+                <span class="text-sm" style="color:var(--body)">
+                  I agree to the event rules and liability waiver *
+                </span>
+              </label>
+              <p class="form-error" id="err-agree">You must agree to continue.</p>
+            </div>
+
+          </div>
+
+          <button type="submit" class="w-full mt-8 py-4 rounded-full text-white font-semibold text-base tracking-wide transition-all hover:opacity-90 active:scale-[0.98]" style="background:var(--accent)">
+            SECURE MY SLOT →
+          </button>
+        </form>
+
+        <!-- Success state -->
+        <div id="success-state">
+          <div class="text-5xl mb-5">🏅</div>
+          <h3 class="font-display font-extrabold text-3xl mb-3" style="color:var(--ink)">YOU'RE IN, <span id="success-name"></span>!</h3>
+          <p class="text-base mb-2" style="color:var(--body)">Check your email for your confirmation and race kit details.</p>
+          <p class="font-semibold" style="color:var(--accent)">See you at the starting line on June 14!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════
+       10. FAQ SECTION
+  ════════════════════════════════════════ -->
+  <section id="faq" class="py-24 px-6" style="background:var(--surface)">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-14 reveal">
+        <p class="text-xs font-semibold tracking-[0.2em] uppercase mb-3" style="color:var(--accent)">Got Questions?</p>
+        <h2 class="font-display font-extrabold text-4xl md:text-5xl" style="color:var(--ink)">FAQ</h2>
+      </div>
+
+      <div class="space-y-3" id="faq-list">
+
+        <div class="faq-item reveal">
+          <button class="faq-btn w-full flex items-center justify-between px-6 py-5 text-left">
+            <span class="font-semibold text-base pr-4" style="color:var(--ink)">What's included in the registration fee?</span>
+            <span class="faq-icon font-display font-bold text-xl flex-shrink-0" style="color:var(--accent)">+</span>
+          </button>
+          <div class="faq-answer px-6 pb-0">
+            <p class="text-sm pb-5" style="color:var(--body)">Your registration includes an official race bib, finisher medal (Top 50), Neon Dash t-shirt, race kit with glowstick accessories, hydration at water stations, and access to the post-race party with live music and food vendors.</p>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" style="transition-delay:0.06s">
+          <button class="faq-btn w-full flex items-center justify-between px-6 py-5 text-left">
+            <span class="font-semibold text-base pr-4" style="color:var(--ink)">Is the route suitable for beginners?</span>
+            <span class="faq-icon font-display font-bold text-xl flex-shrink-0" style="color:var(--accent)">+</span>
+          </button>
+          <div class="faq-answer px-6 pb-0">
+            <p class="text-sm pb-5" style="color:var(--body)">Absolutely! The route is entirely flat along Manila Bay Esplanade, with no inclines or obstacles. The 5K Fun Run category is designed for all fitness levels — whether you walk, jog, or run.</p>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" style="transition-delay:0.12s">
+          <button class="faq-btn w-full flex items-center justify-between px-6 py-5 text-left">
+            <span class="font-semibold text-base pr-4" style="color:var(--ink)">Can I join without a running background?</span>
+            <span class="faq-icon font-display font-bold text-xl flex-shrink-0" style="color:var(--accent)">+</span>
+          </button>
+          <div class="faq-answer px-6 pb-0">
+            <p class="text-sm pb-5" style="color:var(--body)">Yes! No running experience is required. This is a fun run — you can walk, jog, dance, or skip the entire way. It's about celebrating movement, not competing.</p>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" style="transition-delay:0.18s">
+          <button class="faq-btn w-full flex items-center justify-between px-6 py-5 text-left">
+            <span class="font-semibold text-base pr-4" style="color:var(--ink)">What do I wear? Is there a dress code?</span>
+            <span class="faq-icon font-display font-bold text-xl flex-shrink-0" style="color:var(--accent)">+</span>
+          </button>
+          <div class="faq-answer px-6 pb-0">
+            <p class="text-sm pb-5" style="color:var(--body)">Wear comfortable athletic shoes and your Neon Dash t-shirt (provided in your race kit). Neon and bright colors are encouraged — it's a vibe! Avoid dark clothing so the glow accessories stand out.</p>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" style="transition-delay:0.24s">
+          <button class="faq-btn w-full flex items-center justify-between px-6 py-5 text-left">
+            <span class="font-semibold text-base pr-4" style="color:var(--ink)">Where do I pick up my race kit?</span>
+            <span class="faq-icon font-display font-bold text-xl flex-shrink-0" style="color:var(--accent)">+</span>
+          </button>
+          <div class="faq-answer px-6 pb-0">
+            <p class="text-sm pb-5" style="color:var(--body)">Race kit claiming is on June 12–13, 2025 at the Neon Dash Booth, SM Mall of Asia Activity Center, 10AM–8PM. Bring a printed or digital copy of your confirmation email and a valid ID.</p>
+          </div>
+        </div>
+
+        <div class="faq-item reveal" style="transition-delay:0.30s">
+          <button class="faq-btn w-full flex items-center justify-between px-6 py-5 text-left">
+            <span class="font-semibold text-base pr-4" style="color:var(--ink)">What happens if it rains?</span>
+            <span class="faq-icon font-display font-bold text-xl flex-shrink-0" style="color:var(--accent)">+</span>
+          </button>
+          <div class="faq-answer px-6 pb-0">
+            <p class="text-sm pb-5" style="color:var(--body)">The event will proceed rain or shine. In case of severe weather (typhoon signal), we will issue an official statement 24 hours before the event. Registered participants will be notified via email and our official social media channels.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════
+       11. FOOTER
+  ════════════════════════════════════════ -->
+  <footer class="py-16 px-6" style="background:var(--ink)">
+    <div class="max-w-5xl mx-auto">
+      <!-- Top: logo + tagline -->
+      <div class="text-center mb-10">
+        <div class="font-display font-extrabold text-3xl mb-2" style="color:var(--accent)">NEON DASH 5K</div>
+        <p class="text-sm" style="color:rgba(255,255,255,0.5)">June 14, 2025 · Manila, Philippines</p>
+      </div>
+
+      <!-- Divider -->
+      <div class="border-t mb-8" style="border-color:rgba(255,255,255,0.1)"></div>
+
+      <!-- Social + contact -->
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <!-- Social icons -->
+        <div class="flex items-center gap-5">
+          <!-- Facebook -->
+          <a href="#" class="footer-social w-10 h-10 rounded-full flex items-center justify-center transition-all" style="background:rgba(255,255,255,0.08)" aria-label="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="color:rgba(255,255,255,0.6)">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+            </svg>
+          </a>
+          <!-- Instagram -->
+          <a href="#" class="footer-social w-10 h-10 rounded-full flex items-center justify-center transition-all" style="background:rgba(255,255,255,0.08)" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+          <!-- Twitter/X -->
+          <a href="#" class="footer-social w-10 h-10 rounded-full flex items-center justify-center transition-all" style="background:rgba(255,255,255,0.08)" aria-label="Twitter/X">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,0.6)">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Contact -->
+        <div class="text-center md:text-right space-y-1">
+          <p class="text-sm" style="color:rgba(255,255,255,0.5)">info@neondash5k.ph</p>
+          <p class="text-sm" style="color:rgba(255,255,255,0.5)">+63 917 000 0000</p>
+        </div>
+      </div>
+
+      <!-- Copyright -->
+      <div class="border-t mt-8 pt-8 text-center" style="border-color:rgba(255,255,255,0.08)">
+        <p class="text-xs" style="color:rgba(255,255,255,0.3)">© 2025 Neon Dash Events. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ════════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════════ -->
+  <script>
+    // ── Nav scroll behavior ──────────────────────────────────────────
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // ── Hamburger ───────────────────────────────────────────────────
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    });
+
+    // ── Countdown timer ──────────────────────────────────────────────
+    const raceDate = new Date('2025-06-14T05:30:00+08:00').getTime();
+    function updateCountdown() {
+      const now = Date.now();
+      const diff = raceDate - now;
+      if (diff <= 0) {
+        ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id => document.getElementById(id).textContent = '00');
+        return;
+      }
+      const days  = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins  = Math.floor((diff % 3600000) / 60000);
+      const secs  = Math.floor((diff % 60000) / 1000);
+      document.getElementById('cd-days').textContent  = String(days).padStart(2,'0');
+      document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+      document.getElementById('cd-mins').textContent  = String(mins).padStart(2,'0');
+      document.getElementById('cd-secs').textContent  = String(secs).padStart(2,'0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // ── IntersectionObserver for .reveal ────────────────────────────
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ── Stats count-up ───────────────────────────────────────────────
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseInt(el.dataset.count, 10);
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        const duration = 1200;
+        const startTime = performance.now();
+        function tick(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(eased * target);
+          el.textContent = prefix + current + suffix;
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        statsObserver.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-count]').forEach(el => statsObserver.observe(el));
+
+    // ── Video scrub ──────────────────────────────────────────────────
+    const scrubSection = document.getElementById('video-scrub');
+    const scrubVideo   = document.getElementById('scrub-video');
+    const progressBar  = document.getElementById('scrub-progress-bar');
+    const scrubT1 = document.getElementById('scrub-text-1');
+    const scrubT2 = document.getElementById('scrub-text-2');
+    const scrubT3 = document.getElementById('scrub-text-3');
+
+    // Never autoplay — enforce pause always
+    scrubVideo.pause();
+    scrubVideo.addEventListener('play', () => scrubVideo.pause());
+    scrubVideo.addEventListener('timeupdate', () => scrubVideo.pause());
+
+    function updateScrubText(p) {
+      // Phase 1: visible 0–25%, fade out by 35%
+      scrubT1.style.opacity = p < 0.25 ? 1 : Math.max(0, 1 - (p - 0.25) / 0.1);
+      scrubT1.style.transform = `translateY(${p < 0.25 ? 0 : -(p - 0.25) * 60}px)`;
+
+      // Phase 2: fade in at 30%, visible 35–60%, fade out by 70%
+      const t2in  = Math.min(1, Math.max(0, (p - 0.30) / 0.08));
+      const t2out = Math.min(1, Math.max(0, (p - 0.62) / 0.08));
+      scrubT2.style.opacity = t2in * (1 - t2out);
+
+      // Phase 3: fade in at 75%, stay through 100%
+      scrubT3.style.opacity = Math.min(1, Math.max(0, (p - 0.75) / 0.1));
+      scrubT3.style.transform = `translateY(${p > 0.75 ? 0 : (0.75 - p) * 40}px)`;
+    }
+
+    window.addEventListener('scroll', () => {
+      const rect = scrubSection.getBoundingClientRect();
+      const sectionScrollable = scrubSection.offsetHeight - window.innerHeight;
+      const scrolled = -rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / sectionScrollable));
+
+      if (scrubVideo.readyState >= 2 && scrubVideo.duration) {
+        scrubVideo.currentTime = progress * scrubVideo.duration;
+      }
+      progressBar.style.width = (progress * 100) + '%';
+      updateScrubText(progress);
+    }, { passive: true });
+
+    // Fallback: if video fails, show a static image
+    scrubVideo.addEventListener('error', () => {
+      const wrapper = document.getElementById('scrub-video-wrapper');
+      wrapper.innerHTML = `<div style="height:480px; background: url('https://images.pexels.com/photos/2803158/pexels-photo-2803158.jpeg?auto=compress&cs=tinysrgb&w=1400') center/cover; border-radius:20px; position:relative;">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(255,92,43,0.5),transparent);border-radius:20px;"></div>
+      </div>`;
+    });
+
+    // ── Gallery drag scroll ──────────────────────────────────────────
+    const track = document.getElementById('gallery-track');
+    let isDown = false, startX, scrollLeft;
+
+    track.addEventListener('mousedown', e => {
+      isDown = true;
+      track.classList.add('grabbing');
+      startX = e.pageX - track.offsetLeft;
+      scrollLeft = track.scrollLeft;
+    });
+    track.addEventListener('mouseleave', () => { isDown = false; track.classList.remove('grabbing'); });
+    track.addEventListener('mouseup', () => { isDown = false; track.classList.remove('grabbing'); });
+    track.addEventListener('mousemove', e => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - track.offsetLeft;
+      track.scrollLeft = scrollLeft - (x - startX) * 1.4;
+    });
+
+    document.getElementById('gallery-prev').addEventListener('click', () => {
+      track.scrollBy({ left: -320, behavior: 'smooth' });
+    });
+    document.getElementById('gallery-next').addEventListener('click', () => {
+      track.scrollBy({ left: 320, behavior: 'smooth' });
+    });
+
+    // ── Footer social icon hover ─────────────────────────────────────
+    document.querySelectorAll('.footer-social').forEach(btn => {
+      btn.addEventListener('mouseenter', () => { btn.style.background = 'var(--accent)'; });
+      btn.addEventListener('mouseleave', () => { btn.style.background = 'rgba(255,255,255,0.08)'; });
+    });
+
+    // ── Pricing card selection ───────────────────────────────────────
+    const pricingCards = document.querySelectorAll('.pricing-card');
+    const categorySelect = document.getElementById('f-category');
+
+    pricingCards.forEach(card => {
+      card.addEventListener('click', () => {
+        pricingCards.forEach(c => {
+          c.classList.remove('selected');
+          c.querySelector('.pricing-label').style.color = 'var(--muted)';
+          c.querySelector('.pricing-amount').style.color = 'var(--ink)';
+        });
+        card.classList.add('selected');
+        const category = card.dataset.category;
+        if (categorySelect) {
+          for (let opt of categorySelect.options) {
+            if (opt.value === category) { opt.selected = true; break; }
+          }
+        }
+      });
+    });
+
+    // Sync pricing card when category dropdown changes
+    categorySelect.addEventListener('change', () => {
+      const val = categorySelect.value;
+      pricingCards.forEach(c => {
+        const isMatch = c.dataset.category === val;
+        c.classList.toggle('selected', isMatch);
+        c.querySelector('.pricing-label').style.color = isMatch ? 'white' : 'var(--muted)';
+        c.querySelector('.pricing-amount').style.color = isMatch ? 'white' : 'var(--ink)';
+      });
+    });
+
+    // ── Registration form validation ─────────────────────────────────
+    document.getElementById('reg-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      let valid = true;
+
+      function check(id, errId, condition) {
+        const el = document.getElementById(id);
+        const err = document.getElementById(errId);
+        if (!condition(el)) {
+          el.classList.add('error');
+          err.classList.add('visible');
+          valid = false;
+        } else {
+          el.classList.remove('error');
+          err.classList.remove('visible');
+        }
+      }
+
+      check('f-name',     'err-name',     el => el.value.trim().length >= 2);
+      check('f-email',    'err-email',    el => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()));
+      check('f-phone',    'err-phone',    el => el.value.trim().length >= 7);
+      check('f-age',      'err-age',      el => parseInt(el.value) >= 7);
+      check('f-gender',   'err-gender',   el => el.value !== '');
+      check('f-category', 'err-category', el => el.value !== '');
+      check('f-size',     'err-size',     el => el.value !== '');
+      check('f-ec-name',  'err-ec-name',  el => el.value.trim().length >= 2);
+      check('f-ec-phone', 'err-ec-phone', el => el.value.trim().length >= 7);
+
+      const agreeEl  = document.getElementById('f-agree');
+      const agreeErr = document.getElementById('err-agree');
+      if (!agreeEl.checked) {
+        agreeErr.classList.add('visible');
+        valid = false;
+      } else {
+        agreeErr.classList.remove('visible');
+      }
+
+      if (!valid) return;
+
+      // Success
+      const name = document.getElementById('f-name').value.trim().split(' ')[0].toUpperCase();
+      document.getElementById('success-name').textContent = name;
+      document.getElementById('reg-form').style.display = 'none';
+      const successEl = document.getElementById('success-state');
+      successEl.style.display = 'block';
+    });
+
+    // Clear error on input
+    document.querySelectorAll('.form-input').forEach(input => {
+      input.addEventListener('input', () => input.classList.remove('error'));
+      input.addEventListener('change', () => input.classList.remove('error'));
+    });
+
+    // ── FAQ accordion ────────────────────────────────────────────────
+    document.querySelectorAll('.faq-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item   = btn.closest('.faq-item');
+        const answer = item.querySelector('.faq-answer');
+        const icon   = btn.querySelector('.faq-icon');
+        const isOpen = answer.classList.contains('open');
+
+        // Close all
+        document.querySelectorAll('.faq-item').forEach(i => {
+          i.classList.remove('open');
+          i.querySelector('.faq-answer').classList.remove('open');
+          i.querySelector('.faq-icon').textContent = '+';
+        });
+
+        // Open clicked if it was closed
+        if (!isOpen) {
+          item.classList.add('open');
+          answer.classList.add('open');
+          icon.textContent = '−';
+        }
+      });
+    });
+
+  </script>
+</body>
+</html>
