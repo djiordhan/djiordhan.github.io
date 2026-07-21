@@ -25,19 +25,28 @@
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);
     font-family:"Space Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior:none;}
-  #stage{position:fixed;inset:0;touch-action:none;}
-  canvas{display:block}
-  /* vignette + grain over the 3D */
-  #vignette{position:fixed;inset:0;pointer-events:none;
-    background:radial-gradient(120% 100% at 50% 35%,transparent 40%,rgba(3,6,11,.55) 100%);
-    mix-blend-mode:multiply;}
-
+  /* app shell: stage on top (large), controls below — not overlapping */
+  #app{height:100dvh;display:flex;flex-direction:column;}
+  #stage{position:relative;flex:1 1 auto;min-height:0;touch-action:none;overflow:hidden;
+    margin:10px 10px 0;border-radius:16px;border:1px solid var(--stroke);
+    background:radial-gradient(120% 90% at 50% 30%, #10192a 0%, #0a1120 55%, #070b12 100%);
+    box-shadow:inset 0 1px 0 rgba(160,190,210,.06), 0 10px 40px rgba(0,0,0,.4);}
+  #stage canvas{display:block;width:100%;height:100%}
+  /* vignette scoped to the stage */
+  #vignette{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 100% at 50% 35%,transparent 45%,rgba(3,6,11,.5) 100%);
+    mix-blend-mode:multiply;border-radius:16px;}
+  @media (min-width:820px){
+    #app{flex-direction:row}
+    #stage{margin:16px 0 16px 16px}
+  }
+ 
   .mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
   .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.28em;
     text-transform:uppercase;color:var(--teal);}
-
-  /* top bar */
-  #top{position:fixed;top:0;left:0;right:0;padding:14px 16px;display:flex;justify-content:space-between;
+ 
+  /* top bar — overlays the stage viewport */
+  #top{position:absolute;top:0;left:0;right:0;padding:12px 14px;display:flex;justify-content:space-between;
     align-items:flex-start;pointer-events:none;gap:12px;z-index:5;}
   #brand .name{font-weight:700;font-size:15px;letter-spacing:.02em;line-height:1;margin-top:3px}
   #brand .name b{color:var(--teal)}
@@ -48,15 +57,13 @@
   #status.incanal{color:var(--amber)}
   #status.near{color:var(--teal)}
   #status.cleared{color:var(--good)}
-
-  /* control panel — mobile: collapsible bottom sheet */
-  #panel{position:fixed;z-index:6;background:var(--panel);backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);border:1px solid var(--stroke);
-    left:0;right:0;bottom:0;border-radius:20px 20px 0 0;
-    padding:4px 16px calc(14px + env(safe-area-inset-bottom));
-    box-shadow:0 -24px 60px rgba(0,0,0,.5);
+ 
+  /* control panel — below the stage on mobile, beside it on desktop */
+  #panel{flex:none;z-index:6;background:var(--panel);backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);border-top:1px solid var(--stroke);
+    padding:2px 16px calc(12px + env(safe-area-inset-bottom));
     display:flex;flex-direction:column;
-    max-height:min(80vh, 620px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+    max-height:52vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
   /* grabber handle (mobile only) */
   #handle{align-self:center;border:0;background:transparent;padding:9px 44px 5px;
     cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;flex:none;
@@ -66,16 +73,15 @@
     text-transform:uppercase;color:var(--muted)}
   #panel.collapsed{max-height:none}
   #panel.collapsed .more{display:none}
-
+ 
   @media (min-width:820px){
-    #panel{left:auto;right:16px;top:16px;bottom:16px;width:360px;border-radius:18px;
+    #panel{width:360px;margin:16px;border:1px solid var(--stroke);border-radius:18px;
       padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.5);max-height:none}
     #panel.collapsed .more{display:block}   /* always expanded on desktop */
     #handle{display:none}
     .more{margin-top:auto}
-    #top{right:392px}
   }
-
+ 
   .stephead{display:flex;align-items:baseline;gap:10px;margin-bottom:2px}
   .stepnum{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--teal);letter-spacing:.1em}
   .steps-of{color:var(--muted)}
@@ -83,13 +89,13 @@
   #stepbody{font-size:13.5px;line-height:1.5;color:#c3ced6;min-height:38px}
   #stepbody b{color:var(--amber);font-weight:600}
   #stepbody .side{color:var(--coral);font-weight:600}
-
+ 
   /* progress dots */
   #dots{display:flex;gap:6px;margin:12px 0 4px}
   .dot{height:4px;flex:1;border-radius:99px;background:rgba(120,150,175,.18);transition:.3s}
   .dot.done{background:var(--teal-dim)}
   .dot.active{background:var(--teal)}
-
+ 
   /* hold timer */
   #hold{margin:12px 0;display:none;align-items:center;gap:12px}
   #hold.show{display:flex}
@@ -99,7 +105,7 @@
   .ring::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--bg2)}
   .ring span{position:relative;z-index:1;font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:500}
   #holdlabel{font-size:12px;color:var(--muted);line-height:1.4}
-
+ 
   /* nav row */
   #nav{display:flex;gap:8px;margin-top:12px}
   button{font-family:inherit;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;
@@ -111,149 +117,158 @@
   .btn-primary{flex:1;background:var(--teal);color:#03181a;border-color:transparent}
   .btn-primary:hover{background:#4fd0da}
   .btn-ghost{flex:none}
-
+ 
   /* utility row */
   #util{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
   #util button{flex:1;font-size:11.5px;padding:9px 8px;font-weight:500;color:var(--muted)}
   #util button.on{color:var(--teal);border-color:var(--teal-dim)}
-
+ 
   .segmented{display:flex;border:1px solid var(--stroke);border-radius:11px;overflow:hidden;margin-top:2px}
   .segmented button{flex:1;border:0;border-radius:0;background:transparent;font-size:12px;padding:9px;color:var(--muted)}
   .segmented button.on{background:rgba(56,190,201,.14);color:var(--teal)}
   .fieldlabel{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;
     text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
-
+ 
   #enable{margin-top:12px;width:100%;background:rgba(56,190,201,.12);border-color:var(--teal-dim);color:var(--teal)}
   #enable.hidden{display:none}
   #sensornote{font-size:11px;color:var(--muted);line-height:1.45;margin-top:8px}
   #sensornote.warn{color:var(--coral)}
-
+ 
   .spacer{flex:1}
   #disclaimer{font-size:10px;line-height:1.45;color:#5a6874;margin-top:14px;border-top:1px solid var(--stroke);padding-top:10px}
-
-  /* cleared flash */
-  #flash{position:fixed;inset:0;z-index:7;display:none;place-items:center;pointer-events:none}
+ 
+  /* cleared flash — overlays the stage */
+  #flash{position:absolute;inset:0;z-index:7;display:none;place-items:center;pointer-events:none}
   #flash.show{display:grid;animation:fade .5s ease}
-  #flash .card{background:rgba(10,20,20,.72);backdrop-filter:blur(6px);border:1px solid rgba(95,227,176,.4);
+  #flash .card{background:rgba(10,20,20,.78);backdrop-filter:blur(6px);border:1px solid rgba(95,227,176,.4);
     border-radius:16px;padding:20px 26px;text-align:center;pointer-events:auto;max-width:80%}
   #flash .card h2{margin:0 0 6px;color:var(--good);font-size:20px}
   #flash .card p{margin:0 0 14px;font-size:13px;color:#c3ced6;line-height:1.5}
   @keyframes fade{from{opacity:0}to{opacity:1}}
-
-  .hint{position:fixed;left:50%;bottom:calc(50% - 40px);transform:translateX(-50%);z-index:4;
+ 
+  .hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:4;
     font-size:12px;color:var(--muted);font-family:"IBM Plex Mono",monospace;letter-spacing:.06em;
-    pointer-events:none;text-align:center;transition:opacity .6s}
-  @media (min-width:820px){.hint{bottom:auto;top:60%}}
+    pointer-events:none;text-align:center;transition:opacity .6s;padding:0 16px;max-width:90%}
 </style>
 </head>
 <body>
-  <div id="stage"></div>
-  <div id="vignette"></div>
-
-  <div id="top">
-    <div id="brand">
-      <div class="eyebrow">Otolith</div>
-      <div class="name">Epley <b>Maneuver</b> Simulator</div>
+  <div id="app">
+    <div id="stage">
+      <div id="vignette"></div>
+ 
+      <div id="top">
+        <div id="brand">
+          <div class="eyebrow">Otolith</div>
+          <div class="name">Epley <b>Maneuver</b> Simulator</div>
+        </div>
+        <div id="readout">
+          <div>pitch <span class="v" id="rPitch">0°</span> · roll <span class="v" id="rRoll">0°</span></div>
+          <div>turn <span class="v" id="rYaw">0°</span></div>
+          <div id="status" class="incanal">In canal</div>
+        </div>
+      </div>
+ 
+      <div class="hint" id="hint">tilt your phone to move the crystal · or drag the model</div>
+ 
+      <div id="flash"><div class="card">
+        <h2>Crystal cleared</h2>
+        <p id="flashp">The otoconia reached the utricle and dropped out of the canal — the gravity signal that drives vertigo is gone.</p>
+        <button class="btn-primary" style="width:100%" onclick="document.getElementById('flash').classList.remove('show')">Continue</button>
+      </div></div>
     </div>
-    <div id="readout">
-      <div>pitch <span class="v" id="rPitch">0°</span> · roll <span class="v" id="rRoll">0°</span></div>
-      <div>turn <span class="v" id="rYaw">0°</span></div>
-      <div id="status" class="incanal">In canal</div>
-    </div>
-  </div>
-
-  <div class="hint" id="hint">drag to rotate the head · or enable motion below</div>
-
+ 
   <div id="panel" class="collapsed">
     <button id="handle" aria-label="Expand or collapse options"><span class="bar"></span><span class="cue" id="handleCue">▲ Options</span></button>
-
+ 
     <button id="enable">Enable phone motion</button>
-
+ 
     <div class="stephead">
       <span class="stepnum"><span id="stepIdx">1</span><span class="steps-of">/5</span></span>
       <span class="eyebrow" style="color:var(--muted)">Posterior canal · <span id="earLabel">right</span> ear</span>
     </div>
     <div id="steptitle">Start position</div>
     <div id="stepbody"></div>
-
+ 
     <div id="dots"></div>
-
+ 
     <div id="hold">
       <div class="ring" id="ring" style="--p:0"><span id="ringTxt">30</span></div>
       <div id="holdlabel">Hold this position while the loose crystal settles. The spinning sensation should ease.</div>
     </div>
-
+ 
     <div id="nav">
       <button class="btn-ghost" id="prev">Back</button>
       <button class="btn-primary" id="next">Next position</button>
     </div>
-
+ 
     <div class="more">
       <div class="fieldlabel">Affected ear</div>
       <div class="segmented" id="earSeg">
         <button data-ear="right" class="on">Right</button>
         <button data-ear="left">Left</button>
       </div>
-
+ 
       <div id="sensornote">Sensors off — drag the model to move the head. On a phone, tap “Enable phone motion.”</div>
-
+ 
       <div id="util">
         <button id="recenter">Recenter view</button>
         <button id="reset">Reset crystal</button>
       </div>
-
+ 
       <div id="disclaimer">Educational visualization only — an approximation of otoconia mechanics in the posterior semicircular canal. Not a diagnosis or treatment tool. BPPV should be assessed and the Epley maneuver performed with a qualified clinician; done for the wrong condition it can make symptoms worse.</div>
     </div>
   </div>
-
-  <div id="flash"><div class="card">
-    <h2>Crystal cleared</h2>
-    <p id="flashp">The otoconia reached the utricle and dropped out of the canal — the gravity signal that drives vertigo is gone.</p>
-    <button class="btn-primary" style="width:100%" onclick="document.getElementById('flash').classList.remove('show')">Continue</button>
-  </div></div>
-
+  </div>
+ 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
 "use strict";
 const T = window.THREE;
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
+ 
 /* ---------- scene ---------- */
 const stage = document.getElementById('stage');
 const scene = new T.Scene();
 scene.fog = new T.FogExp2(0x070b12, 0.11);
-
+ 
 const camera = new T.PerspectiveCamera(42, 1, 0.1, 100);
 camera.position.set(0, 0.25, 6.4);
 camera.lookAt(0,0,0);
-
+ 
 const renderer = new T.WebGLRenderer({antialias:true, alpha:true});
 renderer.setClearColor(0x000000, 0);
 renderer.setPixelRatio(Math.min(devicePixelRatio||1, 2));
 stage.appendChild(renderer.domElement);
-
+ 
 function resize(){
   const w = stage.clientWidth, h = stage.clientHeight;
+  if(!w || !h) return;
   renderer.setSize(w,h,false);
   camera.aspect = w/h; camera.updateProjectionMatrix();
+  // frame the labyrinth so it fits both dimensions (portrait stages are narrow)
+  const fit = 2.7;
+  const vhalf = Math.tan(camera.fov*Math.PI/360);
+  camera.position.z = Math.max(fit/vhalf, fit/(vhalf*camera.aspect));
+  camera.lookAt(0,0,0);
 }
 window.addEventListener('resize', resize);
-
+if(window.ResizeObserver){ new ResizeObserver(resize).observe(stage); }
+ 
 /* ---------- lights ---------- */
 scene.add(new T.HemisphereLight(0x9fdfff, 0x0a1420, 0.75));
 const key = new T.PointLight(0x8fe9ff, 90, 30); key.position.set(4,5,6); scene.add(key);
 const rim = new T.PointLight(0xff9a5a, 40, 30); rim.position.set(-5,-2,-3); scene.add(rim);
 const fill = new T.PointLight(0x3a6a80, 30, 30); fill.position.set(-3,4,4); scene.add(fill);
-
+ 
 /* ---------- labyrinth ---------- */
 // labyrinth is the "head" frame; it gets the display orientation.
 const labyrinth = new T.Group();
 scene.add(labyrinth);
-
+ 
 const R = 1.15;          // canal loop radius
 const TUBE = 0.085;      // tube thickness
-
+ 
 function glassCanal(color, active){
   const g = new T.TorusGeometry(R, TUBE, 20, 140);
   const m = new T.MeshStandardMaterial({
@@ -265,7 +280,7 @@ function glassCanal(color, active){
   });
   return new T.Mesh(g,m);
 }
-
+ 
 // three canals, mounted at anatomically-flavored angles
 function canalGroup(euler, color, active){
   const grp = new T.Group();
@@ -274,25 +289,25 @@ function canalGroup(euler, color, active){
   labyrinth.add(grp);
   return grp;
 }
-
+ 
 let EAR = 'right';
 const s = () => (EAR==='right'? 1 : -1);   // mirror factor
-
+ 
 // Built each time ear changes so mirroring is correct
 let posterior, anterior, lateral, utricle, crystal, glow, trail, trailGeo;
 const trailLen = 40;
-
+ 
 function buildLabyrinth(){
   // clear
   while(labyrinth.children.length) labyrinth.remove(labyrinth.children[0]);
-
+ 
   // posterior (active) — steep, angled ~45° in yaw
   posterior = canalGroup([0.62, -0.80*s(), 0.28*s()], 0x8fe4ff, true);
   // anterior / superior — shares crus with posterior
   anterior  = canalGroup([-0.66, 0.62*s(), -0.30*s()], 0x63c9d6, false);
   // horizontal / lateral — near-horizontal, tilted ~30°
   lateral   = canalGroup([1.32, 0.05*s(), 0.0], 0x4fbecb, false);
-
+ 
   // utricle — the vestibule where crystals belong. Sits at the posterior
   // canal's exit (local +Y), just outside the loop.
   const uGeo = new T.SphereGeometry(0.42, 24, 20);
@@ -305,7 +320,7 @@ function buildLabyrinth(){
   const halo = new T.Mesh(new T.RingGeometry(0.16,0.22,24),
     new T.MeshBasicMaterial({color:0x5fe3b0, transparent:true, opacity:0.5, side:T.DoubleSide}));
   halo.position.set(0, R, 0); posterior.add(halo);
-
+ 
   // crystal (otoconia)
   crystal = new T.Mesh(new T.IcosahedronGeometry(0.11, 0),
     new T.MeshStandardMaterial({color:0xffe6ad, emissive:0xffb347, emissiveIntensity:1.4,
@@ -315,17 +330,17 @@ function buildLabyrinth(){
   const halo2 = new T.Sprite(new T.SpriteMaterial({color:0xffcf6b, transparent:true, opacity:0.55,
     blending:T.AdditiveBlending, depthWrite:false}));
   halo2.scale.set(0.55,0.55,0.55); crystal.add(halo2);
-
+ 
   // motion trail
   const pts = new Float32Array(trailLen*3);
   trailGeo = new T.BufferGeometry();
   trailGeo.setAttribute('position', new T.BufferAttribute(pts,3));
   trail = new T.Line(trailGeo, new T.LineBasicMaterial({color:0xffb347, transparent:true, opacity:0.35}));
   posterior.add(trail);
-
+ 
   resetCrystal();
 }
-
+ 
 /* ---------- crystal physics ----------
    The crystal is a bead constrained to the posterior canal loop, parameterised
    by theta. It rolls to the lowest point of the loop under *real* gravity.
@@ -335,7 +350,7 @@ const THETA_EXIT  =  Math.PI/2;   // top of loop, at the utricle exit
 const EXIT_W = 0.6;
 let theta = THETA_START, omega = 0, cleared = false;
 const trailBuf = [];
-
+ 
 function resetCrystal(){
   theta = THETA_START; omega = 0; cleared = false;
   trailBuf.length = 0;
@@ -345,7 +360,7 @@ function resetCrystal(){
 function loopPos(th){ return new T.Vector3(R*Math.cos(th), R*Math.sin(th), 0); }
 function loopTan(th){ return new T.Vector3(-Math.sin(th), Math.cos(th), 0); }
 function placeCrystal(){ if(crystal) crystal.position.copy(loopPos(theta)); }
-
+ 
 const worldDown = new T.Vector3(0,-1,0);
 function stepPhysics(dt){
   if(!posterior) return;
@@ -353,22 +368,22 @@ function stepPhysics(dt){
   const gHead = worldDown.clone().applyQuaternion(rawQuat.clone().invert());
   // gravity in CANAL-local frame = undo the canal mount
   const gCanal = gHead.applyQuaternion(posterior.quaternion.clone().invert());
-
+ 
   if(cleared){
     // settle gently into the utricle exit
     theta += (THETA_EXIT - theta)*Math.min(1, dt*4);
     omega = 0; placeCrystal(); pushTrail(); return;
   }
   const tan = loopTan(theta);
-  const aTang = (gCanal.x*tan.x + gCanal.y*tan.y) * 9.0; // component of g along path
+  const aTang = (gCanal.x*tan.x + gCanal.y*tan.y) * 12.0; // component of g along path
   omega += aTang * dt;
-  omega *= 0.90;                     // heavy endolymph damping
-  omega = Math.max(-6, Math.min(6, omega));
+  omega *= 0.88;                     // viscous endolymph damping
+  omega = Math.max(-7, Math.min(7, omega));
   theta += omega * dt;
-
+ 
   placeCrystal();
   pushTrail();
-
+ 
   // success: crystal reaches the utricle exit after the maneuver is under way
   let d = Math.atan2(Math.sin(theta-THETA_EXIT), Math.cos(theta-THETA_EXIT));
   if(!cleared && Math.abs(d) < EXIT_W && step >= 2){
@@ -391,7 +406,7 @@ function pushTrail(){
   }
   trailGeo.attributes.position.needsUpdate = true;
 }
-
+ 
 /* ---------- orientation: sensor + manual ---------- */
 let rawQuat = new T.Quaternion();     // "true" device→world (drives physics)
 let manualQuat = new T.Quaternion();  // used when sensors off
@@ -400,7 +415,7 @@ let useSensor = false;
 let yawOffset = 0;                    // view-only yaw calibration (about world Y)
 const Y_AXIS = new T.Vector3(0,1,0);
 const X_AXIS = new T.Vector3(1,0,0);
-
+ 
 // device orientation → quaternion (classic THREE DeviceOrientation math)
 const _zee = new T.Vector3(0,0,1);
 const _euler = new T.Euler();
@@ -424,7 +439,7 @@ function onDeviceOrientation(e){
   if(!useSensor){ useSensor = true; hideHint(); collapseSheet(); document.getElementById('sensornote').textContent =
      'Motion active — move your head with the phone against your temple, or held facing you.'; }
 }
-
+ 
 /* manual trackball drag */
 let dragging=false, lx=0, ly=0;
 stage.addEventListener('pointerdown', e=>{ dragging=true; lx=e.clientX; ly=e.clientY; stage.setPointerCapture(e.pointerId); hideHint(); });
@@ -437,7 +452,7 @@ stage.addEventListener('pointermove', e=>{
   useSensor = false;
 });
 window.addEventListener('pointerup', ()=> dragging=false);
-
+ 
 /* ---------- permission ---------- */
 const enableBtn = document.getElementById('enable');
 function needsPermission(){
@@ -456,7 +471,7 @@ enableBtn.addEventListener('click', async ()=>{
     requestWake();
   }catch(err){ sensorFail('Motion unavailable here. Open this file directly in your phone browser.'); }
 });
-
+ 
 /* keep the screen awake during the maneuver */
 let wakeLock=null;
 async function requestWake(){ try{ if('wakeLock' in navigator){ wakeLock = await navigator.wakeLock.request('screen'); } }catch(e){} }
@@ -468,13 +483,13 @@ function sensorFail(msg){
 if(!needsPermission() && typeof DeviceOrientationEvent!=='undefined'){
   window.addEventListener('deviceorientation', onDeviceOrientation, true);
 }
-
+ 
 /* ---------- calibration (view yaw only; physics stays absolute) ---------- */
 function currentYaw(q){ return new T.Euler().setFromQuaternion(q,'YXZ').y; }
 function calibrate(){ yawOffset = -currentYaw(useSensor?sensorQuat:manualQuat); }
 document.getElementById('recenter').addEventListener('click', calibrate);
 document.getElementById('reset').addEventListener('click', resetCrystal);
-
+ 
 /* ---------- Epley steps ---------- */
 function steps(ear){
   const A = ear==='right' ? 'right' : 'left';
@@ -494,7 +509,7 @@ function steps(ear){
 }
 let STEPS = steps(EAR);
 let step = 0;
-
+ 
 const el = id => document.getElementById(id);
 function renderStep(){
   const st = STEPS[step];
@@ -513,7 +528,7 @@ function renderStep(){
 }
 el('next').addEventListener('click', ()=>{ if(step<STEPS.length-1){ step++; renderStep(); } else { step=0; renderStep(); } });
 el('prev').addEventListener('click', ()=>{ if(step>0){ step--; renderStep(); } });
-
+ 
 /* hold timer */
 let holdTimer=null, holdT=30;
 function startHold(){ stopHold(); holdT=30; updateRing();
@@ -521,7 +536,7 @@ function startHold(){ stopHold(); holdT=30; updateRing();
 function stopHold(){ if(holdTimer){ clearInterval(holdTimer); holdTimer=null; } }
 function updateRing(){ el('ring').style.setProperty('--p', ((30-holdT)/30*100));
   el('ringTxt').textContent = Math.max(0,holdT); }
-
+ 
 /* ---------- ear toggle ---------- */
 document.getElementById('earSeg').addEventListener('click', e=>{
   const b=e.target.closest('button'); if(!b) return;
@@ -531,17 +546,17 @@ document.getElementById('earSeg').addEventListener('click', e=>{
   STEPS = steps(EAR); step=0;
   buildLabyrinth(); renderStep();
 });
-
+ 
 /* ---------- status + flash ---------- */
 function setStatus(cls,txt){ const s=el('status'); s.className=cls; s.textContent=txt; }
 function showFlash(){ const f=el('flash'); f.classList.add('show');
   setTimeout(()=>f.classList.remove('show'), 4200); }
-
+ 
 /* hint */
 let hintShown=true;
 function hideHint(){ if(hintShown){ hintShown=false; const h=el('hint'); h.style.opacity=0; setTimeout(()=>h.remove(),700); } }
 setTimeout(hideHint, 8000);
-
+ 
 /* ---------- mobile bottom sheet ---------- */
 const panelEl = el('panel'), handleEl = el('handle'), cueEl = el('handleCue');
 function syncCue(){ cueEl.textContent = panelEl.classList.contains('collapsed') ? '▲ Options' : '▼ Hide'; }
@@ -549,37 +564,37 @@ function collapseSheet(){ panelEl.classList.add('collapsed'); syncCue(); }
 handleEl.addEventListener('click', ()=>{ panelEl.classList.toggle('collapsed'); syncCue();
   if(!panelEl.classList.contains('collapsed')) panelEl.scrollTop = 0; });
 syncCue();
-
+ 
 /* ---------- loop ---------- */
 const clock = new T.Clock();
 let idle=0;
 function animate(){
   requestAnimationFrame(animate);
   let dt = Math.min(clock.getDelta(), 0.05);
-
+ 
   rawQuat = useSensor ? sensorQuat : manualQuat;
-
+ 
   // display orientation = view-yaw calibration (world Y) * raw  → keeps "down" true
   const disp = new T.Quaternion().setFromAxisAngle(Y_AXIS, yawOffset).multiply(rawQuat);
   labyrinth.quaternion.slerp(disp, 0.35);
-
+ 
   // gentle idle breathing before the user interacts (skip if reduced motion)
   if(!useSensor && !dragging && hintShown && !reduceMotion){
     idle += dt; manualQuat.premultiply(new T.Quaternion().setFromAxisAngle(Y_AXIS, Math.sin(idle*0.6)*0.0016));
   }
-
+ 
   stepPhysics(dt);
   if(crystal){ const p=0.9+Math.sin(performance.now()*0.006)*0.12; glow.intensity=6*p; }
-
+ 
   // readouts
   const e = new T.Euler().setFromQuaternion(rawQuat,'YXZ');
   el('rPitch').textContent = Math.round(-e.x*180/Math.PI)+'°';
   el('rRoll').textContent  = Math.round(e.z*180/Math.PI)+'°';
   el('rYaw').textContent   = Math.round(currentYaw(rawQuat)*180/Math.PI)+'°';
-
+ 
   renderer.render(scene,camera);
 }
-
+ 
 /* ---------- go ---------- */
 resize();
 buildLabyrinth();
