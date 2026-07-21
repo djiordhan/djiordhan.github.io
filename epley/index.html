@@ -49,14 +49,30 @@
   #status.near{color:var(--teal)}
   #status.cleared{color:var(--good)}
 
-  /* control panel */
+  /* control panel — mobile: collapsible bottom sheet */
   #panel{position:fixed;z-index:6;background:var(--panel);backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);border:1px solid var(--stroke);}
-  #panel{left:0;right:0;bottom:0;border-radius:20px 20px 0 0;padding:16px 18px calc(16px + env(safe-area-inset-bottom));
-    box-shadow:0 -24px 60px rgba(0,0,0,.5)}
+    -webkit-backdrop-filter:blur(14px);border:1px solid var(--stroke);
+    left:0;right:0;bottom:0;border-radius:20px 20px 0 0;
+    padding:4px 16px calc(14px + env(safe-area-inset-bottom));
+    box-shadow:0 -24px 60px rgba(0,0,0,.5);
+    display:flex;flex-direction:column;
+    max-height:min(80vh, 620px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  /* grabber handle (mobile only) */
+  #handle{align-self:center;border:0;background:transparent;padding:9px 44px 5px;
+    cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;flex:none;
+    position:sticky;top:0;z-index:2}
+  #handle .bar{width:40px;height:4px;border-radius:99px;background:rgba(150,175,195,.45)}
+  #handle .cue{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted)}
+  #panel.collapsed{max-height:none}
+  #panel.collapsed .more{display:none}
+
   @media (min-width:820px){
     #panel{left:auto;right:16px;top:16px;bottom:16px;width:360px;border-radius:18px;
-      padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.5);display:flex;flex-direction:column}
+      padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.5);max-height:none}
+    #panel.collapsed .more{display:block}   /* always expanded on desktop */
+    #handle{display:none}
+    .more{margin-top:auto}
     #top{right:392px}
   }
 
@@ -148,7 +164,11 @@
 
   <div class="hint" id="hint">drag to rotate the head · or enable motion below</div>
 
-  <div id="panel">
+  <div id="panel" class="collapsed">
+    <button id="handle" aria-label="Expand or collapse options"><span class="bar"></span><span class="cue" id="handleCue">▲ Options</span></button>
+
+    <button id="enable">Enable phone motion</button>
+
     <div class="stephead">
       <span class="stepnum"><span id="stepIdx">1</span><span class="steps-of">/5</span></span>
       <span class="eyebrow" style="color:var(--muted)">Posterior canal · <span id="earLabel">right</span> ear</span>
@@ -168,23 +188,22 @@
       <button class="btn-primary" id="next">Next position</button>
     </div>
 
-    <div class="fieldlabel">Affected ear</div>
-    <div class="segmented" id="earSeg">
-      <button data-ear="right" class="on">Right</button>
-      <button data-ear="left">Left</button>
+    <div class="more">
+      <div class="fieldlabel">Affected ear</div>
+      <div class="segmented" id="earSeg">
+        <button data-ear="right" class="on">Right</button>
+        <button data-ear="left">Left</button>
+      </div>
+
+      <div id="sensornote">Sensors off — drag the model to move the head. On a phone, tap “Enable phone motion.”</div>
+
+      <div id="util">
+        <button id="recenter">Recenter view</button>
+        <button id="reset">Reset crystal</button>
+      </div>
+
+      <div id="disclaimer">Educational visualization only — an approximation of otoconia mechanics in the posterior semicircular canal. Not a diagnosis or treatment tool. BPPV should be assessed and the Epley maneuver performed with a qualified clinician; done for the wrong condition it can make symptoms worse.</div>
     </div>
-
-    <button id="enable">Enable phone motion</button>
-    <div id="sensornote">Sensors off — drag the model to move the head. On a phone, tap “Enable phone motion.”</div>
-
-    <div class="spacer"></div>
-
-    <div id="util">
-      <button id="recenter">Recenter view</button>
-      <button id="reset">Reset crystal</button>
-    </div>
-
-    <div id="disclaimer">Educational visualization only — an approximation of otoconia mechanics in the posterior semicircular canal. Not a diagnosis or treatment tool. BPPV should be assessed and the Epley maneuver performed with a qualified clinician; done for the wrong condition it can make symptoms worse.</div>
   </div>
 
   <div id="flash"><div class="card">
@@ -402,7 +421,7 @@ function onDeviceOrientation(e){
   if(e.alpha==null && e.beta==null && e.gamma==null) return;
   const a = (e.alpha||0)*Math.PI/180, b=(e.beta||0)*Math.PI/180, g=(e.gamma||0)*Math.PI/180;
   sensorQuat = quatFromDevice(a,b,g, screenAngle());
-  if(!useSensor){ useSensor = true; hideHint(); document.getElementById('sensornote').textContent =
+  if(!useSensor){ useSensor = true; hideHint(); collapseSheet(); document.getElementById('sensornote').textContent =
      'Motion active — move your head with the phone against your temple, or held facing you.'; }
 }
 
@@ -434,8 +453,14 @@ enableBtn.addEventListener('click', async ()=>{
     window.addEventListener('deviceorientation', onDeviceOrientation, true);
     enableBtn.classList.add('hidden');
     calibrate();
+    requestWake();
   }catch(err){ sensorFail('Motion unavailable here. Open this file directly in your phone browser.'); }
 });
+
+/* keep the screen awake during the maneuver */
+let wakeLock=null;
+async function requestWake(){ try{ if('wakeLock' in navigator){ wakeLock = await navigator.wakeLock.request('screen'); } }catch(e){} }
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && useSensor) requestWake(); });
 function sensorFail(msg){
   const n=document.getElementById('sensornote'); n.textContent=msg; n.classList.add('warn');
 }
@@ -516,6 +541,14 @@ function showFlash(){ const f=el('flash'); f.classList.add('show');
 let hintShown=true;
 function hideHint(){ if(hintShown){ hintShown=false; const h=el('hint'); h.style.opacity=0; setTimeout(()=>h.remove(),700); } }
 setTimeout(hideHint, 8000);
+
+/* ---------- mobile bottom sheet ---------- */
+const panelEl = el('panel'), handleEl = el('handle'), cueEl = el('handleCue');
+function syncCue(){ cueEl.textContent = panelEl.classList.contains('collapsed') ? '▲ Options' : '▼ Hide'; }
+function collapseSheet(){ panelEl.classList.add('collapsed'); syncCue(); }
+handleEl.addEventListener('click', ()=>{ panelEl.classList.toggle('collapsed'); syncCue();
+  if(!panelEl.classList.contains('collapsed')) panelEl.scrollTop = 0; });
+syncCue();
 
 /* ---------- loop ---------- */
 const clock = new T.Clock();
